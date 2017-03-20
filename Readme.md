@@ -11,44 +11,44 @@ Describe your architecture in JSON. You can do this in two ways
 - in multiple json files that are all in one directory. (prefered for structuring bigger definitions)
 
 ```
->{
->  "name": "my application suite",
->  "components": [
->    {
->      "name": "Name of Component",
->      "group": "Optional a Group",
->      "technology": "Optional name of the used technologie",
->      "category": "Optional a category"
->      "description": "Some short description",
->      "display":{
->        "bordercolor": "#3971ad"
->      },
->      "provided-services": [
->        {
->          "name": "auth",
->          "type": "api",
->            "dependencies": [
->              {
->                "reference": "othercomponent",
->              }
->            ]
->        }
->
->      ],
->      "infrastructure-dependencies": [
->        {
->          "type": "redis"
->        }
->      ],
->      "dependencies": [
->              {
->                "reference": "keycloak.login",
->                "relationship": "serviceapi",
->                 "isSameLevel": false
->                 "isBrowserBased": true
->              }
->            ]
->    }
+{
+  "name": "my application suite",
+  "components": [
+    {
+      "name": "Name of Component",
+      "group": "Optional a Group",
+      "technology": "Optional name of the used technologie",
+      "category": "Optional a category"
+      "description": "Some short description",
+      "display":{
+        "bordercolor": "#3971ad"
+      },
+      "provided-services": [
+        {
+          "name": "auth",
+          "type": "api",
+            "dependencies": [
+              {
+                "reference": "othercomponent",
+              }
+            ]
+        }
+
+      ],
+      "infrastructure-dependencies": [
+        {
+          "type": "redis"
+        }
+      ],
+      "dependencies": [
+              {
+                "reference": "keycloak.login",
+                "relationship": "serviceapi",
+                 "isSameLevel": false
+                 "isBrowserBased": true
+              }
+            ]
+    }
 ```
 
 
@@ -65,25 +65,25 @@ Currently the main feature is generating graphviz compatible graph descriptions 
 This tool defines:
 
 **Component:**
-    A component is normaly something that offers one or more services (or interfaces).
-    Normaly a component is something that is deployed seperate - and has a seperate build and integration pipeline.
+A component is normaly something that offers one or more services (or interfaces).
+Normaly a component is something that is deployed seperate - and has a seperate build and integration pipeline.
 
-    - Supported Categories: external (rendered in red)
-    - Supported Technologies: go, scala, magento, akeneo, php, anypoint, keycloak
+- Supported Categories: external (rendered in red)
+- Supported Technologies: go, scala, magento, akeneo, php, anypoint, keycloak
 
 **Service:**
-    A component offers services (one or more). Services can have a type. Services are used by other systems or humans. The can be public or just internal.
+A component offers services (one or more). Services can have a type. Services are used by other systems or humans. The can be public or just internal.
 
 **Dependency:**
-    A component or a service can have dependencies. You can add dependency on service level to emphazize that the dependency is only required for a certain service.
-    (This is used for impact analyses).
-    A depdendency creates a reference to either a component - or more exact to a service. The relation is of a certain relationship type.
+A component or a service can have dependencies. You can add dependency on service level to emphazize that the dependency is only required for a certain service.
+(This is used for impact analyses).
+A depdendency creates a reference to either a component - or more exact to a service. The relation is of a certain relationship type.
 
-    **supported releationship types:**
-    - customer-supplier (use this where a strong dependency extsis that the supplier delivers whats required by the customer. A stronger collaboration between the teams of the components need to exist.)
-    - conformist (use this to emphazise also a strong dependency that we need the services provided. But there is no chance to influence the interface - so the downstream component is forced to be conform to whatever is provided - and need to make it work.)
-    - serviceapi (The used api is designed for integration. Its nice and offers multiple services and the format is published (documented). Most modern Rest API should fall under this section. (see open host / published language). This is the default
-    - acl (Anti coruption layer: If the provided interface is complex or very different from the components internal model. The acl emphazizes that the downstream component takes care to isolate his domain with a acl pattern)
+**supported releationship types:**
+- customer-supplier (use this where a strong dependency extsis that the supplier delivers whats required by the customer. A stronger collaboration between the teams of the components need to exist.)
+- conformist (use this to emphazise also a strong dependency that we need the services provided. But there is no chance to influence the interface - so the downstream component is forced to be conform to whatever is provided - and need to make it work.)
+- serviceapi (The used api is designed for integration. Its nice and offers multiple services and the format is published (documented). Most modern Rest API should fall under this section. (see open host / published language). This is the default
+- acl (Anti coruption layer: If the provided interface is complex or very different from the components internal model. The acl emphazizes that the downstream component takes care to isolate his domain with a acl pattern)
 
 
 ## Todos
