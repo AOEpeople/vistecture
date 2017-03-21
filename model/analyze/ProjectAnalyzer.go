@@ -2,56 +2,52 @@ package analyze
 
 import (
 	"errors"
-	core "appdependency/model/core"
+
+	"github.com/danielpoe/appdependency/model/core"
 )
 
-type ProjectAnalyzer struct {
-}
+type ProjectAnalyzer struct{}
 
-
-//Validates Project and Components
-func (ProjectAnalyzer *ProjectAnalyzer) Analyze(Project *core.Project) error {
-
+//Analyze validates Project and Components
+func (projectAnalyzer *ProjectAnalyzer) Analyze(project *core.Project) error {
 	//Walk dependencies add add service to called stack
 	var stack []string
-	for _, component := range Project.Components {
-		e := ProjectAnalyzer.walkDependencies(Project,component,stack)
-		if (e != nil) {
-			return e
+	for _, component := range project.Components {
+		err := projectAnalyzer.walkDependencies(project, component, stack)
+		if err != nil {
+			return err
 		}
 	}
 	return nil
 }
 
-func (ProjectAnalyzer *ProjectAnalyzer) walkDependencies(Project *core.Project,Component *core.Component, callStack []string) error {
+func (projectAnalyzer *ProjectAnalyzer) walkDependencies(project *core.Project, component *core.Component, callStack []string) error {
 	//end of recursion
 	if len(callStack) >= 50 {
 		return errors.New("More than 50 depth")
 	}
-	if (arrayContainsName(callStack,Component.Name)) {
+	if arrayContainsName(callStack, component.Name) {
 		errorMessage := "Cyclic dependency: "
 
-		for _,v := range callStack {
-			errorMessage = errorMessage + v + " -> ";
+		for _, v := range callStack {
+			errorMessage += v + " -> "
 		}
-		return errors.New(errorMessage+ Component.Name)
+		return errors.New(errorMessage + component.Name)
 	}
 
-	//For next recursion copy map
-	newCallStack := append(callStack, Component.Name)
+	callStack = append(callStack, component.Name)
 
-
-	for _, dependency := range Component.Dependencies {
-		nextComponent, _ := dependency.GetComponent(Project)
-		e := ProjectAnalyzer.walkDependencies(Project,&nextComponent,newCallStack)
-		if (e != nil) {
-			return e
+	for _, dependency := range component.Dependencies {
+		nextComponent, _ := dependency.GetComponent(project)
+		err := projectAnalyzer.walkDependencies(project, &nextComponent, callStack)
+		if err != nil {
+			return err
 		}
 	}
 	return nil
 }
 
-func arrayContainsName(callStack []string, name string)  bool {
+func arrayContainsName(callStack []string, name string) bool {
 	for _, v := range callStack {
 		if v == name {
 			return true

@@ -104,10 +104,25 @@
 </style>
 </head>
 <body>
-<h1>Project {{.projectName}} documentation:</h1>
+    <h1>Project {{.Project.Name}} documentation:</h1>
 
-<h2>Overview</h2>
-{{.componentTable}}
+    <h2>Overview</h2>
+
+    <table>
+        <tr><th>Name</th><th>Services</th><tr>
+        {{ range .Project.Components }}
+        <tr>
+            <td>{{ .Name }}<br /><small>{{ .Description }}</small></td>
+            <td>
+                <table>
+                    <tr><th>Name</th><th>Type</th><tr>
+                    {{ range .ProvidedServices }}
+                        <tr><td>{{ .Name }}</td><td>{{ .Type }}</td></tr>
+                    {{ end }}
+                </table>
+            </td>
+        </tr>
+        {{ end }}
+    </table>
 </body>
 </html>
-
