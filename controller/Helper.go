@@ -1,17 +1,15 @@
 package controller
 
 import (
-	"fmt"
-	"os"
-	"appdependency/model/core"
+	"log"
+
+	"github.com/danielpoe/appdependency/model/core"
 )
 
-
 func loadProject(ProjectConfigPath string) *core.Project {
-	project,e := core.CreateProjectAndValidate(ProjectConfigPath)
-	if (e != nil) {
-		fmt.Println("Project JSON is not valid:", e)
-		os.Exit(-1)
+	project, err := core.CreateProjectAndValidate(ProjectConfigPath)
+	if err != nil {
+		log.Fatal("Project JSON is not valid:", err)
 	}
 	return project
 }

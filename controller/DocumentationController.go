@@ -2,28 +2,31 @@ package controller
 
 import (
 	"fmt"
-	"appdependency/model/graphviz"
-	"text/template"
 	"os"
+	"text/template"
+
+	"github.com/danielpoe/appdependency/model/core"
+	"github.com/danielpoe/appdependency/model/graphviz"
 )
 
-type DocumentationController struct {
-	ProjectConfigPath string
-}
+type (
+	DocumentationController struct {
+		ProjectConfigPath *string
+	}
+
+	TemplateData struct {
+		Project *core.Project
+	}
+)
 
 func (DocumentationController DocumentationController) GraphvizAction() {
-	Project:=loadProject(DocumentationController.ProjectConfigPath)
+	Project := loadProject(*DocumentationController.ProjectConfigPath)
 	ProjectDrawer := graphviz.CreateProjectDrawer(Project)
 	fmt.Print(ProjectDrawer.Draw())
 }
 
-
 func (DocumentationController DocumentationController) HTMLDocumentAction() {
-	Project:=loadProject(DocumentationController.ProjectConfigPath)
-	template := template.Must(template.ParseFiles("templates/htmldocument.tmpl"))
-	data := map[string]interface{}{
-		"projectName": Project.Name,
-		"componentTable": Project.AsTable(),
-	}
-	template.Execute(os.Stdout, data)
+	project := loadProject(*DocumentationController.ProjectConfigPath)
+	tpl := template.Must(template.ParseFiles("templates/htmldocument.tmpl"))
+	tpl.Execute(os.Stdout, TemplateData{Project: project})
 }
