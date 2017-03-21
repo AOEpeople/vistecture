@@ -124,8 +124,8 @@ A depdendency creates a reference to either a component - or more exact to a ser
 
 ## Todos
 
--  [ ] Grpahviz - DOT bin path configurable (for documentation command)
--  [ ] Graph for single component including infrastructure
--  [ ] Impact Analysis for compoent failures
+
+-  [X] Graph for single component including infrastructure
+-  [ ] Impact Analysis for component failures
 -  [ ] Create complete documentation
 -  [ ] Generate useful artefacts for infrastructure pipeline (e.g. consul acls, service discovery tests...)
