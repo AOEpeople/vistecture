@@ -65,6 +65,12 @@ Currently the main feature is generating graphviz compatible graph descriptions 
 > go run appdependency.go --config=pathtojson graph | dot -Tpng -o graph.png
 ```
 
+You can also render a documentation - expecting the dot command is executable for the application it will embedd svg images:
+
+```
+> go run appdependency.go --config=pathtojson documentation > documentation.html
+```
+
 ## Domain Language / Concepts:
 
 This tool defines:
