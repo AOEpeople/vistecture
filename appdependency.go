@@ -1,9 +1,9 @@
 package main
 
 import (
-	"os"
 	"appdependency/controller"
 	"gopkg.in/urfave/cli.v1"
+	"os"
 )
 
 func action(cb func()) func(c *cli.Context) error {
@@ -14,7 +14,7 @@ func action(cb func()) func(c *cli.Context) error {
 }
 
 func main() {
-	var projectConfigPath,componentName string
+	var projectConfigPath, componentName string
 
 	app := cli.NewApp()
 	app.Name = "appdependency tool "
@@ -51,12 +51,12 @@ func main() {
 		{
 			Name:   "graph",
 			Usage:  "Build graphviz format which can be used by dot or any other graphviz command. \n go run main.go graph | dot -Tpng -o graph.png \n See: http://www.graphviz.org/pdf/twopi.1.pdf",
-			Action: action( func() { documentationController.GraphvizAction(componentName) }),
+			Action: action(func() { documentationController.GraphvizAction(componentName) }),
 			Flags: []cli.Flag{
 				cli.StringFlag{
-					Name: "component",
-					Value: "",
-					Usage: "Name of a component - then only a graph for this component will be drawn",
+					Name:        "component",
+					Value:       "",
+					Usage:       "Name of a component - then only a graph for this component will be drawn",
 					Destination: &componentName,
 				},
 			},
