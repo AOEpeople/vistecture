@@ -132,7 +132,7 @@
     <h2>Component Details</h2>
 
     {{ range $key, $component := .Project.Components }}
-       <h3><a name="#{{ .Name }}" /> {{$component.Name}}</h3>
+       <h3><a name="{{ .Name }}" /> {{$component.Name}}</h3>
        <p> {{$component.Description}}  </p>
        <div style="border: 1px solid black; width: 500px;">
        {{ renderSVGInlineImage $component }}

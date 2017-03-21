@@ -45,7 +45,8 @@ func (DocumentationController DocumentationController) HTMLDocumentAction() {
 		"renderSVGInlineImage": func(Component core.Component) template.HTML {
 			ProjectDrawer := graphviz.CreateProjectDrawer(project)
 			stdInContent := ProjectDrawer.DrawComponent(&Component)
-			commandName := "/usr/local/bin/dot"
+
+			commandName := "dot"
 			dot := exec.Command(commandName,"-Tsvg")
 			buf := new(bytes.Buffer)
 			dot.Stdin = bytes.NewBufferString(stdInContent)

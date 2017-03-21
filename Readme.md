@@ -10,6 +10,31 @@ Describe your architecture in JSON. You can do this in two ways
 - one json file or
 - in multiple json files that are all in one directory. (prefered for structuring bigger definitions)
 
+### Installation:
+
+Download a published release from github:
+
+E.g. for mac:
+(For linux use "appdependency-linux" and for windows "appdependency.exe")
+
+```
+curl -LOk "https://github.com/danielpoe/appdependency/releases/download/0.2.alpha/appdependency"
+chmod +x appdependency
+
+curl -LOk "https://github.com/danielpoe/appdependency/releases/download/0.2.alpha/templates.zip"
+
+```
+
+
+And then discover the command:
+
+```
+appdependency help
+```
+
+You can also clone the repository and use golang tools.
+
+
 ### Example:
 
 ```
@@ -62,13 +87,13 @@ Describe your architecture in JSON. You can do this in two ways
 Currently the main feature is generating graphviz compatible graph descriptions that can be used by any of the graphviz layouters like this:
 
 ```
-> go run appdependency.go --config=pathtojson graph | dot -Tpng -o graph.png
+> appdependency --config=pathtojson graph | dot -Tpng -o graph.png
 ```
 
 You can also render a documentation - expecting the dot command is executable for the application it will embedd svg images:
 
 ```
-> go run appdependency.go --config=pathtojson documentation > documentation.html
+> appdependency --config=pathtojson documentation > documentation.html
 ```
 
 ## Domain Language / Concepts:
@@ -99,6 +124,7 @@ A depdendency creates a reference to either a component - or more exact to a ser
 
 ## Todos
 
+-  [ ] Grpahviz - DOT bin path configurable (for documentation command)
 -  [ ] Graph for single component including infrastructure
 -  [ ] Impact Analysis for compoent failures
 -  [ ] Create complete documentation
