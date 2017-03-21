@@ -2,8 +2,7 @@ package graphviz
 
 import (
 	"strings"
-
-	model "github.com/danielpoe/appdependency/model/core"
+	model "appdependency/model/core"
 )
 
 // EXTEND PROJECT
@@ -14,7 +13,7 @@ type ProjectDrawer struct {
 }
 
 // Decorate Draw function
-func (ProjectDrawer *ProjectDrawer) Draw() string {
+func (ProjectDrawer *ProjectDrawer) DrawComplete() string {
 	var result string
 	result = "digraph { graph [] \n"
 	// Nodes
@@ -33,20 +32,44 @@ func (ProjectDrawer *ProjectDrawer) Draw() string {
 	}
 	// Paths
 	for _, component := range ProjectDrawer.originalProject.Components {
-
-		// From components
-		for _, dependency := range component.Dependencies {
-			result += "\"" + component.Name + "\" ->" + getGraphVizReference(dependency) + getEdgeLayoutFromDependency(dependency, component.Display) + "\n"
-		}
-
-		// From components/interfaces
-		for _, providedInterface := range component.ProvidedServices {
-			for _, dependency := range providedInterface.Dependencies {
-				result += "\"" + component.Name + "\":\"" + providedInterface.Name + "\"->" + getGraphVizReference(dependency) + getEdgeLayoutFromDependency(dependency, component.Display) + "\n"
-			}
-		}
+		result = result + drawComponentOutgoingRelations(component)
 	}
 	result = result + "}"
+	return result
+}
+
+
+
+// Decorate Draw function
+func (ProjectDrawer *ProjectDrawer) DrawComponent(Component *model.Component) string {
+	var result string
+	result = "digraph { graph [] \n"
+	drawer := ComponentDrawer{originalComponent: Component}
+	result = result + drawer.Draw()
+	result = result + drawComponentOutgoingRelations(Component)
+	allRelatedComponents,_  := Component.GetAllRelatedComponents(ProjectDrawer.originalProject)
+
+	for _, relatedComponent := range allRelatedComponents {
+		drawer := ComponentDrawer{originalComponent: &relatedComponent}
+		result = result + drawer.Draw()
+	}
+	result = result + "}"
+	return result
+}
+
+
+func drawComponentOutgoingRelations(Component *model.Component) string {
+	result := ""
+	// Relation from components
+	for _, dependency := range Component.Dependencies {
+		result += "\""+Component.Name + "\" ->" + getGraphVizReference(dependency)+getEdgeLayoutFromDependency(dependency,Component.Display)+"\n"
+	}
+	// Relation from components/interfaces
+	for _, providedInterface := range Component.ProvidedServices {
+		for _, dependency := range providedInterface.Dependencies {
+			result += "\""+Component.Name+"\":\""+providedInterface.Name+"\"->"+getGraphVizReference(dependency)+getEdgeLayoutFromDependency(dependency,Component.Display)+"\n"
+		}
+	}
 	return result
 }
 

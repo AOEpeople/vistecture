@@ -74,5 +74,8 @@ func (Project *Project) AddComponentsFromProject(OtherProject *Project) error {
 		}
 		Project.Components = append(Project.Components, component)
 	}
+	if (OtherProject.Name != "") {
+		Project.Name = OtherProject.Name
+	}
 	return nil
 }

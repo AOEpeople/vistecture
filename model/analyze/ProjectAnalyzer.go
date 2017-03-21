@@ -3,7 +3,7 @@ package analyze
 import (
 	"errors"
 
-	"github.com/danielpoe/appdependency/model/core"
+	"appdependency/model/core"
 )
 
 type ProjectAnalyzer struct{}

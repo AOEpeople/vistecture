@@ -10,6 +10,8 @@ Describe your architecture in JSON. You can do this in two ways
 - one json file or
 - in multiple json files that are all in one directory. (prefered for structuring bigger definitions)
 
+### Example:
+
 ```
 {
   "name": "my application suite",
@@ -49,6 +51,9 @@ Describe your architecture in JSON. You can do this in two ways
               }
             ]
     }
+
+    ...
+
 ```
 
 

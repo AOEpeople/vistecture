@@ -2,6 +2,7 @@
 <head>
 <style>
     body { background-color: #eee; font-family: arial, helvetica, sans-serif; margin: 20px}
+    svg {width: 100%!important}
     table a:link {
     	color: #666;
     	font-weight: bold;
@@ -104,15 +105,16 @@
 </style>
 </head>
 <body>
+
     <h1>Project {{.Project.Name}} documentation:</h1>
 
     <h2>Overview</h2>
 
     <table>
-        <tr><th>Name</th><th>Services</th><tr>
+        <tr><th>Name</th><th>provided services</th><tr>
         {{ range .Project.Components }}
         <tr>
-            <td>{{ .Name }}<br /><small>{{ .Description }}</small></td>
+            <td><a href="#{{ .Name }}">{{ .Name }}</a><br /><small>{{ .Description }}</small></td>
             <td>
                 <table>
                     <tr><th>Name</th><th>Type</th><tr>
@@ -124,5 +126,25 @@
         </tr>
         {{ end }}
     </table>
+
+
+
+    <h2>Component Details</h2>
+
+    {{ range $key, $component := .Project.Components }}
+       <h3><a name="#{{ .Name }}" /> {{$component.Name}}</h3>
+       <p> {{$component.Description}}  </p>
+       <div style="border: 1px solid black; width: 500px;">
+       {{ renderSVGInlineImage $component }}
+       </div>
+       <h5>Service Discovery</h5>
+       <ul>
+           {{$dependencies := $component.GetAllDependencies $.Project }}
+           {{ range $dependency := $dependencies }}
+                <li>{{$dependency.Reference}}</li>
+           {{ end }}
+       </ul>
+    {{ end }}
+
 </body>
 </html>

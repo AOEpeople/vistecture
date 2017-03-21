@@ -3,7 +3,7 @@ package controller
 import (
 	"log"
 
-	"github.com/danielpoe/appdependency/model/core"
+	"appdependency/model/core"
 )
 
 func loadProject(ProjectConfigPath string) *core.Project {

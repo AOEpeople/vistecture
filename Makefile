@@ -8,10 +8,10 @@ all: darwin linux windows
 
 
 darwin: $(SOURCES)
-	GOOS=darwin go build -o appdependency $(SOURCES)
+	GOOS=darwin go build -o build-artifacts/appdependency $(SOURCES)
 
 linux: $(SOURCES)
-	GOOS=linux go build -o appdependency-linux $(SOURCES)
+	GOOS=linux go build -o build-artifacts/appdependency-linux $(SOURCES)
 
 windows: $(SOURCES)
-	GOOS=windows go build -o appdependency.exe $(SOURCES)
+	GOOS=windows go build -o build-artifacts/appdependency.exe $(SOURCES)
