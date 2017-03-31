@@ -7,9 +7,13 @@ import (
 )
 
 func loadProject(ProjectConfigPath string) *core.Project {
-	project, err := core.CreateProjectAndValidate(ProjectConfigPath)
+	project, err := core.CreateProject(ProjectConfigPath)
 	if err != nil {
 		log.Fatal("Project JSON is not valid:", err)
+	}
+	err = project.Validate()
+	if err != nil {
+		log.Fatal("Validation Errors:", err)
 	}
 	return project
 }

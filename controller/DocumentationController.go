@@ -9,6 +9,7 @@ import (
 	"appdependency/model/graphviz"
 	"os/exec"
 	"bytes"
+	"strings"
 )
 
 type (
@@ -58,6 +59,9 @@ func (DocumentationController DocumentationController) HTMLDocumentAction() {
 			dot.Wait()
 
 			return template.HTML(buf.String())
+		},
+		"renderContent": func(content string) template.HTML {
+			return template.HTML(strings.Replace(content," / ","<br />",-1))
 		},
 	})
 	tpl, err := tpl.ParseFiles("templates/htmldocument.tmpl")

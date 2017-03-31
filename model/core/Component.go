@@ -9,6 +9,7 @@ import (
 type Component struct {
 	Name             string                   `json:"name"`
 	Description      string                   `json:"description,omitempty"`
+	Summary      	 string                   `json:"summary,omitempty"`
 	Group            string                   `json:"group,omitempty"`
 	Technology       string                   `json:"technology,omitempty"`
 	Category         string                   `json:"category,omitempty"`
@@ -24,6 +25,17 @@ func (Component Component) Validate() bool {
 		return false
 	}
 	return true
+}
+
+// Returns summary. If summary is not set the first 100 letters from description
+func (Component Component) GetSummary() string {
+	if Component.Summary != "" {
+		return Component.Summary
+	}
+	if (len(Component.Description) > 100) {
+		return Component.Description[0:100]+"..."
+	}
+	return Component.Description
 }
 
 

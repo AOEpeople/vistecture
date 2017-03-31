@@ -14,7 +14,7 @@ import (
 type ProjectFactory struct{}
 
 // Factory
-func CreateProjectAndValidate(filePath string) (*Project, error) {
+func CreateProject(filePath string) (*Project, error) {
 	var factory ProjectFactory
 	return factory.LoadFromFilePath(filePath)
 }
@@ -43,20 +43,36 @@ func (factory *ProjectFactory) LoadFromFilePath(filePath string) (*Project, erro
 }
 
 func (factory *ProjectFactory) createFromFolder(folderPath string) (*Project, error) {
-	files, err := filepath.Glob(strings.TrimRight(folderPath, "/") + "/*.json")
+	files, err := filepath.Glob(strings.TrimRight(folderPath, "/") + "/*")
 	if err != nil {
 		return nil, err
 	}
 	var newProject Project
 	if len(files) == 0 {
-		return nil, errors.New("No JSON files found in folder \"" + folderPath + "\"")
+		return nil, errors.New("No files found in folder \"" + folderPath + "\"")
 	}
 	for _, file := range files {
-		projectForFile, err := factory.createFromFile(file)
-		if err != nil {
-			return &newProject, err
+
+		fileInfo, fileErr := os.Stat(file)
+		if fileErr != nil {
+			return &newProject, fileErr
 		}
-		err = newProject.AddComponentsFromProject(projectForFile)
+
+		var tempProject *Project
+		var tmpError error
+
+		if fileInfo.IsDir() {
+			tempProject, tmpError = factory.createFromFolder(file)
+		} else if !fileInfo.IsDir() && strings.Contains(fileInfo.Name(),".json") {
+			tempProject, tmpError = factory.createFromFile(file)
+		} else {
+			continue
+		}
+
+		if tmpError != nil {
+			return &newProject, errors.New(tmpError.Error() + " in file " + file)
+		}
+		err =  newProject.AddComponentsFromProject(tempProject)
 		if err != nil {
 			return &newProject, errors.New(err.Error() + " in file " + file)
 		}

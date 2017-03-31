@@ -4,23 +4,42 @@ import (
 	"errors"
 
 	"appdependency/model/core"
+	"strconv"
 )
 
 type ProjectAnalyzer struct{}
 
 //Analyze validates Project and Components
-func (projectAnalyzer *ProjectAnalyzer) Analyze(project *core.Project) error {
+func (projectAnalyzer *ProjectAnalyzer) AnalyzeCyclicDependencies(project *core.Project) []error {
 	//Walk dependencies add add service to called stack
 	var stack []string
+	var errors []error
 	for _, component := range project.Components {
 		err := projectAnalyzer.walkDependencies(project, component, stack)
 		if err != nil {
-			return err
+			errors = append(errors,err)
 		}
 	}
-	return nil
+	return errors
 }
 
+//Analyze validates Project and Components
+func (projectAnalyzer *ProjectAnalyzer) ImpactAnalyze(project *core.Project) []string {
+	//Walk dependencies add add service to called stack
+	var impactsPerComponent []string
+	for _, component := range project.Components {
+		directComponents := project.FindComponentsThatReferenceTo(component, false)
+		allIndirectComponents := project.FindComponentsThatReferenceTo(component, true)
+		impactsPerComponent = append(impactsPerComponent,strconv.Itoa(len(directComponents)) + "\t\t"+ strconv.Itoa(len(allIndirectComponents)) +"\t\t" + component.Name)
+	}
+	return impactsPerComponent
+}
+
+
+
+
+// called recursive and adds the dependency components to the stack
+// if a component appears again it throws an error (= cyclic dependencie)
 func (projectAnalyzer *ProjectAnalyzer) walkDependencies(project *core.Project, component *core.Component, callStack []string) error {
 	//end of recursion
 	if len(callStack) >= 50 {
@@ -36,8 +55,8 @@ func (projectAnalyzer *ProjectAnalyzer) walkDependencies(project *core.Project, 
 	}
 
 	callStack = append(callStack, component.Name)
-
-	for _, dependency := range component.Dependencies {
+	dependencies,_ := component.GetAllDependencies(project)
+	for _,dependency  := range dependencies {
 		nextComponent, _ := dependency.GetComponent(project)
 		err := projectAnalyzer.walkDependencies(project, &nextComponent, callStack)
 		if err != nil {

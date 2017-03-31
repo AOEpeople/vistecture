@@ -1,7 +1,12 @@
 <html>
 <head>
 <style>
-    body { background-color: #eee; font-family: arial, helvetica, sans-serif; margin: 20px}
+    body {
+        background-color: #f5f5f5;
+         font-family: arial, helvetica, sans-serif;
+         margin: 20px;
+         color: #666666
+     }
     svg {width: 100%!important}
     table a:link {
     	color: #666;
@@ -25,6 +30,7 @@
     	text-shadow: 1px 1px 0px #fff;
     	background:#eaebec;
     	border:#ccc 1px solid;
+    	width: 90%;
 
     	-moz-border-radius:3px;
     	-webkit-border-radius:3px;
@@ -102,19 +108,41 @@
     	background: -webkit-gradient(linear, left top, left bottom, from(#f2f2f2), to(#f0f0f0));
     	background: -moz-linear-gradient(top,  #f2f2f2,  #f0f0f0);
     }
+    .table-of-content {
+        font-size: 12px
+    }
 </style>
 </head>
 <body>
 
     <h1>Project {{.Project.Name}} documentation:</h1>
+    <h2>Table of Content</h2>
+    <div class="table-of-content">
+    <ul>
+        <li><a href="#overview">Overview</a></li>
+        <li><a href="#details">Component Details</a>
+            <ul>
+             {{ range $key, $component := .Project.Components }}
+                <li><a href="#details-{{$component.Name}}">{{$component.Name}}</a>
+                    <ul>
+                        <li><a href="#details-{{$component.Name}}-services">Services Provided</a></li>
+                        <li><a href="#details-{{$component.Name}}-discovery">Service Discovery</a></li>
+                    </ul>
+                </li>
+             {{ end }}
+            </ul>
+        </li>
+    </div>
 
-    <h2>Overview</h2>
+
+
+    <h2><a name="overview" />Overview</h2>
 
     <table>
         <tr><th>Name</th><th>provided services</th><tr>
         {{ range .Project.Components }}
         <tr>
-            <td><a href="#{{ .Name }}">{{ .Name }}</a><br /><small>{{ .Description }}</small></td>
+            <td><a href="details-#{{ .Name }}">{{ .Name }}</a><br /><small>{{ renderContent .GetSummary }}</small></td>
             <td>
                 <table>
                     <tr><th>Name</th><th>Type</th><tr>
@@ -129,21 +157,38 @@
 
 
 
-    <h2>Component Details</h2>
+    <h2><a name="details" />Component Details</h2>
 
     {{ range $key, $component := .Project.Components }}
-       <h3><a name="{{ .Name }}" /> {{$component.Name}}</h3>
-       <p> {{$component.Description}}  </p>
-       <div style="border: 1px solid black; width: 500px;">
+       <h3><a name="details-{{ .Name }}" /> {{$component.Name}}</h3>
+       <p> {{ renderContent $component.Description }} </p>
+       <div style="border: 1px solid black; width: 90%">
        {{ renderSVGInlineImage $component }}
        </div>
-       <h5>Service Discovery</h5>
+        <h4><a name="details-{{ .Name }}-services" />Services Provided</h4>
+              <p>The component provides the following services:</p>
+              <ul>
+                  {{ range $service := $component.ProvidedServices }}
+                       <li>
+                        <b>{{$service.Name}} {{if $service.IsPublic}} (Public Service) {{end}}</b>
+                        <br> {{$service.Description}}
+                       </li>
+                  {{ end }}
+              </ul>
+       <h4><a name="details-{{ .Name }}-services" />Services Required / Service Discovery</h4>
+       <p>The component requires the following services:</p>
        <ul>
            {{$dependencies := $component.GetAllDependencies $.Project }}
            {{ range $dependency := $dependencies }}
                 <li>{{$dependency.Reference}}</li>
            {{ end }}
        </ul>
+        <p>The component requires the following infrastructure services:</p>
+              <ul>
+                  {{ range $infraDependencies := $component.InfrastructureDependencies }}
+                       <li>{{$infraDependencies.Type}}-{{$component.Name}}</li>
+                  {{ end }}
+              </ul>
     {{ end }}
 
 </body>

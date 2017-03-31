@@ -20,6 +20,17 @@ func (Dependency *Dependency) GetComponentAndServiceNames() (string, string) {
 	return Dependency.Reference, ""
 }
 
+func (Dependency *Dependency) GetComponentName() string {
+	if strings.Contains(Dependency.Reference, ".") {
+		splitted := strings.Split(Dependency.Reference, ".")
+		return splitted[0]
+	}
+	return Dependency.Reference
+}
+
+
+
+
 func (Dependency *Dependency) GetComponent(Project *Project) (Component, error) {
 	componentName, _ := Dependency.GetComponentAndServiceNames()
 	return Project.FindComponent(componentName)

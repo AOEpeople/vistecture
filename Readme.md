@@ -46,7 +46,8 @@ You can also clone the repository and use golang tools.
       "group": "Optional a Group",
       "technology": "Optional name of the used technologie",
       "category": "Optional a category"
-      "description": "Some short description",
+      "description": "Some short description / New line",
+      "summary": "Optional shorter summary",
       "display":{
         "bordercolor": "#3971ad"
       },

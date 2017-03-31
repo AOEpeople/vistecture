@@ -17,19 +17,29 @@ func (Project *Project) Validate() error {
 		if component.Validate() == false {
 			return errors.New("Component not valid")
 		}
-		for _, dependency := range component.Dependencies {
+		dependencies, _ := component.GetAllDependencies(Project)
+		for _,dependency  := range dependencies {
 			dependendComponentName, serviceName := dependency.GetComponentAndServiceNames()
-			dependendComponent, errorOnComponentFound := Project.FindComponent(dependendComponentName)
-			if errorOnComponentFound != nil {
-				return errors.New("Component " + component.Name + " Dependencies has Error:" + errorOnComponentFound.Error())
-			}
-			if serviceName == "" {
-				continue
-			}
-			if _, errorOnServiceFound := dependendComponent.FindService(serviceName); errorOnServiceFound != nil {
-				return errorOnServiceFound
+			error := Project.doesServiceExists(dependendComponentName,serviceName)
+			if error != nil {
+				return errors.New("Component " + component.Name + " Dependencies has Error:" + error.Error())
 			}
 		}
+	}
+	return nil
+}
+
+
+func (Project *Project) doesServiceExists(dependendComponentName string, serviceName string) error {
+	dependendComponent, errorOnComponentFound := Project.FindComponent(dependendComponentName)
+	if errorOnComponentFound != nil {
+		return errorOnComponentFound
+	}
+	if serviceName == "" {
+		return nil
+	}
+	if _, errorOnServiceFound := dependendComponent.FindService(serviceName); errorOnServiceFound != nil {
+		return errorOnServiceFound
 	}
 	return nil
 }
@@ -43,6 +53,63 @@ func (Project *Project) FindComponent(nameToMatch string) (Component, error) {
 	}
 	return Component{}, errors.New("Component with name " + nameToMatch + " not found")
 }
+
+
+//Find by Name
+func (Project *Project) FindComponentsThatReferenceTo(component *Component, recursive bool) []*Component {
+	if recursive {
+		return Project.findAllComponentsThatReferenceComponent(component)
+	} else {
+		return Project.findComponentsThatReferenceComponent(component)
+	}
+
+}
+
+
+func (Project *Project) findAllComponentsThatReferenceComponent(componentReferenced *Component) []*Component {
+	var referencingComponents []*Component
+	for _,currentComponent := range Project.findComponentsThatReferenceComponent(componentReferenced) {
+		referencingComponents = append(referencingComponents,currentComponent)
+		recursiveReferencingComponents := Project.findAllComponentsThatReferenceComponent(currentComponent)
+		for _,currentComponent := range recursiveReferencingComponents {
+			referencingComponents = append(referencingComponents,currentComponent)
+			if sliceContains(referencingComponents,currentComponent) {
+				continue
+			}
+		}
+	}
+	return referencingComponents
+}
+
+// returns all components that have a direct dependency to the given component
+func (Project *Project) findComponentsThatReferenceComponent(componentReferenced *Component) []*Component {
+	var referencingComponents []*Component
+	//walk through all registered compoents and return those who match
+	for _, currentComponent := range Project.Components {
+		currentComponentsDependencies,_ := currentComponent.GetAllDependencies(Project)
+		for _, dependency := range currentComponentsDependencies {
+			if dependency.GetComponentName() != componentReferenced.Name {
+				continue
+			}
+			if sliceContains(referencingComponents,currentComponent) {
+				continue
+			}
+			referencingComponents = append(referencingComponents,currentComponent)
+		}
+	}
+	return referencingComponents
+}
+
+//Helper to check if a slice of components already contains a certain Component
+func sliceContains(searchInList []*Component, searchFor *Component) bool {
+	for _, s := range searchInList {
+		if s == searchFor {
+			return true
+		}
+	}
+	return false
+}
+
 
 //Check if a component with Name exist
 func (Project *Project) HasComponentWithName(nameToMatch string) bool {
