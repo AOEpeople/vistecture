@@ -44,7 +44,7 @@ You can also clone the repository and use golang tools.
     {
       "name": "Name of Component",
       "group": "Optional a Group",
-      "technology": "Optional name of the used technologie",
+      "technology": "scala",
       "category": "Optional a category"
       "description": "Some short description / New line",
       "summary": "Optional shorter summary",
@@ -53,15 +53,16 @@ You can also clone the repository and use golang tools.
       },
       "provided-services": [
         {
-          "name": "auth",
-          "type": "api",
+            "name": "auth",
+            "type": "api",
+            "description": "A description of the service",
+            "isPublic": true,
             "dependencies": [
               {
-                "reference": "othercomponent",
+                "reference": "othercomponent"
               }
             ]
         }
-
       ],
       "infrastructure-dependencies": [
         {
@@ -69,13 +70,14 @@ You can also clone the repository and use golang tools.
         }
       ],
       "dependencies": [
-              {
-                "reference": "keycloak.login",
-                "relationship": "serviceapi",
-                 "isSameLevel": false
-                 "isBrowserBased": true
-              }
-            ]
+          {
+            "reference": "keycloak.login",
+            "relationship": "serviceapi",
+            "isSameLevel": false,
+            "isBrowserBased": true,
+            "resilience": true
+          }
+      ]
     }
 
     ...

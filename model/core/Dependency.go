@@ -6,7 +6,7 @@ type Dependency struct {
 	Reference      string `json:"reference"`
 	Relationship   string `json:"relationship"`
 	IsSameLevel    bool   `json:"isSameLevel"`
-	Resilience     string
+	Resilience     bool `json:"resilience"`
 	IsBrowserBased bool `json:"isBrowserBased"`
 }
 
