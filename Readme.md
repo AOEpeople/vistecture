@@ -99,6 +99,12 @@ You can also render a documentation - expecting the dot command is executable fo
 > appdependency --config=pathtojson documentation > documentation.html
 ```
 
+Check for cyclic dependencies and get a first impact analysis:
+
+```
+> appdependency --config=pathtojson analyze
+```
+
 ## Domain Language / Concepts:
 
 This tool defines:

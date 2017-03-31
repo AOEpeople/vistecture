@@ -20,9 +20,10 @@ func (AnalyzeController AnalyzeController) AnalyzeAction() {
 		}
 		log.Fatal("Solve Errors please!")
 	}
+	fmt.Println("\nGreat - no errors or cyclic dependencies found in your definitions!")
 
 	fmt.Println()
-	fmt.Println("Impact Analysis")
+	fmt.Println("Impact Analysis: \n(How many other components may be influenced if a component fails)\n")
 	impacts := ProjectAnalyzer.ImpactAnalyze(project)
 	fmt.Println("Direct\t\tIndirect\tComponent")
 	fmt.Println("------\t\t--------\t--------")
@@ -30,7 +31,7 @@ func (AnalyzeController AnalyzeController) AnalyzeAction() {
 		fmt.Println(impact)
 	}
 
-	fmt.Println("No errors found in your definitions!")
+
 
 
 }
