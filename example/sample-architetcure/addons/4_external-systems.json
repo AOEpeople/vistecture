@@ -1,0 +1,43 @@
+{
+  "components": [
+    {
+      "name": "emailservice-sparck",
+      "category": "external",
+      "description": "External System",
+      "provided-services": [
+        {
+          "name": "email",
+          "type": "api"
+        }
+      ]
+    },
+    {
+      "name": "payment",
+      "description": "External System",
+      "category": "external",
+      "provided-services": [
+        {
+          "name": "auth",
+          "type": "api"
+        },
+        {
+          "name": "capture",
+          "type": "api"
+        },
+        {
+          "name": "refund",
+          "type": "api"
+        },
+        {
+          "name": "payout",
+          "type": "api"
+        },
+        {
+          "name": "reports",
+          "type": "api"
+        }
+      ]
+    }
+
+  ]
+}

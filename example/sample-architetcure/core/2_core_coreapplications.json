@@ -1,0 +1,37 @@
+{
+  "components": [
+
+    {
+      "name": "keycloak-customer",
+      "technology": "keycloak",
+      "provided-services": [
+        {
+          "name": "login",
+          "type": "gui"
+        },
+        {
+          "name": "oauth",
+          "type": "api"
+        },
+        {
+          "name": "api",
+          "type": "api"
+        }
+      ]
+    },
+    {
+      "name": "pim",
+      "technology": "akeneo",
+      "provided-services": [
+        {
+          "name": "productapi",
+          "type": "api"
+        },
+        {
+          "name": "gui",
+          "type": "gui"
+        }
+      ]
+    }
+  ]
+}

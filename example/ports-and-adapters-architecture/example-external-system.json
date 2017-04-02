@@ -1,0 +1,50 @@
+{
+  "components": [
+    {
+      "name": "external-component",
+      "category": "external",
+      "group": "external",
+      "description": "Some external system",
+      "provided-services": [
+        {
+          "name": "published-api",
+          "type": "public-inbound-port"
+        }
+      ],
+      "dependencies": [
+        {
+          "reference": "messagesolution.external-component-exchange",
+          "relationship": "publish"
+        },
+        {
+          "reference": "messagesolution.mycomponent-pubsub-exchange",
+          "relationship": "may subscribe"
+        },
+        {
+          "reference": "interface.rest-api",
+          "relationship": "may call"
+
+        }
+      ]
+    },
+    {
+      "name": "messagesolution",
+      "group": "rabbitmq",
+      "description": "e.g. Rabbitmq",
+      "provided-services": [
+        {
+          "name": "mycomponent-pubsub-exchange",
+          "type": "exchange"
+        },
+        {
+          "name": "mycomponent-inbound-exchange",
+          "type": "exchange"
+        },
+        {
+          "name": "external-component-exchange",
+          "type": "exchange"
+        }
+      ]
+    }
+  ]
+}
