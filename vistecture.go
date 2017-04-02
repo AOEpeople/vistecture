@@ -1,7 +1,7 @@
 package main
 
 import (
-	"appdependency/controller"
+	"./controller"
 	"gopkg.in/urfave/cli.v1"
 	"os"
 )
@@ -17,8 +17,8 @@ func main() {
 	var projectConfigPath, componentName string
 
 	app := cli.NewApp()
-	app.Name = "appdependency tool "
-	app.Usage = " describing and analysing distributed or microservice-style architectures with its depenendcy!"
+	app.Name = "vistecture tool "
+	app.Usage = "describing and analysing distributed or microservice-style architectures with its depenendcy!"
 
 	app.Flags = []cli.Flag{
 		cli.StringFlag{

@@ -1,4 +1,4 @@
-SOURCES=appdependency.go
+SOURCES=vistecture.go
 
 .PHONY: all templates darwin linux windows default
 
@@ -10,10 +10,10 @@ templates:
 	zip -qr build-artifacts/templates.zip templates
 
 darwin: $(SOURCES) templates
-	GOOS=darwin go build -o build-artifacts/appdependency $(SOURCES)
+	GOOS=darwin go build -o build-artifacts/vistecture $(SOURCES)
 
 linux: $(SOURCES) templates
-	GOOS=linux go build -o build-artifacts/appdependency-linux $(SOURCES)
+	GOOS=linux go build -o build-artifacts/vistecture-linux $(SOURCES)
 
 windows: $(SOURCES) templates
-	GOOS=windows go build -o build-artifacts/appdependency.exe $(SOURCES)
+	GOOS=windows go build -o build-artifacts/vistecture.exe $(SOURCES)

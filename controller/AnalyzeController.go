@@ -3,7 +3,7 @@ package controller
 import (
 	"fmt"
 	"log"
-	"appdependency/model/analyze"
+	"../model/analyze"
 )
 
 type AnalyzeController struct {

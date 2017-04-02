@@ -4,9 +4,8 @@ import (
 	"fmt"
 	"os"
 	"html/template"
-
-	"appdependency/model/core"
-	"appdependency/model/graphviz"
+	"../model/core"
+	"../model/graphviz"
 	"os/exec"
 	"bytes"
 	"strings"

@@ -1,4 +1,4 @@
-# appdependency: Service Architecture Tool
+# vistecture: Service Architecture Tool
 
 A tool for visualizing and analyzing distributed (micro) service oriented architectures.
 
@@ -15,13 +15,13 @@ Describe your architecture in JSON. You can do this in two ways
 Download a published release from github:
 
 E.g. for mac:
-(For linux use "appdependency-linux" and for windows "appdependency.exe")
+(For linux use "vistecture-linux" and for windows "vistecture.exe")
 
 ```
-curl -LOk "https://github.com/danielpoe/appdependency/releases/download/0.2.alpha/appdependency"
-chmod +x appdependency
+curl -LOk "https://github.com/danielpoe/vistecture/releases/download/0.2.alpha/vistecture"
+chmod +x vistecture
 
-curl -LOk "https://github.com/danielpoe/appdependency/releases/download/0.2.alpha/templates.zip"
+curl -LOk "https://github.com/danielpoe/vistecture/releases/download/0.2.alpha/templates.zip"
 
 ```
 
@@ -29,7 +29,7 @@ curl -LOk "https://github.com/danielpoe/appdependency/releases/download/0.2.alph
 And then discover the command:
 
 ```
-appdependency help
+vistecture help
 ```
 
 You can also clone the repository and use golang tools.
@@ -90,19 +90,19 @@ You can also clone the repository and use golang tools.
 Currently the main feature is generating graphviz compatible graph descriptions that can be used by any of the graphviz layouters like this:
 
 ```
-> appdependency --config=pathtojson graph | dot -Tpng -o graph.png
+> vistecture --config=pathtojson graph | dot -Tpng -o graph.png
 ```
 
 You can also render a documentation - expecting the dot command is executable for the application it will embedd svg images:
 
 ```
-> appdependency --config=pathtojson documentation > documentation.html
+> vistecture --config=pathtojson documentation > documentation.html
 ```
 
 Check for cyclic dependencies and get a first impact analysis:
 
 ```
-> appdependency --config=pathtojson analyze
+> vistecture --config=pathtojson analyze
 ```
 
 ## Domain Language / Concepts:

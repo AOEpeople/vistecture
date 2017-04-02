@@ -2,7 +2,7 @@ package graphviz
 
 import (
 	"strings"
-	model "appdependency/model/core"
+	model "../core"
 )
 
 

@@ -2,8 +2,7 @@ package analyze
 
 import (
 	"errors"
-
-	"appdependency/model/core"
+	"../../model/core"
 	"strconv"
 )
 
