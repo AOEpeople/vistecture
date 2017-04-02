@@ -21,7 +21,9 @@ E.g. for mac:
 curl -LOk "https://github.com/danielpoe/vistecture/releases/download/0.2.beta/vistecture"
 chmod +x vistecture
 
+# dowload the templates
 curl -LOk "https://github.com/danielpoe/vistecture/releases/download/0.2.beta/templates.zip"
+unzip templates.zip
 
 ```
 
@@ -35,7 +37,7 @@ vistecture help
 You can also clone the repository and use golang tools.
 
 
-### Example:
+### Example project definition (json):
 
 ```
 {
