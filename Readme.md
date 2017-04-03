@@ -18,11 +18,11 @@ E.g. for mac:
 (For linux use "vistecture-linux" and for windows "vistecture.exe")
 
 ```
-curl -LOk "https://github.com/danielpoe/vistecture/releases/download/0.2.beta/vistecture"
+curl -LOk "https://github.com/AOEpeople/vistecture/releases/download/0.2.beta/vistecture"
 chmod +x vistecture
 
 # dowload the templates
-curl -LOk "https://github.com/danielpoe/vistecture/releases/download/0.2.beta/templates.zip"
+curl -LOk "https://github.com/AOEpeople/vistecture/releases/download/0.2.beta/templates.zip"
 unzip templates.zip
 
 ```
