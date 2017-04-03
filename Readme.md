@@ -140,3 +140,12 @@ A depdendency creates a reference to either a component - or more exact to a ser
 -  [ ] Impact Analysis for component failures
 -  [ ] Create complete documentation
 -  [ ] Generate useful artefacts for infrastructure pipeline (e.g. consul acls, service discovery tests...)
+
+## Tip
+
+Disable CSP Header in Jenkins to allow inline styles (required for a direct view of the generated documentation as jenkins artefact)
+Open Jenkins script console and type:
+
+```
+System.setProperty("hudson.model.DirectoryBrowserSupport.CSP", "")
+```
