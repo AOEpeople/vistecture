@@ -3,6 +3,7 @@ package graphviz
 import (
 	"strings"
 	model "../core"
+	"os"
 )
 
 
@@ -18,9 +19,9 @@ func (ComponentDrawer ApplicationDrawer) Draw() string {
 	Component := ComponentDrawer.originalComponent
 
 	icon := ""
-	switch Component.Technology {
-	case "go", "scala", "php", "anypoint", "akeneo", "magento", "keycloak":
-		icon = "<IMG SRC=\"templates/res/" + Component.Technology + ".png\" scale=\"true\"/>"
+	iconPath := "templates/res/" + strings.ToLower(Component.Technology) + ".png"
+	if _, err := os.Stat(iconPath); err == nil {
+		icon = "<IMG SRC=\"" + iconPath + "\" scale=\"true\"/>"
 	}
 
 	tableHeaderColor := ""
