@@ -54,9 +54,9 @@ func main() {
 			Action: action(func() { documentationController.GraphvizAction(componentName) }),
 			Flags: []cli.Flag{
 				cli.StringFlag{
-					Name:        "component",
+					Name:        "application",
 					Value:       "",
-					Usage:       "Name of a component - then only a graph for this component will be drawn",
+					Usage:       "Name of a application - then only a graph for this application will be drawn",
 					Destination: &componentName,
 				},
 			},

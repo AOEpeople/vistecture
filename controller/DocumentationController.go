@@ -42,7 +42,7 @@ func (DocumentationController DocumentationController) HTMLDocumentAction() {
 	project := loadProject(*DocumentationController.ProjectConfigPath)
 	tpl := template.New("htmldocument.tmpl")
 	tpl.Funcs(template.FuncMap{
-		"renderSVGInlineImage": func(Component core.Component) template.HTML {
+		"renderSVGInlineImage": func(Component core.Application) template.HTML {
 			ProjectDrawer := graphviz.CreateProjectDrawer(project)
 			stdInContent := ProjectDrawer.DrawComponent(&Component)
 

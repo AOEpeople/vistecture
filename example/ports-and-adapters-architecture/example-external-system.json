@@ -1,5 +1,5 @@
 {
-  "components": [
+  "applications": [
     {
       "name": "external-component",
       "category": "external",

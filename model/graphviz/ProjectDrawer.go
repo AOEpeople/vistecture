@@ -20,7 +20,7 @@ func (ProjectDrawer *ProjectDrawer) DrawComplete() string {
 	for key, componentList := range ProjectDrawer.originalProject.GetComponentsByGroup() {
 		drawingResultInGroup := ""
 		for _, component := range componentList {
-			drawer := ComponentDrawer{originalComponent: component}
+			drawer := ApplicationDrawer{originalComponent: component}
 			drawingResultInGroup = drawingResultInGroup + drawer.Draw()
 		}
 
@@ -31,7 +31,7 @@ func (ProjectDrawer *ProjectDrawer) DrawComplete() string {
 		}
 	}
 	// Paths
-	for _, component := range ProjectDrawer.originalProject.Components {
+	for _, component := range ProjectDrawer.originalProject.Applications {
 		result = result + drawComponentOutgoingRelations(component)
 	}
 	result = result + "}"
@@ -41,29 +41,29 @@ func (ProjectDrawer *ProjectDrawer) DrawComplete() string {
 
 
 // Decorate Draw function - Draws only a component with its direct dependencies
-func (ProjectDrawer *ProjectDrawer) DrawComponent(Component *model.Component) string {
+func (ProjectDrawer *ProjectDrawer) DrawComponent(Component *model.Application) string {
 	var result string
 	result = "digraph { graph [] \n"
-	drawer := ComponentDrawer{originalComponent: Component}
+	drawer := ApplicationDrawer{originalComponent: Component}
 	result = result + drawer.Draw()
 	result = result + drawComponentOutgoingRelations(Component)
 	allRelatedComponents,_  := Component.GetAllRelatedComponents(ProjectDrawer.originalProject)
 
 	for _, relatedComponent := range allRelatedComponents {
-		drawer := ComponentDrawer{originalComponent: &relatedComponent}
+		drawer := ApplicationDrawer{originalComponent: &relatedComponent}
 		result = result + drawer.Draw()
 	}
 	// Draw infrastructure :-)
 	for _, infrastructureDependency := range Component.InfrastructureDependencies {
-		result = result + "\n"+infrastructureDependency.Type+"[shape=box, color=deeppink]"
-		result = result + "\n"+infrastructureDependency.Type+"->"+Component.Name+"[color=deeppink,arrowhead=none]"
+		result = result + "\n\""+infrastructureDependency.Type+"\"[shape=box, color=\"#576f96\"] \n"
+		result = result + "\n\""+infrastructureDependency.Type+"\"->\""+Component.Name+"\"[color=\"#576f96\",arrowhead=none] \n"
 	}
 	result = result + "\n}"
 	return result
 }
 
 
-func drawComponentOutgoingRelations(Component *model.Component) string {
+func drawComponentOutgoingRelations(Component *model.Application) string {
 	result := ""
 	// Relation from components
 	for _, dependency := range Component.Dependencies {
@@ -87,7 +87,7 @@ func getGraphVizReference(Dependency model.Dependency) string {
 	return "\"" + Dependency.Reference + "\""
 }
 
-func getEdgeLayoutFromDependency(dependency model.Dependency, display model.ComponentDisplaySettings) string {
+func getEdgeLayoutFromDependency(dependency model.Dependency, display model.ApplicationDisplaySettings) string {
 
 	edgeLayout := "["
 	if display.BorderColor != "" {
@@ -102,9 +102,14 @@ func getEdgeLayoutFromDependency(dependency model.Dependency, display model.Comp
 		edgeLayout += ", label=\"" + dependency.Relationship + "\""
 	}
 	if dependency.Relationship == "customer-supplier" || dependency.Relationship == "conformist" {
-		edgeLayout += "weight=3, style=\"bold\""
-	} else if dependency.IsBrowserBased {
-		edgeLayout += "style=\"dashed\""
+		edgeLayout += ", weight=2"
+	}
+	if dependency.Relationship == "customer-supplier" || dependency.Relationship == "conformist" {
+		edgeLayout += ", weight=3"
+	}
+
+	if dependency.IsBrowserBased {
+		edgeLayout += ", style=\"dashed\""
 	}
 	if dependency.IsSameLevel {
 		edgeLayout += ", constraint=false"

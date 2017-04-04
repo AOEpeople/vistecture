@@ -13,7 +13,7 @@ func (projectAnalyzer *ProjectAnalyzer) AnalyzeCyclicDependencies(project *core.
 	//Walk dependencies add add service to called stack
 	var stack []string
 	var errors []error
-	for _, component := range project.Components {
+	for _, component := range project.Applications {
 		err := projectAnalyzer.walkDependencies(project, component, stack)
 		if err != nil {
 			errors = append(errors,err)
@@ -26,7 +26,7 @@ func (projectAnalyzer *ProjectAnalyzer) AnalyzeCyclicDependencies(project *core.
 func (projectAnalyzer *ProjectAnalyzer) ImpactAnalyze(project *core.Project) []string {
 	//Walk dependencies add add service to called stack
 	var impactsPerComponent []string
-	for _, component := range project.Components {
+	for _, component := range project.Applications {
 		directComponents := project.FindComponentsThatReferenceTo(component, false)
 		allIndirectComponents := project.FindComponentsThatReferenceTo(component, true)
 		impactsPerComponent = append(impactsPerComponent,strconv.Itoa(len(directComponents)) + "\t\t"+ strconv.Itoa(len(allIndirectComponents)) +"\t\t" + component.Name)
@@ -39,7 +39,7 @@ func (projectAnalyzer *ProjectAnalyzer) ImpactAnalyze(project *core.Project) []s
 
 // called recursive and adds the dependency components to the stack
 // if a component appears again it throws an error (= cyclic dependencie)
-func (projectAnalyzer *ProjectAnalyzer) walkDependencies(project *core.Project, component *core.Component, callStack []string) error {
+func (projectAnalyzer *ProjectAnalyzer) walkDependencies(project *core.Project, component *core.Application, callStack []string) error {
 	//end of recursion
 	if len(callStack) >= 50 {
 		return errors.New("More than 50 depth")

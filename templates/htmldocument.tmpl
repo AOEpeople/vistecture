@@ -120,9 +120,9 @@
     <div class="table-of-content">
     <ul>
         <li><a href="#overview">Overview</a></li>
-        <li><a href="#details">Component Details</a>
+        <li><a href="#details">Applications Details</a>
             <ul>
-             {{ range $key, $component := .Project.Components }}
+             {{ range $key, $component := .Project.Applications }}
                 <li><a href="#details-{{$component.Name}}">{{$component.Name}}</a>
                     <ul>
                         <li><a href="#details-{{$component.Name}}-services">Services Provided</a></li>
@@ -140,7 +140,7 @@
 
     <table>
         <tr><th>Name</th><th>provided services</th><tr>
-        {{ range .Project.Components }}
+        {{ range .Project.Applications }}
         <tr>
             <td><a href="details-#{{ .Name }}">{{ .Name }}</a><br /><small>{{ renderContent .GetSummary }}</small></td>
             <td>
@@ -157,16 +157,16 @@
 
 
 
-    <h2><a name="details" />Component Details</h2>
+    <h2><a name="details" />Application Details</h2>
 
-    {{ range $key, $component := .Project.Components }}
+    {{ range $key, $component := .Project.Applications }}
        <h3><a name="details-{{ .Name }}" /> {{$component.Name}}</h3>
        <p> {{ renderContent $component.Description }} </p>
        <div style="border: 1px solid black; width: 90%">
        {{ renderSVGInlineImage $component }}
        </div>
         <h4><a name="details-{{ .Name }}-services" />Services Provided</h4>
-              <p>The component provides the following services:</p>
+              <p>The application provides the following service components:</p>
               <ul>
                   {{ range $service := $component.ProvidedServices }}
                        <li>
@@ -176,14 +176,14 @@
                   {{ end }}
               </ul>
        <h4><a name="details-{{ .Name }}-services" />Services Required / Service Discovery</h4>
-       <p>The component requires the following services:</p>
+       <p>The application requires the following services:</p>
        <ul>
            {{$dependencies := $component.GetAllDependencies $.Project }}
            {{ range $dependency := $dependencies }}
                 <li>{{$dependency.Reference}}</li>
            {{ end }}
        </ul>
-        <p>The component requires the following infrastructure services:</p>
+        <p>The application requires the following infrastructure services:</p>
               <ul>
                   {{ range $infraDependencies := $component.InfrastructureDependencies }}
                        <li>{{$infraDependencies.Type}}-{{$component.Name}}</li>

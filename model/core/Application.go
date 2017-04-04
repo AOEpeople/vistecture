@@ -6,7 +6,7 @@ import (
 	"strings"
 )
 
-type Component struct {
+type Application struct {
 	Name             string                   `json:"name"`
 	Description      string                   `json:"description,omitempty"`
 	Summary      	 string                   `json:"summary,omitempty"`
@@ -16,10 +16,10 @@ type Component struct {
 	ProvidedServices []Service                `json:"provided-services"`
 	InfrastructureDependencies []InfrastructureDependency `json:"infrastructure-dependencies"`
 	Dependencies     []Dependency             `json:"dependencies"`
-	Display          ComponentDisplaySettings `json:"display,omitempty"`
+	Display          ApplicationDisplaySettings `json:"display,omitempty"`
 }
 
-func (Component Component) Validate() bool {
+func (Component Application) Validate() bool {
 	if strings.Contains(Component.Name, ".") {
 		fmt.Printf("Component Name contains . '%v'\n", Component.Name)
 		return false
@@ -28,7 +28,7 @@ func (Component Component) Validate() bool {
 }
 
 // Returns summary. If summary is not set the first 100 letters from description
-func (Component Component) GetSummary() string {
+func (Component Application) GetSummary() string {
 	if Component.Summary != "" {
 		return Component.Summary
 	}
@@ -39,7 +39,7 @@ func (Component Component) GetSummary() string {
 }
 
 
-func (Component Component) FindService(nameToMatch string) (*Service, error) {
+func (Component Application) FindService(nameToMatch string) (*Service, error) {
 	for _, service := range Component.ProvidedServices {
 		if service.Name == nameToMatch {
 			return &service, nil
@@ -52,8 +52,8 @@ func (Component Component) FindService(nameToMatch string) (*Service, error) {
 
 
 //returns the depending Components
-func (GivenComponent Component) GetAllRelatedComponents(Project *Project) ([]Component,error) {
-	var result []Component
+func (GivenComponent Application) GetAllRelatedComponents(Project *Project) ([]Application,error) {
+	var result []Application
 	for _, dependency := range GivenComponent.Dependencies {
 		foundComponent, e := dependency.GetComponent(Project)
 		if (e != nil) {
@@ -75,7 +75,7 @@ func (GivenComponent Component) GetAllRelatedComponents(Project *Project) ([]Com
 
 
 //returns the depending Dependencies
-func (GivenComponent Component) GetAllDependencies(Project *Project) ([]Dependency,error) {
+func (GivenComponent Application) GetAllDependencies(Project *Project) ([]Dependency,error) {
 	var result []Dependency
 	for _, dependency := range GivenComponent.Dependencies {
 		result = append(result,dependency)

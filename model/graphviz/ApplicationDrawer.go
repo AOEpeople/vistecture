@@ -7,13 +7,13 @@ import (
 
 
 // EXTEND COMPONENT
-type ComponentDrawer struct {
+type ApplicationDrawer struct {
 	//inherit
-	originalComponent *model.Component
+	originalComponent *model.Application
 }
 
 // Decorate Draw function
-func (ComponentDrawer ComponentDrawer) Draw() string {
+func (ComponentDrawer ApplicationDrawer) Draw() string {
 	var result string
 	Component := ComponentDrawer.originalComponent
 

@@ -1,6 +1,6 @@
 {
   "name": "Ports and Adapters DDD Architecture",
-  "components": [
+  "applications": [
     {
       "name": "domain",
       "group": "component-internal-bounded-context",

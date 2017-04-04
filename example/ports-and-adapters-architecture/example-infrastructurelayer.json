@@ -1,5 +1,5 @@
 {
-  "components": [
+  "applications": [
     {
       "name": "infrastructure",
       "group": "component-internal-bounded-context",

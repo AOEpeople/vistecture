@@ -1,6 +1,6 @@
 {
   "name": "Sample",
-  "components": [
+  "applications": [
     {
       "name": "mars",
       "summary": "Ecommerce Frontend Component",

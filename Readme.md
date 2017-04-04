@@ -42,9 +42,9 @@ You can also clone the repository and use golang tools.
 ```
 {
   "name": "my application suite",
-  "components": [
+  "applications": [
     {
-      "name": "Name of Component",
+      "name":  "application1",
       "group": "Optional a Group",
       "technology": "scala",
       "category": "Optional a category"
@@ -61,7 +61,7 @@ You can also clone the repository and use golang tools.
             "isPublic": true,
             "dependencies": [
               {
-                "reference": "othercomponent"
+                "reference": "application2"
               }
             ]
         }
@@ -81,6 +81,15 @@ You can also clone the repository and use golang tools.
           }
       ]
     }
+    "business-services": [
+        {
+            "name": "eshop",
+            "references": [
+                "application1",
+                "application2"
+            ]
+        }
+      ],
 
     ...
 
@@ -91,8 +100,14 @@ You can also clone the repository and use golang tools.
 
 Currently the main feature is generating graphviz compatible graph descriptions that can be used by any of the graphviz layouters like this:
 
+Complete Graph
 ```
 > vistecture --config=pathtojson graph | dot -Tpng -o graph.png
+```
+
+Graph for one Application and its direct dependencies (including infrastructure dependencies):
+```
+> vistecture --config=pathtojson graph --application=applicationame | dot -Tpng -o graph.png
 ```
 
 You can also render a documentation - expecting the dot command is executable for the application it will embedd svg images:
@@ -111,33 +126,43 @@ Check for cyclic dependencies and get a first impact analysis:
 
 This tool defines:
 
-**Component:**
-A component is normaly something that offers one or more services (or interfaces).
-Normaly a component is something that is deployed seperate - and has a seperate build and integration pipeline.
+**Application:**
+A Application is normaly something that offers one or more service-components (or interfaces).
+Normaly a Application is something that is deployed seperate - and has a seperate build and integration pipeline.
 
 - Supported Categories: external (rendered in red)
-- Supported Technologies: go, scala, magento, akeneo, php, anypoint, keycloak
+- Supported Technologies: go, scala, magento, akeneo, php, anypoint, keycloak (they will get a nice icon)
 
 **Service:**
-A component offers services (one or more). Services can have a type. Services are used by other systems or humans. The can be public or just internal.
+An Application offers services (more specific service components - but we use services here).
+An application can offer one or more services.
+Services are used by other systems or humans. They can be public or just internal.
 
 **Dependency:**
-A component or a service can have dependencies. You can add dependency on service level to emphazize that the dependency is only required for a certain service.
+A Application or a service can have dependencies. You can add dependency on service level to emphazize that the dependency is only required for a certain service.
 (This is used for impact analyses).
-A depdendency creates a reference to either a component - or more exact to a service. The relation is of a certain relationship type.
+A depdendency creates a reference to either a application - or more exact to a service. The relation is of a certain relationship type.
 
 **supported releationship types:**
-- customer-supplier (use this where a strong dependency extsis that the supplier delivers whats required by the customer. A stronger collaboration between the teams of the components need to exist.)
-- conformist (use this to emphazise also a strong dependency that we need the services provided. But there is no chance to influence the interface - so the downstream component is forced to be conform to whatever is provided - and need to make it work.)
-- serviceapi (The used api is designed for integration. Its nice and offers multiple services and the format is published (documented). Most modern Rest API should fall under this section. (see open host / published language). This is the default
-- acl (Anti coruption layer: If the provided interface is complex or very different from the components internal model. The acl emphazizes that the downstream component takes care to isolate his domain with a acl pattern)
+- customer-supplier: (use this where a strong dependency extsis that the supplier delivers whats required by the customer. A stronger collaboration between the teams of the components need to exist.)
+- openhost: The used api is designed for integration. Its nice and offers multiple services and the format well thought. Most modern Rest API should fall under this section. This is the default
+- published-language:  (like openhost + documentation / api formats are published (documented) )
+- conformist: (use this to emphazise also a strong dependency that we need the services provided. But there is no chance to influence the interface - so the downstream component is forced to be conform to whatever is provided - and need to make it work.)
+- acl: (Anti coruption layer: If the provided interface is complex or very different from the applications bounded context internal model. The acl emphazizes that the downstream component takes care to isolate his domain with a acl pattern)
+
+(See https://www.aoe.com/tech-radar/strategic-domain-driven-design.html )
+
+**Business Services:**
+Several service components are typically composed to business services.
+For example an ecommerce shop business service may consist of services from  ecommerce application, login application, search application.
 
 
 ## Todos
 
-
--  [X] Graph for single component including infrastructure
--  [ ] Impact Analysis for component failures
+-  [X] Graph for single application including infrastructure
+-  [ ] Introduce useful resilience pattern types for the dependencies
+-  [ ] Introduce Business Services as Composite of Services
+-  [ ] Better Impact Analysis for application failures - inlcuing resilience evaluation
 -  [ ] Create complete documentation
 -  [ ] Generate useful artefacts for infrastructure pipeline (e.g. consul acls, service discovery tests...)
 
