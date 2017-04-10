@@ -177,6 +177,7 @@ go test ./tests/...
 ```
 
 
+
 ## Tip
 
 Disable CSP Header in Jenkins to allow inline styles (required for a direct view of the generated documentation as jenkins artefact)
