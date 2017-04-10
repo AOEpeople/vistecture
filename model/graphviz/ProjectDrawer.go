@@ -2,7 +2,7 @@ package graphviz
 
 import (
 	"strings"
-	model "../core"
+	model "vistecture/model/core"
 )
 
 // EXTEND PROJECT
@@ -17,7 +17,7 @@ func (ProjectDrawer *ProjectDrawer) DrawComplete() string {
 	var result string
 	result = "digraph { graph [] \n"
 	// Nodes
-	for key, componentList := range ProjectDrawer.originalProject.GetComponentsByGroup() {
+	for key, componentList := range ProjectDrawer.originalProject.GetApplicationByGroup() {
 		drawingResultInGroup := ""
 		for _, component := range componentList {
 			drawer := ApplicationDrawer{originalComponent: component}

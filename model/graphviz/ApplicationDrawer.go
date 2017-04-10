@@ -2,7 +2,7 @@ package graphviz
 
 import (
 	"strings"
-	model "../core"
+	model "vistecture/model/core"
 )
 
 

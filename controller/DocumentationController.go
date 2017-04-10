@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"os"
 	"html/template"
-	"../model/core"
-	"../model/graphviz"
+	"vistecture/model/core"
+	"vistecture/model/graphviz"
 	"os/exec"
 	"bytes"
 	"strings"
@@ -25,7 +25,7 @@ func (DocumentationController DocumentationController) GraphvizAction(componentN
 	Project := loadProject(*DocumentationController.ProjectConfigPath)
 	ProjectDrawer := graphviz.CreateProjectDrawer(Project)
 	if componentName != ""  {
-		Component, e := Project.FindComponent(componentName)
+		Component, e := Project.FindApplication(componentName)
 		if (e != nil) {
 			fmt.Println(e)
 			os.Exit(-1)

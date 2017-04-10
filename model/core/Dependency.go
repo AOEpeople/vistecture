@@ -33,5 +33,5 @@ func (Dependency *Dependency) GetComponentName() string {
 
 func (Dependency *Dependency) GetComponent(Project *Project) (Application, error) {
 	componentName, _ := Dependency.GetComponentAndServiceNames()
-	return Project.FindComponent(componentName)
+	return Project.FindApplication(componentName)
 }

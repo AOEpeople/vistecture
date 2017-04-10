@@ -14,16 +14,16 @@ const NOGROUP = "nogroup"
 
 //Validates Project and Components
 func (Project *Project) Validate() error {
-	for _, component := range Project.Applications {
-		if component.Validate() == false {
+	for _, application := range Project.Applications {
+		if application.Validate() == false {
 			return errors.New("Component not valid")
 		}
-		dependencies, _ := component.GetAllDependencies(Project)
+		dependencies, _ := application.GetAllDependencies(Project)
 		for _,dependency  := range dependencies {
 			dependendComponentName, serviceName := dependency.GetComponentAndServiceNames()
 			error := Project.doesServiceExists(dependendComponentName,serviceName)
 			if error != nil {
-				return errors.New("Component " + component.Name + " Dependencies has Error:" + error.Error())
+				return errors.New("Component " + application.Name + " Dependencies has Error:" + error.Error())
 			}
 		}
 	}
@@ -31,22 +31,8 @@ func (Project *Project) Validate() error {
 }
 
 
-func (Project *Project) doesServiceExists(dependendComponentName string, serviceName string) error {
-	dependendComponent, errorOnComponentFound := Project.FindComponent(dependendComponentName)
-	if errorOnComponentFound != nil {
-		return errorOnComponentFound
-	}
-	if serviceName == "" {
-		return nil
-	}
-	if _, errorOnServiceFound := dependendComponent.FindService(serviceName); errorOnServiceFound != nil {
-		return errorOnServiceFound
-	}
-	return nil
-}
-
 //Find by Name
-func (Project *Project) FindComponent(nameToMatch string) (Application, error) {
+func (Project *Project) FindApplication(nameToMatch string) (Application, error) {
 	for _, component := range Project.Applications {
 		if component.Name == nameToMatch {
 			return *component, nil
@@ -57,21 +43,59 @@ func (Project *Project) FindComponent(nameToMatch string) (Application, error) {
 
 
 //Find by Name
-func (Project *Project) FindComponentsThatReferenceTo(component *Application, recursive bool) []*Application {
+func (Project *Project) FindApplicationThatReferenceTo(application *Application, recursive bool) []*Application {
 	if recursive {
-		return Project.findAllComponentsThatReferenceComponent(component)
+		return Project.findAllApplicationsThatReferenceComponent(application)
 	} else {
-		return Project.findComponentsThatReferenceComponent(component)
+		return Project.findApplicationsThatReferenceComponent(application)
 	}
 
 }
 
 
-func (Project *Project) findAllComponentsThatReferenceComponent(componentReferenced *Application) []*Application {
+//Check if a component with Name exist
+func (Project *Project) HasApplicationWithName(nameToMatch string) bool {
+	if _, e := Project.FindApplication(nameToMatch); e != nil {
+		return false
+	}
+	return true
+}
+
+// Get Map with components grouped by Group.
+// NOGROUP is used for ungrouped components
+func (Project *Project) GetApplicationByGroup() map[string][]*Application {
+	m := make(map[string][]*Application)
+	for _, component := range Project.Applications {
+		if len(component.Group) > 0 {
+			m[component.Group] = append(m[component.Group], component)
+		} else {
+			m[NOGROUP] = append(m[NOGROUP], component)
+		}
+	}
+	return m
+}
+
+//Merges the given Project with another. The current project is the one who will be modified.
+func (Project *Project) MergeWith(OtherProject *Project) error {
+	for _, component := range OtherProject.Applications {
+		if Project.HasApplicationWithName(component.Name) {
+			return errors.New(component.Name + " Is duplicated")
+		}
+		Project.Applications = append(Project.Applications, component)
+	}
+	if (OtherProject.Name != "") {
+		Project.Name = OtherProject.Name
+	}
+	return nil
+}
+
+
+
+func (Project *Project) findAllApplicationsThatReferenceComponent(componentReferenced *Application) []*Application {
 	var referencingComponents []*Application
-	for _,currentComponent := range Project.findComponentsThatReferenceComponent(componentReferenced) {
+	for _,currentComponent := range Project.findApplicationsThatReferenceComponent(componentReferenced) {
 		referencingComponents = append(referencingComponents,currentComponent)
-		recursiveReferencingComponents := Project.findAllComponentsThatReferenceComponent(currentComponent)
+		recursiveReferencingComponents := Project.findAllApplicationsThatReferenceComponent(currentComponent)
 		for _,currentComponent := range recursiveReferencingComponents {
 			referencingComponents = append(referencingComponents,currentComponent)
 			if sliceContains(referencingComponents,currentComponent) {
@@ -83,7 +107,7 @@ func (Project *Project) findAllComponentsThatReferenceComponent(componentReferen
 }
 
 // returns all components that have a direct dependency to the given component
-func (Project *Project) findComponentsThatReferenceComponent(componentReferenced *Application) []*Application {
+func (Project *Project) findApplicationsThatReferenceComponent(componentReferenced *Application) []*Application {
 	var referencingComponents []*Application
 	//walk through all registered compoents and return those who match
 	for _, currentComponent := range Project.Applications {
@@ -111,39 +135,18 @@ func sliceContains(searchInList []*Application, searchFor *Application) bool {
 	return false
 }
 
-
-//Check if a component with Name exist
-func (Project *Project) HasComponentWithName(nameToMatch string) bool {
-	if _, e := Project.FindComponent(nameToMatch); e != nil {
-		return false
+// internal method - Checks if a service exists and returns error if not
+func (Project *Project) doesServiceExists(dependendComponentName string, serviceName string) error {
+	dependendComponent, errorOnComponentFound := Project.FindApplication(dependendComponentName)
+	if errorOnComponentFound != nil {
+		return errorOnComponentFound
 	}
-	return true
-}
-
-//Get Map with components grouped by Group.
-// NOGROUP is used for ungrouped components
-func (Project *Project) GetComponentsByGroup() map[string][]*Application {
-	m := make(map[string][]*Application)
-	for _, component := range Project.Applications {
-		if len(component.Group) > 0 {
-			m[component.Group] = append(m[component.Group], component)
-		} else {
-			m[NOGROUP] = append(m[NOGROUP], component)
-		}
+	if serviceName == "" {
+		return nil
 	}
-	return m
-}
-
-//Merges the given Project with another
-func (Project *Project) AddComponentsFromProject(OtherProject *Project) error {
-	for _, component := range OtherProject.Applications {
-		if Project.HasComponentWithName(component.Name) {
-			return errors.New(component.Name + " Is duplicated")
-		}
-		Project.Applications = append(Project.Applications, component)
-	}
-	if (OtherProject.Name != "") {
-		Project.Name = OtherProject.Name
+	if _, errorOnServiceFound := dependendComponent.FindService(serviceName); errorOnServiceFound != nil {
+		return errorOnServiceFound
 	}
 	return nil
 }
+

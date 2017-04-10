@@ -3,7 +3,7 @@ package controller
 import (
 	"fmt"
 	"log"
-	"../model/analyze"
+	"vistecture/model/analyze"
 )
 
 type AnalyzeController struct {

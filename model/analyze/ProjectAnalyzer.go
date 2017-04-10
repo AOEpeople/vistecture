@@ -2,7 +2,7 @@ package analyze
 
 import (
 	"errors"
-	"../../model/core"
+	"vistecture/model/core"
 	"strconv"
 )
 
@@ -27,8 +27,8 @@ func (projectAnalyzer *ProjectAnalyzer) ImpactAnalyze(project *core.Project) []s
 	//Walk dependencies add add service to called stack
 	var impactsPerComponent []string
 	for _, component := range project.Applications {
-		directComponents := project.FindComponentsThatReferenceTo(component, false)
-		allIndirectComponents := project.FindComponentsThatReferenceTo(component, true)
+		directComponents := project.FindApplicationThatReferenceTo(component, false)
+		allIndirectComponents := project.FindApplicationThatReferenceTo(component, true)
 		impactsPerComponent = append(impactsPerComponent,strconv.Itoa(len(directComponents)) + "\t\t"+ strconv.Itoa(len(allIndirectComponents)) +"\t\t" + component.Name)
 	}
 	return impactsPerComponent
