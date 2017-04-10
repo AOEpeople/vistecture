@@ -1,7 +1,7 @@
 package main
 
 import (
-	"./controller"
+	"vistecture/controller"
 	"gopkg.in/urfave/cli.v1"
 	"os"
 )

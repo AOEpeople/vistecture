@@ -1,0 +1,31 @@
+{
+  "name": "Fixture with 2 apps",
+  "applications": [
+    {
+      "name": "app1",
+      "description": "app1 description",
+      "provided-services": [
+        {
+          "name": "service1"
+        },
+        {
+          "name": "service2"
+        }
+      ],
+      "dependencies": [
+        {
+          "reference": "app2"
+        }
+      ]
+    },
+    {
+      "name": "app2",
+      "description": "app2 description",
+      "provided-services": [
+        {
+          "name": "service1"
+        }
+      ]
+    }
+  ]
+}

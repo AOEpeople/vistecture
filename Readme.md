@@ -166,6 +166,16 @@ For example an ecommerce shop business service may consist of services from  eco
 -  [ ] Create complete documentation
 -  [ ] Generate useful artefacts for infrastructure pipeline (e.g. consul acls, service discovery tests...)
 
+## Development
+
+Use "make all" to build the binaries.
+
+To run test:`
+
+```
+go test ./tests/...
+``
+
 ## Tip
 
 Disable CSP Header in Jenkins to allow inline styles (required for a direct view of the generated documentation as jenkins artefact)

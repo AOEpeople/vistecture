@@ -10,7 +10,7 @@ import (
 	"strings"
 )
 
-// we need this to bind the interface funcs.. Basti?? Best practice?
+// we need this to bind the interface funcs
 type ProjectFactory struct{}
 
 // Factory
@@ -72,7 +72,7 @@ func (factory *ProjectFactory) createFromFolder(folderPath string) (*Project, er
 		if tmpError != nil {
 			return &newProject, errors.New(tmpError.Error() + " in file " + file)
 		}
-		err =  newProject.AddComponentsFromProject(tempProject)
+		err =  newProject.MergeWith(tempProject)
 		if err != nil {
 			return &newProject, errors.New(err.Error() + " in file " + file)
 		}

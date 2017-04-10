@@ -2,8 +2,8 @@ package graphviz
 
 import (
 	"strings"
-	model "../core"
 	"os"
+	model "vistecture/model/core"
 )
 
 
