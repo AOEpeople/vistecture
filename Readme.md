@@ -37,7 +37,7 @@ vistecture help
 You can also clone the repository and use golang tools.
 
 
-### Example project definition (json):
+### Example project definition ( example.yml ):
 
 ```
 ---
