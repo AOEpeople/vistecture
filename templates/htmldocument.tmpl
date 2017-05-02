@@ -216,7 +216,7 @@
         <tr><th>name</th><th>provided components</th><tr>
         {{ range .Project.Applications }}
         <tr>
-            <td><a href="details-#{{ .Name }}">{{ .Name }}</a><br /><small>{{ renderContent .GetSummary }}</small></td>
+            <td><a href="#details-{{ .Name }}">{{ .Name }}</a><br /><small>{{ renderContent .GetSummary }}</small></td>
             <td>
                 <table>
                     <tr><th>name</th><th>type</th><tr>
@@ -236,7 +236,7 @@
     {{ range $key, $component := .Project.Applications }}
      <section id="details-{{ .Name }}">
        <h3 >{{$component.Name}}</h3>
-       <p> {{ renderContent $component.Description }} </p>
+       <p> {{ $component.GetDescriptionHtml }} </p>
        <div class="svg-container">
        {{ renderSVGInlineImage $component }}
        </div>

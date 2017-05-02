@@ -3,11 +3,11 @@ package core
 import "strings"
 
 type Dependency struct {
-	Reference      string `json:"reference"`
-	Relationship   string `json:"relationship"`
-	IsSameLevel    bool   `json:"isSameLevel"`
-	Resilience     bool `json:"resilience"`
-	IsBrowserBased bool `json:"isBrowserBased"`
+	Reference      string `json:"reference" yaml:"reference"`
+	Relationship   string `json:"relationship" yaml:"relationship"`
+	IsSameLevel    bool   `json:"isSameLevel" yaml:"isSameLevel"`
+	Resilience     bool   `json:"resilience" yaml:"resilience"`
+	IsBrowserBased bool   `json:"isBrowserBased" yaml:"isBrowserBased"`
 }
 
 // Returns the name of the "component" and "service" this dependecy points to
@@ -27,9 +27,6 @@ func (Dependency *Dependency) GetComponentName() string {
 	}
 	return Dependency.Reference
 }
-
-
-
 
 func (Dependency *Dependency) GetComponent(Project *Project) (Application, error) {
 	componentName, _ := Dependency.GetComponentAndServiceNames()

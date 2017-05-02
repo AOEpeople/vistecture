@@ -8,6 +8,8 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+
+	"gopkg.in/yaml.v2"
 )
 
 // we need this to bind the interface funcs
@@ -63,7 +65,7 @@ func (factory *ProjectFactory) createFromFolder(folderPath string) (*Project, er
 
 		if fileInfo.IsDir() {
 			tempProject, tmpError = factory.createFromFolder(file)
-		} else if !fileInfo.IsDir() && strings.Contains(fileInfo.Name(),".json") {
+		} else if !fileInfo.IsDir() && (strings.Contains(fileInfo.Name(), ".json") || strings.Contains(fileInfo.Name(), ".yml")) {
 			tempProject, tmpError = factory.createFromFile(file)
 		} else {
 			continue
@@ -72,7 +74,7 @@ func (factory *ProjectFactory) createFromFolder(folderPath string) (*Project, er
 		if tmpError != nil {
 			return &newProject, errors.New(tmpError.Error() + " in file " + file)
 		}
-		err =  newProject.MergeWith(tempProject)
+		err = newProject.MergeWith(tempProject)
 		if err != nil {
 			return &newProject, errors.New(err.Error() + " in file " + file)
 		}
@@ -86,9 +88,16 @@ func (factory *ProjectFactory) createFromFile(fileName string) (*Project, error)
 		return nil, errors.New("File error: " + err.Error())
 	}
 	var newProject Project
-	err = json.Unmarshal(file, &newProject)
+	if strings.Contains(fileName, ".json") {
+		err = json.Unmarshal(file, &newProject)
+	} else if strings.Contains(fileName, ".yml") {
+		err = yaml.Unmarshal(file, &newProject)
+	} else {
+		err = errors.New("Unknown file type")
+	}
+
 	if err != nil {
-		return nil, errors.New(fmt.Sprintf("JSON broken in %v error: %v\n", fileName, err))
+		return nil, errors.New(fmt.Sprintf("File broken in %v error: %v\n", fileName, err))
 	}
 	return &newProject, nil
 }

@@ -5,8 +5,8 @@ import (
 )
 
 type Project struct {
-	Name         string       `json:"name"`
-	Applications []*Application `json:"applications"`
+	Name         string         `json:"name" yaml:"name" `
+	Applications []*Application `json:"applications" yaml:"applications"`
 	// TODO - add services
 }
 
@@ -19,9 +19,9 @@ func (Project *Project) Validate() error {
 			return errors.New("Component not valid")
 		}
 		dependencies, _ := application.GetAllDependencies(Project)
-		for _,dependency  := range dependencies {
+		for _, dependency := range dependencies {
 			dependendComponentName, serviceName := dependency.GetComponentAndServiceNames()
-			error := Project.doesServiceExists(dependendComponentName,serviceName)
+			error := Project.doesServiceExists(dependendComponentName, serviceName)
 			if error != nil {
 				return errors.New("Component " + application.Name + " Dependencies has Error:" + error.Error())
 			}
@@ -29,7 +29,6 @@ func (Project *Project) Validate() error {
 	}
 	return nil
 }
-
 
 //Find by Name
 func (Project *Project) FindApplication(nameToMatch string) (Application, error) {
@@ -41,7 +40,6 @@ func (Project *Project) FindApplication(nameToMatch string) (Application, error)
 	return Application{}, errors.New("Component with name " + nameToMatch + " not found")
 }
 
-
 //Find by Name
 func (Project *Project) FindApplicationThatReferenceTo(application *Application, recursive bool) []*Application {
 	if recursive {
@@ -51,7 +49,6 @@ func (Project *Project) FindApplicationThatReferenceTo(application *Application,
 	}
 
 }
-
 
 //Check if a component with Name exist
 func (Project *Project) HasApplicationWithName(nameToMatch string) bool {
@@ -83,22 +80,20 @@ func (Project *Project) MergeWith(OtherProject *Project) error {
 		}
 		Project.Applications = append(Project.Applications, component)
 	}
-	if (OtherProject.Name != "") {
+	if OtherProject.Name != "" {
 		Project.Name = OtherProject.Name
 	}
 	return nil
 }
 
-
-
 func (Project *Project) findAllApplicationsThatReferenceComponent(componentReferenced *Application) []*Application {
 	var referencingComponents []*Application
-	for _,currentComponent := range Project.findApplicationsThatReferenceComponent(componentReferenced) {
-		referencingComponents = append(referencingComponents,currentComponent)
+	for _, currentComponent := range Project.findApplicationsThatReferenceComponent(componentReferenced) {
+		referencingComponents = append(referencingComponents, currentComponent)
 		recursiveReferencingComponents := Project.findAllApplicationsThatReferenceComponent(currentComponent)
-		for _,currentComponent := range recursiveReferencingComponents {
-			referencingComponents = append(referencingComponents,currentComponent)
-			if sliceContains(referencingComponents,currentComponent) {
+		for _, currentComponent := range recursiveReferencingComponents {
+			referencingComponents = append(referencingComponents, currentComponent)
+			if sliceContains(referencingComponents, currentComponent) {
 				continue
 			}
 		}
@@ -111,15 +106,15 @@ func (Project *Project) findApplicationsThatReferenceComponent(componentReferenc
 	var referencingComponents []*Application
 	//walk through all registered compoents and return those who match
 	for _, currentComponent := range Project.Applications {
-		currentComponentsDependencies,_ := currentComponent.GetAllDependencies(Project)
+		currentComponentsDependencies, _ := currentComponent.GetAllDependencies(Project)
 		for _, dependency := range currentComponentsDependencies {
 			if dependency.GetComponentName() != componentReferenced.Name {
 				continue
 			}
-			if sliceContains(referencingComponents,currentComponent) {
+			if sliceContains(referencingComponents, currentComponent) {
 				continue
 			}
-			referencingComponents = append(referencingComponents,currentComponent)
+			referencingComponents = append(referencingComponents, currentComponent)
 		}
 	}
 	return referencingComponents
@@ -149,4 +144,3 @@ func (Project *Project) doesServiceExists(dependendComponentName string, service
 	}
 	return nil
 }
-

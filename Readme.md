@@ -6,7 +6,7 @@ A tool for visualizing and analyzing distributed (micro) service oriented archit
 
 ## Define your application architecture:
 
-Describe your architecture in JSON. You can do this in two ways
+Describe your architecture in JSON (use .json) or YAML (use .yml). You can do this in two ways
 - one json file or
 - in multiple json files that are all in one directory. (prefered for structuring bigger definitions)
 
@@ -40,58 +40,47 @@ You can also clone the repository and use golang tools.
 ### Example project definition (json):
 
 ```
-{
-  "name": "my application suite",
-  "applications": [
-    {
-      "name":  "application1",
-      "group": "Optional a Group",
-      "technology": "scala",
-      "category": "Optional a category"
-      "description": "Some short description / New line",
-      "summary": "Optional shorter summary",
-      "display":{
-        "bordercolor": "#3971ad"
-      },
-      "provided-services": [
-        {
-            "name": "auth",
-            "type": "api",
-            "description": "A description of the service",
-            "isPublic": true,
-            "dependencies": [
-              {
-                "reference": "application2"
-              }
-            ]
-        }
-      ],
-      "infrastructure-dependencies": [
-        {
-          "type": "redis"
-        }
-      ],
-      "dependencies": [
-          {
-            "reference": "keycloak.login",
-            "relationship": "serviceapi",
-            "isSameLevel": false,
-            "isBrowserBased": true,
-            "resilience": true
-          }
-      ]
-    }
-    "business-services": [
-        {
-            "name": "eshop",
-            "references": [
-                "application1",
-                "application2"
-            ]
-        }
-      ],
-
-    ...
+---
+name: Ports and Adapters DDD Architecture
+applications:
+- name: domain
+  group: component-internal-bounded-context
+  technology: scala
+  display:
+    bordercolor: "#c922b3"
+  summary: Short description
+  description: |
+        Use markdown to describe the service.
+        * one
+        * tow
+  provided-services:
+  - name: domain-objects
+    type: inbound-port
+  - name: repository-interfaces
+    type: outbound-port
+  - name: eventpublish-interfaces
+    type: outbound-port
+  infrastructure-dependencies:
+  - type: mysql
+- name: application
+  group: component-internal-bounded-context
+  description: Application Use Cases
+  provided-services:
+  - name: application-services
+    type: inbound-port
+    description: Main Application API. Also internaly works with eventpublish-interfaces
+    dependencies:
+    - reference: domain.domain-objects
+    - reference: domain.repository-interfaces
+      relationship: uses
+  - name: eventpublish-interfaces
+    type: outbound-port
+  - name: domainEventAdapter
+    type: "(logic)"
+    description: Listen for (some) domain events. Also internaly works with eventpublish-interfaces
+    dependencies:
+    - reference: domain.eventpublish-interfaces
+      relationship: implements
 
 ```
 
