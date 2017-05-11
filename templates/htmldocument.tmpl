@@ -197,7 +197,7 @@
         <li><a href="#details">Applications details</a>
             <ul>
                 {{ range $key, $application := .Project.Applications }}
-                <li><a href="#details-{{$application.Name}}">{{$application.Name}}</a>
+                <li><a href="#details-{{$application.Name}}">{{$application.Title}}</a>
                 </li>
                 {{ end }}
             </ul>
@@ -235,7 +235,8 @@
 
     {{ range $key, $component := .Project.Applications }}
      <section id="details-{{ .Name }}">
-       <h3 >{{$component.Name}}</h3>
+       <h3 >{{$component.Title}} ({{ .Name }})</h3>
+       <p><b>{{ $component.Summary }}</b></p>
        <p> {{ $component.GetDescriptionHtml }} </p>
        <div class="svg-container">
        {{ renderSVGInlineImage $component }}

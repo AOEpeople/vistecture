@@ -183,7 +183,7 @@ For example an ecommerce shop business service may consist of services from  eco
 
 -  [X] Graph for single application including infrastructure
 -  [ ] Introduce useful resilience pattern types for the dependencies
--  [ ] Introduce Business Services as Composite of Services
+-  [ ] Introduce Business Services as Composite of Applications (Service Components)
 -  [ ] Better Impact Analysis for application failures - inlcuing resilience evaluation
 -  [ ] Create complete documentation
 -  [ ] Generate useful artefacts for infrastructure pipeline (e.g. consul acls, service discovery tests...)

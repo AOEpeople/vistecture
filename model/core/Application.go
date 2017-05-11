@@ -12,8 +12,9 @@ import (
 
 type Application struct {
 	Name                       string                     `json:"name" yaml:"name"`
-	Description                string                     `json:"description,omitempty" yaml:"description,omitempty"`
+	Title                      string                     `json:"title" yaml:"title"`
 	Summary                    string                     `json:"summary,omitempty" yaml:"summary,omitempty"`
+	Description                string                     `json:"description,omitempty" yaml:"description,omitempty"`
 	Group                      string                     `json:"group,omitempty" yaml:"group,omitempty"`
 	Technology                 string                     `json:"technology,omitempty" yaml:"technology,omitempty"`
 	Category                   string                     `json:"category,omitempty" yaml:"category,omitempty"`
