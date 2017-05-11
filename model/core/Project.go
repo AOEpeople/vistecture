@@ -43,6 +43,7 @@ func (Project *Project) FindApplication(nameToMatch string) (Application, error)
 //Find by Name
 func (Project *Project) FindApplicationThatReferenceTo(application *Application, recursive bool) []*Application {
 	if recursive {
+		// api.2 -> ma -> api.1
 		return Project.findAllApplicationsThatReferenceComponent(application)
 	} else {
 		return Project.findApplicationsThatReferenceComponent(application)

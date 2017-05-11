@@ -3,7 +3,8 @@ package controller
 import (
 	"fmt"
 	"log"
-	"vistecture/model/analyze"
+
+	"../model/analyze"
 )
 
 type AnalyzeController struct {
@@ -15,7 +16,7 @@ func (AnalyzeController AnalyzeController) AnalyzeAction() {
 	var ProjectAnalyzer analyze.ProjectAnalyzer
 	errors := ProjectAnalyzer.AnalyzeCyclicDependencies(project)
 	if errors != nil {
-		for _,error := range errors {
+		for _, error := range errors {
 			fmt.Println(error)
 		}
 		log.Fatal("Solve Errors please!")
@@ -27,12 +28,9 @@ func (AnalyzeController AnalyzeController) AnalyzeAction() {
 	impacts := ProjectAnalyzer.ImpactAnalyze(project)
 	fmt.Println("Direct\t\tIndirect\tComponent")
 	fmt.Println("------\t\t--------\t--------")
-	for _,impact := range impacts {
+	for _, impact := range impacts {
 		fmt.Println(impact)
 	}
-
-
-
 
 }
 

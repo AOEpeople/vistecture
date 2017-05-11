@@ -2,7 +2,8 @@ package graphviz
 
 import (
 	"strings"
-	model "vistecture/model/core"
+
+	model "../core"
 )
 
 // EXTEND PROJECT
@@ -15,7 +16,7 @@ type ProjectDrawer struct {
 // Decorate Draw function
 func (ProjectDrawer *ProjectDrawer) DrawComplete() string {
 	var result string
-	result = "digraph { graph [] \n"
+	result = "digraph { graph [bgcolor=\"transparent\"] \n"
 	// Nodes
 	for key, componentList := range ProjectDrawer.originalProject.GetApplicationByGroup() {
 		drawingResultInGroup := ""
@@ -38,8 +39,6 @@ func (ProjectDrawer *ProjectDrawer) DrawComplete() string {
 	return result
 }
 
-
-
 // Decorate Draw function - Draws only a component with its direct dependencies
 func (ProjectDrawer *ProjectDrawer) DrawComponent(Component *model.Application) string {
 	var result string
@@ -47,7 +46,7 @@ func (ProjectDrawer *ProjectDrawer) DrawComponent(Component *model.Application) 
 	drawer := ApplicationDrawer{originalComponent: Component}
 	result = result + drawer.Draw()
 	result = result + drawComponentOutgoingRelations(Component)
-	allRelatedComponents,_  := Component.GetAllRelatedComponents(ProjectDrawer.originalProject)
+	allRelatedComponents, _ := Component.GetAllRelatedComponents(ProjectDrawer.originalProject)
 
 	for _, relatedComponent := range allRelatedComponents {
 		drawer := ApplicationDrawer{originalComponent: &relatedComponent}
@@ -55,24 +54,23 @@ func (ProjectDrawer *ProjectDrawer) DrawComponent(Component *model.Application) 
 	}
 	// Draw infrastructure :-)
 	for _, infrastructureDependency := range Component.InfrastructureDependencies {
-		result = result + "\n\""+infrastructureDependency.Type+"\"[shape=box, color=\"#576f96\"] \n"
-		result = result + "\n\""+infrastructureDependency.Type+"\"->\""+Component.Name+"\"[color=\"#576f96\",arrowhead=none] \n"
+		result = result + "\n\"" + infrastructureDependency.Type + "\"[shape=box, color=\"#576f96\"] \n"
+		result = result + "\n\"" + infrastructureDependency.Type + "\"->\"" + Component.Name + "\"[color=\"#576f96\",arrowhead=none] \n"
 	}
 	result = result + "\n}"
 	return result
 }
 
-
 func drawComponentOutgoingRelations(Component *model.Application) string {
 	result := ""
 	// Relation from components
 	for _, dependency := range Component.Dependencies {
-		result += "\""+Component.Name + "\" ->" + getGraphVizReference(dependency)+getEdgeLayoutFromDependency(dependency,Component.Display)+"\n"
+		result += "\"" + Component.Name + "\" ->" + getGraphVizReference(dependency) + getEdgeLayoutFromDependency(dependency, Component.Display) + "\n"
 	}
 	// Relation from components/interfaces
 	for _, providedInterface := range Component.ProvidedServices {
 		for _, dependency := range providedInterface.Dependencies {
-			result += "\""+Component.Name+"\":\""+providedInterface.Name+"\"->"+getGraphVizReference(dependency)+getEdgeLayoutFromDependency(dependency,Component.Display)+"\n"
+			result += "\"" + Component.Name + "\":\"" + providedInterface.Name + "\"->" + getGraphVizReference(dependency) + getEdgeLayoutFromDependency(dependency, Component.Display) + "\n"
 		}
 	}
 	return result

@@ -1,11 +1,11 @@
 package graphviz
 
 import (
-	"strings"
 	"os"
-	model "vistecture/model/core"
-)
+	"strings"
 
+	model "../core"
+)
 
 // EXTEND COMPONENT
 type ApplicationDrawer struct {
@@ -57,9 +57,9 @@ func (ComponentDrawer ApplicationDrawer) Draw() string {
 			color = "#CFCFCF"
 		}
 		result += "<TR><TD COLSPAN=\"2\"  align=\"CENTER\" PORT=\"" + service.Name + "\" BGCOLOR=\"" + color + "\">"
-		result += "<FONT POINT-SIZE=\"10\">"+service.Type + ":" + service.Name + "</FONT>"
+		result += "<FONT POINT-SIZE=\"10\">" + service.Type + ":" + service.Name + "</FONT>"
 		if service.Description != "" {
-			result += "<BR /><FONT POINT-SIZE=\"8\">"+service.Description + "</FONT>"
+			result += "<BR /><FONT POINT-SIZE=\"8\">" + service.Description + "</FONT>"
 		}
 
 		result += "</TD></TR>"
@@ -70,6 +70,6 @@ func (ComponentDrawer ApplicationDrawer) Draw() string {
 }
 
 func renderDescription(description string) string {
-	description = strings.Replace(description, " / ","<BR /> ",-1)
+	description = strings.Replace(description, " / ", "<BR /> ", -1)
 	return description
 }
