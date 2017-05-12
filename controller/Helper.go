@@ -3,7 +3,7 @@ package controller
 import (
 	"log"
 
-	"../model/core"
+	"github.com/AOEpeople/vistecture/model/core"
 )
 
 func loadProject(ProjectConfigPath string) *core.Project {

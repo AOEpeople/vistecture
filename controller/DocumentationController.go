@@ -8,8 +8,8 @@ import (
 	"os/exec"
 	"strings"
 
-	"../model/core"
-	"../model/graphviz"
+	"github.com/AOEpeople/vistecture/model/core"
+	"github.com/AOEpeople/vistecture/model/graphviz"
 )
 
 type (

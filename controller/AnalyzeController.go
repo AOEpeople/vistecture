@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"log"
 
-	"../model/analyze"
+	"github.com/AOEpeople/vistecture/model/analyze"
 )
 
 type AnalyzeController struct {

@@ -4,7 +4,7 @@ import (
 	"os"
 	"strings"
 
-	model "../core"
+	model "github.com/AOEpeople/vistecture/model/core"
 )
 
 // EXTEND COMPONENT

@@ -1,7 +1,7 @@
 package main
 
 import (
-	"./controller"
+	"github.com/AOEpeople/vistecture/controller"
 	"gopkg.in/urfave/cli.v1"
 	"os"
 )
