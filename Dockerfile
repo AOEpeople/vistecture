@@ -10,6 +10,8 @@ RUN apk add --no-cache go
 
 RUN apk add --no-cache git
 
-RUN go get github.com/AOEpeople/vistecture
+RUN mkdir -p /usr/src/go
+
+RUN export GOPATH="/usr/src/go" && go get github.com/AOEpeople/vistecture
 
 ENTRYPOINT ["vistecture"]
