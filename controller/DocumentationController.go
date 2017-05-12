@@ -8,6 +8,8 @@ import (
 	"os/exec"
 	"strings"
 
+	"path/filepath"
+
 	"github.com/AOEpeople/vistecture/model/core"
 	"github.com/AOEpeople/vistecture/model/graphviz"
 )
@@ -22,9 +24,9 @@ type (
 	}
 )
 
-func (DocumentationController DocumentationController) GraphvizAction(componentName string) {
+func (DocumentationController DocumentationController) GraphvizAction(componentName string, iconPath string) {
 	Project := loadProject(*DocumentationController.ProjectConfigPath)
-	ProjectDrawer := graphviz.CreateProjectDrawer(Project)
+	ProjectDrawer := graphviz.CreateProjectDrawer(Project, iconPath)
 	if componentName != "" {
 		Component, e := Project.FindApplication(componentName)
 		if e != nil {
@@ -38,12 +40,13 @@ func (DocumentationController DocumentationController) GraphvizAction(componentN
 
 }
 
-func (DocumentationController DocumentationController) HTMLDocumentAction() {
+func (DocumentationController DocumentationController) HTMLDocumentAction(templatePath string, iconPath string) {
 	project := loadProject(*DocumentationController.ProjectConfigPath)
-	tpl := template.New("htmldocument.tmpl")
+	tpl := template.New(filepath.Base(templatePath))
+
 	tpl.Funcs(template.FuncMap{
 		"renderSVGInlineImage": func(Component core.Application) template.HTML {
-			ProjectDrawer := graphviz.CreateProjectDrawer(project)
+			ProjectDrawer := graphviz.CreateProjectDrawer(project, iconPath)
 			stdInContent := ProjectDrawer.DrawComponent(&Component)
 
 			commandName := "dot"
@@ -63,7 +66,7 @@ func (DocumentationController DocumentationController) HTMLDocumentAction() {
 			return template.HTML(strings.Replace(content, " / ", "<br />", -1))
 		},
 	})
-	tpl, err := tpl.ParseFiles("templates/htmldocument.tmpl")
+	tpl, err := tpl.ParseFiles(templatePath)
 	if err != nil {
 		fmt.Println(err)
 		os.Exit(-1)

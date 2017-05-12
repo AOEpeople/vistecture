@@ -21,6 +21,7 @@ type Application struct {
 	InfrastructureDependencies []InfrastructureDependency `json:"infrastructure-dependencies" yaml:"infrastructure-dependencies"`
 	Dependencies               []Dependency               `json:"dependencies" yaml:"dependencies"`
 	Display                    ApplicationDisplaySettings `json:"display,omitempty" yaml:"display,omitempty"`
+	Properties                 map[string]string          `json:"properties,omitempty" yaml:"properties,omitempty"`
 }
 
 func (Component Application) Validate() bool {

@@ -1,0 +1,102 @@
+<html>
+<head>
+    <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
+<style>
+    h1, h2 {
+        font-weight: 300;
+    }
+    h2,h3,h4,h5 {
+        color:#000;
+    }
+
+    table a:link,
+    table a:visited {
+    	color: #333;
+    	font-weight: bold;
+    	text-decoration:none;
+    }
+
+    table a:active,
+    table a:hover {
+    	color: #bd5a35;
+    	text-decoration:underline;
+    }
+    table {
+    	font-family:Arial, Helvetica, sans-serif;
+    	color:#111;
+    	border:0 none;
+        width:100%;
+        box-sizing: border-box;
+    }
+    table > tbody > tr > th {
+    	padding:15px 25px 5px 25px;
+        font-size:110%;
+    	background: #ededed;
+        color:#000;
+
+    }
+    table > tbody > tr > th:first-child {
+    	text-align: left;
+    	padding-left:20px;
+    }
+
+    table tr {
+    	text-align: center;
+    	padding-left:20px;
+    }
+    table td:first-child {
+    	text-align: left;
+    	padding-left:20px;
+    	border-left: 0;
+        vertical-align: top;
+    }
+    table td {
+    	padding:5px;
+    	background: #fafafa;
+        font-size:0.9rem;
+
+    }
+    table tr:nth-child(even) td {
+    	background: #f3f3f3;
+
+    }
+    table tr:last-child td {
+    	border-bottom:0;
+    }
+
+
+    body {
+        padding:0;
+        margin:0;
+        font-family: 'Roboto', sans-serif;
+    }
+
+    small {
+        color: #aaa
+    }
+</style>
+</head>
+<body>
+<section>
+    <header>
+        <h1>{{.Project.Name}} application list</h1>
+    </header>
+    <table>
+        <tr><th>name</th><th>properties</th><tr>
+        {{ range .Project.Applications }}
+        <tr>
+            <td>{{ .Name }}<br /><small>{{ renderContent .GetSummary }}</small></td>
+            <td>
+                <table>
+                    {{ range $key, $value := .Properties }}
+                        <tr><td>{{ $key }}</td><td>{{ $value }}</td></tr>
+                    {{ end }}
+                </table>
+            </td>
+        </tr>
+        {{ end }}
+    </table>
+
+</section>
+</body>
+</html>

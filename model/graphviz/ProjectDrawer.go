@@ -11,6 +11,7 @@ import (
 type ProjectDrawer struct {
 	//inherit
 	originalProject *model.Project
+	iconPath        string
 }
 
 // Decorate Draw function
@@ -21,7 +22,7 @@ func (ProjectDrawer *ProjectDrawer) DrawComplete() string {
 	for key, componentList := range ProjectDrawer.originalProject.GetApplicationByGroup() {
 		drawingResultInGroup := ""
 		for _, component := range componentList {
-			drawer := ApplicationDrawer{originalComponent: component}
+			drawer := ApplicationDrawer{originalComponent: component, iconPath: ProjectDrawer.iconPath}
 			drawingResultInGroup = drawingResultInGroup + drawer.Draw()
 		}
 
@@ -43,13 +44,13 @@ func (ProjectDrawer *ProjectDrawer) DrawComplete() string {
 func (ProjectDrawer *ProjectDrawer) DrawComponent(Component *model.Application) string {
 	var result string
 	result = "digraph { graph [] \n"
-	drawer := ApplicationDrawer{originalComponent: Component}
+	drawer := ApplicationDrawer{originalComponent: Component, iconPath: ProjectDrawer.iconPath}
 	result = result + drawer.Draw()
 	result = result + drawComponentOutgoingRelations(Component)
 	allRelatedComponents, _ := Component.GetAllRelatedComponents(ProjectDrawer.originalProject)
 
 	for _, relatedComponent := range allRelatedComponents {
-		drawer := ApplicationDrawer{originalComponent: &relatedComponent}
+		drawer := ApplicationDrawer{originalComponent: &relatedComponent, iconPath: ProjectDrawer.iconPath}
 		result = result + drawer.Draw()
 	}
 	// Draw infrastructure :-)
@@ -116,8 +117,9 @@ func getEdgeLayoutFromDependency(dependency model.Dependency, display model.Appl
 }
 
 // Factory
-func CreateProjectDrawer(Project *model.Project) *ProjectDrawer {
+func CreateProjectDrawer(Project *model.Project, iconPath string) *ProjectDrawer {
 	var Drawer ProjectDrawer
 	Drawer.originalProject = Project
+	Drawer.iconPath = iconPath
 	return &Drawer
 }

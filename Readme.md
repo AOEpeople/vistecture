@@ -10,9 +10,26 @@ Describe your architecture in JSON (use .json) or YAML (use .yml). You can do th
 - one json file or
 - in multiple json files that are all in one directory. (prefered for structuring bigger definitions)
 
-### Installation:
+### Installation Options:
+#### Go Get
 
-Download a published release from github:
+```
+go get github.com/AOEpeople/vistecture
+```
+#### Use a Docker container
+
+It has graphviz and vistecture installed and can be used directly:
+```
+docker pull aoepeople/vistecture
+```
+
+Example usage with a definition from current folder:
+```
+docker run -v $(pwd):/workspace vistecture  vistecture --config /workspace analyze
+```
+
+#### Download Binaries
+You can also download a published release from github:
 
 E.g. for mac:
 (For linux use "vistecture-linux" and for windows "vistecture.exe")
@@ -39,7 +56,8 @@ You can also clone the repository and use golang tools.
 
 ### Example project definition ( example.yml ):
 
-```
+
+```yaml
 ---
 name: Ports and Adapters DDD Architecture
 applications:
@@ -49,6 +67,9 @@ applications:
   display:
     bordercolor: "#c922b3"
   summary: Short description
+  properties:
+    foo: bar
+    my-version: 0.1.latest
   description: |
         Use markdown to describe the service.
         * one
@@ -98,14 +119,23 @@ Graph for one Application and its direct dependencies (including infrastructure 
 ```
 > vistecture --config=pathtojson graph --application=applicationame | dot -Tpng -o graph.png
 ```
+The generation of the graph can add small icons to the applications. Therefore the tool looks in `iconPath` for a .png file matching the defined "technologie".
 
 You can also render a documentation - expecting the dot command is executable for the application it will embedd svg images:
 
 ```
 > vistecture --config=pathtojson documentation > documentation.html
 ```
+The rendering needs a go html template. The "template" folder comes with a nice example.
+You can download the templates to your local filesystem and use or modify them.
 
-Check for cyclic dependencies and get a first impact analysis:
+E.g.:
+
+```
+> vistecture --config=pathtojson documentation --templatePath=$GOPATH/github.com/AOEpeople/vistecture/templates/htmldocument.tmpl > documentation.html
+```
+
+Check for cyclic dependencies and get a very basic impact analysis:
 
 ```
 > vistecture --config=pathtojson analyze
@@ -157,17 +187,20 @@ For example an ecommerce shop business service may consist of services from  eco
 
 ## Development
 
-Use "make all" to build the binaries.
-
-To run test:`
-
 ```
+go get github.com/AOEpeople/vistecture
+cd github.com/AOEpeople/vistecture
+//build binaries:
+make all
+//build docker
+docker build -t vistecture .
+//run tests
 go test ./tests/...
 ```
 
 
 
-## Tip
+## Jenkins Tip
 
 Disable CSP Header in Jenkins to allow inline styles (required for a direct view of the generated documentation as jenkins artefact)
 Open Jenkins script console and type:

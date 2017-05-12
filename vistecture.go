@@ -1,9 +1,10 @@
 package main
 
 import (
+	"os"
+
 	"github.com/AOEpeople/vistecture/controller"
 	"gopkg.in/urfave/cli.v1"
-	"os"
 )
 
 func action(cb func()) func(c *cli.Context) error {
@@ -14,7 +15,7 @@ func action(cb func()) func(c *cli.Context) error {
 }
 
 func main() {
-	var projectConfigPath, componentName string
+	var projectConfigPath, componentName, templatePath, iconPath string
 
 	app := cli.NewApp()
 	app.Name = "vistecture tool "
@@ -22,7 +23,7 @@ func main() {
 
 	app.Flags = []cli.Flag{
 		cli.StringFlag{
-			Name:        "config",
+			Name:        "config, defintion",
 			Value:       "project",
 			Usage:       "Path to the project definition. Can be a file or a folder with json files",
 			Destination: &projectConfigPath,
@@ -46,18 +47,38 @@ func main() {
 		{
 			Name:   "documentation",
 			Usage:  "Creates (living) documentation",
-			Action: action(documentationController.HTMLDocumentAction),
+			Action: action(func() { documentationController.HTMLDocumentAction(templatePath, iconPath) }),
+			Flags: []cli.Flag{
+				cli.StringFlag{
+					Name:        "templatePath",
+					Value:       "templates/htmldocument.tmpl",
+					Usage:       "Path of template that will be used",
+					Destination: &templatePath,
+				},
+				cli.StringFlag{
+					Name:        "iconPath",
+					Value:       "templates/icons",
+					Usage:       "Path of icons that will be in drawing components",
+					Destination: &iconPath,
+				},
+			},
 		},
 		{
 			Name:   "graph",
 			Usage:  "Build graphviz format which can be used by dot or any other graphviz command. \n go run main.go graph | dot -Tpng -o graph.png \n See: http://www.graphviz.org/pdf/twopi.1.pdf",
-			Action: action(func() { documentationController.GraphvizAction(componentName) }),
+			Action: action(func() { documentationController.GraphvizAction(componentName, iconPath) }),
 			Flags: []cli.Flag{
 				cli.StringFlag{
 					Name:        "application",
 					Value:       "",
 					Usage:       "Name of a application - then only a graph for this application will be drawn",
 					Destination: &componentName,
+				},
+				cli.StringFlag{
+					Name:        "iconPath",
+					Value:       "templates/icons",
+					Usage:       "Path of icons that will be in drawing components",
+					Destination: &iconPath,
 				},
 			},
 		},

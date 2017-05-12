@@ -11,15 +11,16 @@ import (
 type ApplicationDrawer struct {
 	//inherit
 	originalComponent *model.Application
+
+	iconPath string
 }
 
 // Decorate Draw function
 func (ComponentDrawer ApplicationDrawer) Draw() string {
 	var result string
 	Component := ComponentDrawer.originalComponent
-
 	icon := ""
-	iconPath := "templates/res/" + strings.ToLower(Component.Technology) + ".png"
+	iconPath := ComponentDrawer.iconPath + "/" + strings.ToLower(Component.Technology) + ".png"
 	if _, err := os.Stat(iconPath); err == nil {
 		icon = "<IMG SRC=\"" + iconPath + "\" scale=\"true\"/>"
 	}
