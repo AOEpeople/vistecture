@@ -193,12 +193,18 @@ For example an ecommerce shop business service may consist of services from  eco
 ```
 go get github.com/AOEpeople/vistecture
 cd github.com/AOEpeople/vistecture
-//build binaries:
-make all
-//build docker
-docker build -t vistecture .
+
 //run tests
 go test ./tests/...
+
+//build binaries:
+make all
+
+//build docker
+docker build -t aoepeople/vistecture .
+
+
+
 ```
 
 

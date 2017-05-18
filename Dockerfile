@@ -16,5 +16,4 @@ RUN mkdir -p /usr/src/go
 
 RUN export CGO_ENABLED=0 && export GOPATH="/usr/src/go" && go get github.com/AOEpeople/vistecture  && cp -R /usr/src/go/src/github.com/AOEpeople/vistecture/templates /usr/src/go/bin
 
-
 ENV PATH "$PATH:/usr/src/go/bin"

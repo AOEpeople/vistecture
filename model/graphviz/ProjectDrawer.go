@@ -17,7 +17,7 @@ type ProjectDrawer struct {
 // Decorate Draw function
 func (ProjectDrawer *ProjectDrawer) DrawComplete() string {
 	var result string
-	result = "digraph { graph [bgcolor=\"transparent\"] \n"
+	result = "digraph { graph [bgcolor=\"transparent\",overlap=false] \n"
 	// Nodes
 	for key, componentList := range ProjectDrawer.originalProject.GetApplicationByGroup() {
 		drawingResultInGroup := ""
