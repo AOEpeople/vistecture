@@ -163,7 +163,7 @@ Services are used by other systems or humans.
 Service Properties:
 - isPublic: They can be public or just internal.
 - isOpenHost: The service is a well designed published API
-- securityLevel: Classification of the API in regard of security
+- securityLevel: Classification of the API in regard of security (public, internal, confidential, restricted)
 - dependencies: Array of Dependency
 
 **Dependency:**

@@ -42,8 +42,8 @@ func (ComponentDrawer ApplicationDrawer) Draw() string {
 
 	result += ", label=<<TABLE BGCOLOR=\"#1B4E5E\" ROWS=\"*\" CELLPADDING=\"3\" BORDER=\"2\" CELLBORDER=\"0\" CELLSPACING=\"0\"> \n"
 	result += " <TR ><TD BGCOLOR=\"" + tableHeaderColor + "\"><FONT COLOR=\"#fefefe\">" + strings.Replace(strings.ToTitle(Component.Name), " / ", "\n<BR />", 1) + "</FONT></TD><TD BGCOLOR=\"" + tableHeaderColor + "\" width=\"50\" height=\"30\" fixedsize=\"true\" >" + icon + "</TD></TR> \n"
-	if Component.Description != "" {
-		result += " <TR ><TD COLSPAN=\"2\" BGCOLOR=\"#aaaaaa\"><FONT POINT-SIZE=\"10\">" + renderDescription(Component) + "</FONT></TD></TR> \n"
+	if Component.Title != "" {
+		result += " <TR ><TD COLSPAN=\"2\" BGCOLOR=\"#aaaaaa\"><FONT POINT-SIZE=\"10\">" + escape(Component.Title) + "</FONT></TD></TR> \n"
 	}
 	for _, service := range Component.ProvidedServices {
 		var color string
@@ -57,8 +57,8 @@ func (ComponentDrawer ApplicationDrawer) Draw() string {
 		default:
 			color = "#CFCFCF"
 		}
-		result += "<TR><TD COLSPAN=\"2\"  align=\"CENTER\" PORT=\"" + service.Name + "\" BGCOLOR=\"" + color + "\">"
-		result += "<FONT POINT-SIZE=\"10\">" + service.Type + ":" + service.Name + "</FONT>"
+		result += "<TR><TD COLSPAN=\"2\"  align=\"CENTER\" PORT=\"" + escape(service.Name) + "\" BGCOLOR=\"" + color + "\">"
+		result += "<FONT POINT-SIZE=\"10\">" + service.Type + ":" + escape(service.Name) + "</FONT>"
 		if service.IsOpenHost {
 			result += " <FONT COLOR=\"#33911a\">♡</FONT>"
 		}
@@ -69,14 +69,9 @@ func (ComponentDrawer ApplicationDrawer) Draw() string {
 
 }
 
-// returns Title or a Summary of the App
-// Newlines or / are converted to BR
-func renderDescription(app *model.Application) string {
-	description := app.Title
-	if description == "" {
-		description = app.GetSummary()
-	}
-	description = strings.Replace(description, " / ", "<BR /> ", -1)
-	description = strings.Replace(description, "\n", "<BR /> ", -1)
-	return description
+func escape(value string) string {
+
+	value = strings.Replace(value, "&", "&amp;", -1)
+
+	return value
 }

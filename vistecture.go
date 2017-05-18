@@ -24,7 +24,7 @@ func main() {
 
 	app.Flags = []cli.Flag{
 		cli.StringFlag{
-			Name:        "config, defintion",
+			Name:        "config, definition",
 			Value:       "project",
 			Usage:       "Path to the project definition. Can be a file or a folder with json files",
 			Destination: &projectConfigPath,
