@@ -59,10 +59,6 @@ func (ComponentDrawer ApplicationDrawer) Draw() string {
 		}
 		result += "<TR><TD COLSPAN=\"2\"  align=\"CENTER\" PORT=\"" + service.Name + "\" BGCOLOR=\"" + color + "\">"
 		result += "<FONT POINT-SIZE=\"10\">" + service.Type + ":" + service.Name + "</FONT>"
-		if service.Description != "" {
-			result += "<BR /><FONT POINT-SIZE=\"8\">" + service.Description + "</FONT>"
-		}
-
 		result += "</TD></TR>"
 	}
 	result += "</TABLE>>];\n"

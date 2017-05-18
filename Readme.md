@@ -201,7 +201,7 @@ go test ./tests/...
 make all
 
 //build docker
-docker build -t aoepeople/vistecture .
+docker build --no-cache -t aoepeople/vistecture .
 
 
 
