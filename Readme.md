@@ -158,17 +158,29 @@ Normaly a Application is something that is deployed seperate - and has a seperat
 **Service:**
 An Application offers services (more specific service components - but we use services here).
 An application can offer one or more services.
-Services are used by other systems or humans. They can be public or just internal.
+Services are used by other systems or humans. 
+
+Service Properties:
+- isPublic: They can be public or just internal.
+- isOpenHost: The service is a well designed published API
+- securityLevel: Classification of the API in regard of security
+- dependencies: Array of Dependency
 
 **Dependency:**
-A Application or a service can have dependencies. You can add dependency on service level to emphazize that the dependency is only required for a certain service.
-(This is used for impact analyses).
+A Application or a service can have dependencies. 
+You can define dependency on application or also on service level (to emphazize that the dependency is only required for a certain service.)
 A depdendency creates a reference to either a application - or more exact to a service. The relation is of a certain relationship type.
 
+Dependency Properties:
+- reference: String in the format "Applicationname.Servicename" (Servicename is optional)
+- relationship: String - defining the collaboration level between the two bounded contexts / relationship. (See below)
+- isSameLevel: Boolean. Use this to influence graph formating - to emphazise that the services are semantically on the same level
+- resilience: String. Define the implemented resilience pattern
+- isBrowserBased: If the dependency is established in the browser (and not from the backends.) This results in a dashed line.
+
 **supported releationship types:**
+- parntership: Very close collaboration
 - customer-supplier: (use this where a strong dependency extsis that the supplier delivers whats required by the customer. A stronger collaboration between the teams of the components need to exist.)
-- openhost: The used api is designed for integration. Its nice and offers multiple services and the format well thought. Most modern Rest API should fall under this section. This is the default
-- published-language:  (like openhost + documentation / api formats are published (documented) )
 - conformist: (use this to emphazise also a strong dependency that we need the services provided. But there is no chance to influence the interface - so the downstream component is forced to be conform to whatever is provided - and need to make it work.)
 - acl: (Anti coruption layer: If the provided interface is complex or very different from the applications bounded context internal model. The acl emphazizes that the downstream component takes care to isolate his domain with a acl pattern)
 
@@ -181,11 +193,9 @@ For example an ecommerce shop business service may consist of services from  eco
 
 ## Todos
 
--  [X] Graph for single application including infrastructure
 -  [ ] Introduce useful resilience pattern types for the dependencies
 -  [ ] Introduce Business Services as Composite of Applications (Service Components)
 -  [ ] Better Impact Analysis for application failures - inlcuing resilience evaluation
--  [ ] Create complete documentation
 -  [ ] Generate useful artefacts for infrastructure pipeline (e.g. consul acls, service discovery tests...)
 
 ## Development

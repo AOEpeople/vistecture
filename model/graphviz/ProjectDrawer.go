@@ -100,10 +100,10 @@ func getEdgeLayoutFromDependency(dependency model.Dependency, display model.Appl
 	} else {
 		edgeLayout += ", label=\"" + dependency.Relationship + "\""
 	}
-	if dependency.Relationship == "customer-supplier" || dependency.Relationship == "conformist" {
+	if dependency.Relationship == "customer-supplier" {
 		edgeLayout += ", weight=2"
 	}
-	if dependency.Relationship == "customer-supplier" || dependency.Relationship == "conformist" {
+	if dependency.Relationship == "conformist" || dependency.Relationship == "partnership" {
 		edgeLayout += ", weight=3"
 	}
 
