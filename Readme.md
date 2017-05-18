@@ -26,7 +26,10 @@ docker pull aoepeople/vistecture
 Example usage with a definition from current folder:
 ```
 docker run -v $(pwd):/workspace vistecture  vistecture --config /workspace analyze
+
+docker run -v $(pwd):/workspace vistecture  sh -c "vistecture --config /workspace/definition graph --iconPath /usr/src/go/src/github.com/AOEpeople/vistecture/templates/icons | dot -Tpng -o /workspace/graph.png"
 ```
+
 
 #### Download Binaries
 You can also download a published release from github:

@@ -1,0 +1,8 @@
+---
+applications:
+- name: app2
+  title: title1
+  category: external
+  description: External System
+  properties:
+    git: there
