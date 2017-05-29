@@ -8,7 +8,7 @@ A tool for visualizing and analyzing distributed (micro) service oriented archit
 
 Describe your architecture in JSON (use .json) or YAML (use .yml). You can do this in two ways
 - one json file or
-- in multiple json files that are all in one directory. (prefered for structuring bigger definitions)
+- in multiple json files that are all in one directory. (preferred for structuring bigger definitions)
 
 ### Installation Options:
 #### Go Get
@@ -41,7 +41,7 @@ E.g. for mac:
 curl -LOk "https://github.com/AOEpeople/vistecture/releases/download/0.2.beta/vistecture"
 chmod +x vistecture
 
-# dowload the templates
+# download the templates
 curl -LOk "https://github.com/AOEpeople/vistecture/releases/download/0.2.beta/templates.zip"
 unzip templates.zip
 
@@ -122,9 +122,9 @@ Graph for one Application and its direct dependencies (including infrastructure 
 ```
 > vistecture --config=pathtojson graph --application=applicationame | dot -Tpng -o graph.png
 ```
-The generation of the graph can add small icons to the applications. Therefore the tool looks in `iconPath` for a .png file matching the defined "technologie".
+The generation of the graph can add small icons to the applications. Therefore the tool looks in `iconPath` for a .png file matching the defined "technology".
 
-You can also render a documentation - expecting the dot command is executable for the application it will embedd svg images:
+You can also render a documentation - expecting the dot command is executable for the application it will embed svg images:
 
 ```
 > vistecture --config=pathtojson documentation > documentation.html
@@ -149,8 +149,8 @@ Check for cyclic dependencies and get a very basic impact analysis:
 This tool defines:
 
 **Application:**
-A Application is normaly something that offers one or more service-components (or interfaces).
-Normaly a Application is something that is deployed seperate - and has a seperate build and integration pipeline.
+A Application is normally something that offers one or more service-components (or interfaces).
+Normally a Application is something that is deployed separate - and has a separate build and integration pipeline.
 
 - Supported Categories: external (rendered in red)
 - Supported Technologies: go, scala, magento, akeneo, php, anypoint, keycloak (they will get a nice icon)
@@ -158,7 +158,7 @@ Normaly a Application is something that is deployed seperate - and has a seperat
 **Service:**
 An Application offers services (more specific service components - but we use services here).
 An application can offer one or more services.
-Services are used by other systems or humans. 
+Services are used by other systems or humans.
 
 Service Properties:
 - isPublic: They can be public or just internal.
@@ -167,22 +167,22 @@ Service Properties:
 - dependencies: Array of Dependency
 
 **Dependency:**
-A Application or a service can have dependencies. 
-You can define dependency on application or also on service level (to emphazize that the dependency is only required for a certain service.)
-A depdendency creates a reference to either a application - or more exact to a service. The relation is of a certain relationship type.
+A Application or a service can have dependencies.
+You can define dependency on application or also on service level (to emphasize that the dependency is only required for a certain service.)
+A dependency creates a reference to either a application - or more exact to a service. The relation is of a certain relationship type.
 
 Dependency Properties:
 - reference: String in the format "Applicationname.Servicename" (Servicename is optional)
 - relationship: String - defining the collaboration level between the two bounded contexts / relationship. (See below)
-- isSameLevel: Boolean. Use this to influence graph formating - to emphazise that the services are semantically on the same level
+- isSameLevel: Boolean. Use this to influence graph formatting - to emphasise that the services are semantically on the same level
 - resilience: String. Define the implemented resilience pattern
-- isBrowserBased: If the dependency is established in the browser (and not from the backends.) This results in a dashed line.
+- isBrowserBased: If the dependency is established in the browser (and not from the backend.) This results in a dashed line.
 
-**supported releationship types:**
-- parntership: Very close collaboration
-- customer-supplier: (use this where a strong dependency extsis that the supplier delivers whats required by the customer. A stronger collaboration between the teams of the components need to exist.)
-- conformist: (use this to emphazise also a strong dependency that we need the services provided. But there is no chance to influence the interface - so the downstream component is forced to be conform to whatever is provided - and need to make it work.)
-- acl: (Anti coruption layer: If the provided interface is complex or very different from the applications bounded context internal model. The acl emphazizes that the downstream component takes care to isolate his domain with a acl pattern)
+**supported relationship types:**
+- partnership: Very close collaboration
+- customer-supplier: (use this where a strong dependency exists that the supplier delivers whats required by the customer. A stronger collaboration between the teams of the components need to exist.)
+- conformist: (use this to emphasise also a strong dependency that we need the services provided. But there is no chance to influence the interface - so the downstream component is forced to be conform to whatever is provided - and need to make it work.)
+- acl: (Anti corruption layer: If the provided interface is complex or very different from the applications bounded context internal model. The acl emphasizes that the downstream component takes care to isolate his domain with a acl pattern)
 
 (See https://www.aoe.com/tech-radar/strategic-domain-driven-design.html )
 
@@ -196,7 +196,7 @@ For example an ecommerce shop business service may consist of services from  eco
 -  [ ] Introduce useful resilience pattern types for the dependencies
 -  [ ] Introduce Business Services as Composite of Applications (Service Components)
 -  [ ] Better Impact Analysis for application failures - inlcuing resilience evaluation
--  [ ] Generate useful artefacts for infrastructure pipeline (e.g. consul acls, service discovery tests...)
+-  [ ] Generate useful artifacts for infrastructure pipeline (e.g. consul acls, service discovery tests...)
 
 ## Development
 
