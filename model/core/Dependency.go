@@ -4,6 +4,7 @@ import "strings"
 
 type Dependency struct {
 	Reference      string `json:"reference" yaml:"reference"`
+	Description    string `json:"description" yaml:"description"`
 	Relationship   string `json:"relationship" yaml:"relationship"`
 	IsSameLevel    bool   `json:"isSameLevel" yaml:"isSameLevel"`
 	Resilience     bool   `json:"resilience" yaml:"resilience"`

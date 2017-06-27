@@ -97,6 +97,7 @@ applications:
     - reference: domain.domain-objects
     - reference: domain.repository-interfaces
       relationship: uses
+      description: The Application layer implements interfaces (secondary ports) from domain layer
   - name: eventpublish-interfaces
     type: outbound-port
   - name: domainEventAdapter
@@ -169,7 +170,7 @@ Service Properties:
 **Dependency:**
 A Application or a service can have dependencies.
 You can define dependency on application or also on service level (to emphasize that the dependency is only required for a certain service.)
-A dependency creates a reference to either a application - or more exact to a service. The relation is of a certain relationship type.
+A dependency creates a reference to either a application - or more exact to a service. The relation is of a certain relationship type. You can also add a description to explain more details to this dependency.
 
 Dependency Properties:
 - reference: String in the format "Applicationname.Servicename" (Servicename is optional)
