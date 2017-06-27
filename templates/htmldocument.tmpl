@@ -254,7 +254,7 @@
        <h4 id="details-{{ .Name }}-dependencies">dependencies</h4>
        <p>The application requires the following services:</p>
        <ul>
-           {{$dependencies := $component.GetAllDependencies $.Project }}
+           {{$dependencies := $component.GetAllDependencies }}
            {{ range $dependency := $dependencies }}
                 <li>{{$dependency.Reference}}</li>
            {{ end }}

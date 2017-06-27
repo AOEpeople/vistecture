@@ -18,7 +18,7 @@ func (Project *Project) Validate() error {
 		if application.Validate() == false {
 			return errors.New("Component not valid")
 		}
-		dependencies, _ := application.GetAllDependencies(Project)
+		dependencies := application.GetAllDependencies()
 		for _, dependency := range dependencies {
 			dependendComponentName, serviceName := dependency.GetComponentAndServiceNames()
 			error := Project.doesServiceExists(dependendComponentName, serviceName)
@@ -107,7 +107,7 @@ func (Project *Project) findApplicationsThatReferenceComponent(componentReferenc
 	var referencingComponents []*Application
 	//walk through all registered compoents and return those who match
 	for _, currentComponent := range Project.Applications {
-		currentComponentsDependencies, _ := currentComponent.GetAllDependencies(Project)
+		currentComponentsDependencies := currentComponent.GetAllDependencies()
 		for _, dependency := range currentComponentsDependencies {
 			if dependency.GetComponentName() != componentReferenced.Name {
 				continue

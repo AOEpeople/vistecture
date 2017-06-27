@@ -58,9 +58,10 @@ func (Component Application) FindService(nameToMatch string) (*Service, error) {
 	return nil, errors.New("Component " + Component.Name + " has no Interface with Name " + nameToMatch)
 }
 
-//returns the depending Components
-func (GivenComponent Application) GetAllRelatedComponents(Project *Project) ([]Application, error) {
+//returns the  Applications that are a dependency of the current application
+func (GivenComponent Application) GetAllDependencyApplications(Project *Project) ([]Application, error) {
 	var result []Application
+	// Walk dependencies from current component
 	for _, dependency := range GivenComponent.Dependencies {
 		foundComponent, e := dependency.GetComponent(Project)
 		if e != nil {
@@ -68,6 +69,7 @@ func (GivenComponent Application) GetAllRelatedComponents(Project *Project) ([]A
 		}
 		result = append(result, foundComponent)
 	}
+	// Walk dependencies - modeled from current components provides Services
 	for _, service := range GivenComponent.ProvidedServices {
 		for _, dependency := range service.Dependencies {
 			foundComponent, e := dependency.GetComponent(Project)
@@ -77,11 +79,25 @@ func (GivenComponent Application) GetAllRelatedComponents(Project *Project) ([]A
 			result = append(result, foundComponent)
 		}
 	}
+
 	return result, nil
 }
 
+
 //returns the depending Dependencies
-func (GivenComponent Application) GetAllDependencies(Project *Project) ([]Dependency, error) {
+func (GivenComponent Application) GetDependencyTo(ComponentName string) (Dependency, error) {
+	var emptyDependency Dependency;
+	for _, dependency := range GivenComponent.GetAllDependencies() {
+		if (dependency.GetComponentName() == ComponentName) {
+			return dependency,nil
+		}
+	}
+	return emptyDependency, errors.New("Dependency to "+ComponentName+" Not found")
+}
+
+
+//returns the depending Dependencies
+func (GivenComponent Application) GetAllDependencies() []Dependency {
 	var result []Dependency
 	for _, dependency := range GivenComponent.Dependencies {
 		result = append(result, dependency)
@@ -91,5 +107,5 @@ func (GivenComponent Application) GetAllDependencies(Project *Project) ([]Depend
 			result = append(result, dependency)
 		}
 	}
-	return result, nil
+	return result
 }

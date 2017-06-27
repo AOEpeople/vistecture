@@ -40,19 +40,32 @@ func (ProjectDrawer *ProjectDrawer) DrawComplete() string {
 	return result
 }
 
-// Decorate Draw function - Draws only a component with its direct dependencies
+// Decorate Draw function - Draws only a component with its direct dependencies and direct callers
 func (ProjectDrawer *ProjectDrawer) DrawComponent(Component *model.Application) string {
 	var result string
 	result = "digraph { graph [] \n"
 	drawer := ApplicationDrawer{originalComponent: Component, iconPath: ProjectDrawer.iconPath}
 	result = result + drawer.Draw()
-	result = result + drawComponentOutgoingRelations(Component)
-	allRelatedComponents, _ := Component.GetAllRelatedComponents(ProjectDrawer.originalProject)
 
+	// Draw outgoing:
+	result = result + drawComponentOutgoingRelations(Component)
+	allRelatedComponents, _ := Component.GetAllDependencyApplications(ProjectDrawer.originalProject)
 	for _, relatedComponent := range allRelatedComponents {
 		drawer := ApplicationDrawer{originalComponent: &relatedComponent, iconPath: ProjectDrawer.iconPath}
 		result = result + drawer.Draw()
 	}
+	//Draw incoming
+
+	allDependendComponents := ProjectDrawer.originalProject.FindApplicationThatReferenceTo(Component, false)
+	for _, relatedComponent := range allDependendComponents {
+		drawer := ApplicationDrawer{originalComponent: relatedComponent, iconPath: ProjectDrawer.iconPath}
+		result = result + drawer.Draw()
+		dependency, e :=relatedComponent.GetDependencyTo(Component.Name)
+		if e == nil {
+			result += "\"" + relatedComponent.Name + "\" ->" + getGraphVizReference(dependency) + getEdgeLayoutFromDependency(dependency, relatedComponent.Display) + "\n"
+		}
+	}
+
 	// Draw infrastructure :-)
 	for _, infrastructureDependency := range Component.InfrastructureDependencies {
 		result = result + "\n\"" + infrastructureDependency.Type + "\"[shape=box, color=\"#576f96\"] \n"
@@ -79,6 +92,7 @@ func drawComponentOutgoingRelations(Component *model.Application) string {
 
 //Get GRaphviz style reference
 func getGraphVizReference(Dependency model.Dependency) string {
+
 	if strings.Contains(Dependency.Reference, ".") {
 		splitted := strings.Split(Dependency.Reference, ".")
 		return "\"" + splitted[0] + "\":\"" + splitted[1] + "\""
