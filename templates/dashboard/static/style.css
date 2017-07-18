@@ -1,0 +1,8 @@
+body {
+    font-family: Roboto, Open Sans, arial, sans-serif;
+}
+
+td {
+    border: solid;
+    border-width: 1px 0 0 1px;
+}

@@ -83,18 +83,16 @@ func (GivenComponent Application) GetAllDependencyApplications(Project *Project)
 	return result, nil
 }
 
-
 //returns the depending Dependencies
 func (GivenComponent Application) GetDependencyTo(ComponentName string) (Dependency, error) {
-	var emptyDependency Dependency;
+	var emptyDependency Dependency
 	for _, dependency := range GivenComponent.GetAllDependencies() {
-		if (dependency.GetComponentName() == ComponentName) {
-			return dependency,nil
+		if dependency.GetComponentName() == ComponentName {
+			return dependency, nil
 		}
 	}
-	return emptyDependency, errors.New("Dependency to "+ComponentName+" Not found")
+	return emptyDependency, errors.New("Dependency to " + ComponentName + " Not found")
 }
-
 
 //returns the depending Dependencies
 func (GivenComponent Application) GetAllDependencies() []Dependency {

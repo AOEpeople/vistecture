@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" type="text/css" href="static/style.css"/>
+</head>
+
+<body>
+    <table>
+        <tr>
+            <th width="12%">Servicename</th>
+            {{/* <th width="20%">Labels</th> */}}
+            <th width="5%">Kubernetes Replicas</th>
+            <th width="20%">Kubernetes Status</th>
+            <th width="5%">Kubernetes Revision</th>
+            <th width="20%">Ingress</th>
+            <th width="10%">Ingress Response</th>
+            <th>Version</th>
+        </tr>
+        {{- range . }}
+        <tr>
+            <td><strong>{{ .Name }}</strong></td>
+            {{/* <td>
+                {{- range $k, $v := .K8s.Spec.Template.ObjectMeta.Labels }}
+                {{ $k }} = {{ $v }}<br/>
+                {{- end }}
+            </td> */}}
+            <td>{{ .K8s.Status.AvailableReplicas }} / {{ .K8s.Status.Replicas }}</td>
+            <td>
+                {{- range .K8s.Status.Conditions }}
+                {{ .Type }}: {{ .Status }}<br/>{{ .Message }}<br/>
+                {{- end }}
+            </td>
+            <td>{{ .K8s.Status.ObservedGeneration }}</td>
+            <td>
+                {{- range .Ingress }}
+                {{- if not .Alive }}<strike>{{ end }}
+                <a href="https://{{ .Url }}">{{ .Url }}</a>
+                {{- if not .Alive }}</strike>{{ end }}
+                <br />
+                {{- end }}
+            </td>
+            <td>
+                {{- range .Ingress }}
+                {{ .Status }}<br/>
+                {{- end }}
+            </td>
+            <td>
+                {{- range .Version }}
+                {{ . }}<br />
+                {{- end }}
+            </td>
+        </tr>
+        {{- end }}
+    </table>
+</body>
+</html>
