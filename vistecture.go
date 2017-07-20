@@ -83,7 +83,6 @@ func main() {
 				},
 			},
 		},
-		controller.DashboardCommand,
 	}
 
 	app.Run(os.Args)
