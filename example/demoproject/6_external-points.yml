@@ -1,0 +1,12 @@
+---
+applications:
+- name: some-fancy-points-api
+  category: external
+  properties:
+    deployment: external
+  description: External System with awesome Functionality
+- name: more-awesome-system
+  category: external
+  properties:
+    deployment: external
+  description: External System with interesting Information

@@ -1,0 +1,12 @@
+---
+applications:
+- name: warehouse-logistics-adapter
+  description: Some Stuff on Shelves
+  technology: Turbo Pascal
+  properties:
+    deployment: kubernetes
+    main-docker-registry: project
+    healthcheck: /health
+  provided-services:
+  - name: api
+    type: api

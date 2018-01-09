@@ -1,0 +1,23 @@
+---
+applications:
+- name: some-adapter
+  summary: "Connects to an arbitrary API"
+  display:
+    bordercolor: "#b20a0a"
+  technology: anypoint
+  properties:
+    deployment: kubernetes
+    main-docker-registry: project
+  provided-services:
+  - name: enrollment
+    type: api
+  - name: delete
+    type: api
+  - name: add
+    type: api
+  dependencies:
+  - reference: some-other-fancy-adapter
+    relationship: acl
+
+
+

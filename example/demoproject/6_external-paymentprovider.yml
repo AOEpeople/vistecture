@@ -1,0 +1,18 @@
+---
+applications:
+- name: paymentprovider
+  description: External Payment Provider
+  properties:
+    deployment: saas
+  category: external
+  provided-services:
+  - name: auth
+    type: api
+  - name: capture
+    type: api
+  - name: refund
+    type: api
+  - name: payout
+    type: api
+  - name: reports
+    type: api

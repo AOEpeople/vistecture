@@ -1,0 +1,13 @@
+---
+applications:
+- name: some-special-data-importer
+  description: Imports important Data
+  technology: Cobol
+  properties:
+    deployment: kubernetes
+    main-docker-registry: project
+    healthcheck: /api/monitor/healthCheck
+  technology: anypoint
+  provided-services:
+  - name: file
+    type: s3

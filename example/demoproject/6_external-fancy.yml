@@ -1,0 +1,14 @@
+---
+applications:
+- name: some-other-fancy-adapter
+  category: external
+  properties:
+    deployment: external
+  description: External System
+  provided-services:
+  - name: getuser
+    type: api
+  - name: putuser
+    type: api
+  - name: listuser
+    type: api
