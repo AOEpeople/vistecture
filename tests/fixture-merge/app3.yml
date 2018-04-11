@@ -1,0 +1,10 @@
+---
+applications:
+- name: app3
+  title: title1
+  category: core
+  description: Core System
+  properties:
+    deployment: kubernetes
+    main-docker-registry: core
+    healthcheck: /health

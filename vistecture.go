@@ -15,11 +15,11 @@ func action(cb func()) func(c *cli.Context) error {
 }
 
 func main() {
-	var projectConfigPath, componentName, templatePath, iconPath string
+	var projectConfigPath, componentName, templatePath, iconPath, projectName string
 
 	app := cli.NewApp()
 	app.Name = "vistecture tool "
-	app.Version = "0.6.0"
+	app.Version = "0.5.0"
 	app.Usage = "describing and analysing distributed or microservice-style architectures with its depenendcy!"
 
 	app.Flags = []cli.Flag{
@@ -29,10 +29,16 @@ func main() {
 			Usage:       "Path to the project definition. Can be a file or a folder with json files",
 			Destination: &projectConfigPath,
 		},
+		cli.StringFlag{
+			Name:        "project, name, projectname",
+			Value:       "None",
+			Usage:       "Name of the project configuration",
+			Destination: &projectName,
+		},
 	}
 
-	analyzeController := controller.AnalyzeController{ProjectConfigPath: &projectConfigPath}
-	documentationController := controller.DocumentationController{ProjectConfigPath: &projectConfigPath}
+	analyzeController := controller.AnalyzeController{ProjectConfigPath: &projectConfigPath, ProjectName: &projectName}
+	documentationController := controller.DocumentationController{ProjectConfigPath: &projectConfigPath, ProjectName: &projectName}
 
 	app.Commands = []cli.Command{
 		{

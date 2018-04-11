@@ -57,12 +57,13 @@ vistecture help
 You can also clone the repository and use golang tools.
 
 
-### Example project definition ( example.yml ):
+### Example definition ( example.yml ):
 
 
 ```yaml
 ---
-name: Ports and Adapters DDD Architecture
+project:
+- name: Ports and Adapters DDD Architecture
 applications:
 - name: domain
   group: component-internal-bounded-context
@@ -108,21 +109,28 @@ applications:
       relationship: implements
 
 ```
-
+The project configuration is optional and define which components (application configurations) should be used. Please
+also see chapter 'Domain Language / Concepts' for more information
 
 ## Usage
 
 Currently the main feature is generating graphviz compatible graph descriptions that can be used by any of the graphviz layouters like this:
 
-Complete Graph
+Complete Graph:
 ```
 > vistecture --config=pathtojson graph | dot -Tpng -o graph.png
 ```
 
-Graph for one Application and its direct dependencies (including infrastructure dependencies):
+Graph for a dedicated project configuration:
+```
+> vistecture --config=pathtojson graph --projectname=nameoftheproject | dot -Tpng -o graph.png
+```
+
+Graph for one application and its direct dependencies (including infrastructure dependencies):
 ```
 > vistecture --config=pathtojson graph --application=applicationame | dot -Tpng -o graph.png
 ```
+
 The generation of the graph can add small icons to the applications. Therefore the tool looks in `iconPath` for a .png file matching the defined "technology".
 
 You can also render a documentation - expecting the dot command is executable for the application it will embed svg images:
@@ -148,6 +156,25 @@ Check for cyclic dependencies and get a very basic impact analysis:
 ## Domain Language / Concepts:
 
 This tool defines:
+**Repository**
+The repository represents all found entities under the defined config folder.
+
+**Project:**
+A project defines the components and core components to be used for processing at runtime.
+In general, a project acts as an repository "overwrite" to minimize configuration effort.
+
+E.g.:
+- If no project is configured, all available information in the repository will be used for processing.
+- If no core component is configured, all applications with category 'core' available in the repository will be used.
+- If no dependency in a core component is configured, the referenced applications dependencies will be used.
+- If no component is configured, all available 'non core' applications will be taken.
+
+If multiple projects are available and no one is explicit mentioned in the commanline call, the first found will be taken.
+The case that explicit no component or core compontent should be used is currently not covered.
+
+**(Core)Component**
+A component is an application in a project context. It references an application by name. Core components are applications with catergory 'core'and can overwrite the applications dependencies.
+Core components gets a special treatment because they are potentially designed to be used in multiple repositories.
 
 **Application:**
 A Application is normally something that offers one or more service-components (or interfaces).

@@ -22,4 +22,7 @@ func TestCanGetGraph(t *testing.T) {
 	if graph := drawer.DrawComplete(); !strings.Contains(graph, "\"app1\" ->\"app2\"") {
 		t.Error("Graph contains no edge", graph)
 	}
+	if graph := drawer.DrawComplete(); !strings.Contains(graph, "\"app3\"") {
+		t.Error("Graph contains no core app3", graph)
+	}
 }

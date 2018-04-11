@@ -4,16 +4,17 @@ import (
 	"testing"
 
 	core "github.com/AOEpeople/vistecture/model/core"
+	"strings"
 )
 
 func TestCreateProjectFromFixture(t *testing.T) {
 
-	project, e := core.CreateProject("fixture")
-	if e != nil {
-		t.Error("Factory returned error", e)
+	project, errors := core.CreateProject("fixture")
+	if len(errors) >= 1 {
+		t.Error("Factory returned error", errors)
 	}
-	if project.Name != "Fixture with 2 apps" {
-		t.Error("Expected name Fixture with 2 apps")
+	if project.Name != "Fixture Project" {
+		t.Error("Expected name 'Fixture Project'")
 	}
 
 	application, e := project.FindApplication("app1")
@@ -27,12 +28,12 @@ func TestCreateProjectFromFixture(t *testing.T) {
 
 func TestCreateProjectFromFixtureFolderWithMerge(t *testing.T) {
 
-	project, e := core.CreateProject("fixture-merge")
-	if e != nil {
-		t.Error("Factory returned error", e)
+	project, errors := core.CreateProject("fixture-merge")
+	if len(errors) >= 1 {
+		t.Error("Factory returned error", errors)
 	}
-	if project.Name != "test2" {
-		t.Error("Expected name test2")
+	if project.Name != "Fixture Project Merge" {
+		t.Error("Expected name 'Fixture Project Merge'")
 	}
 
 	application, e := project.FindApplication("app1")
@@ -84,4 +85,110 @@ func contains(searchIn []*core.Application, findApp *core.Application) bool {
 		}
 	}
 	return false
+}
+
+func TestCreateProjectFromMultiple1 (t *testing.T) {
+
+	project, errors := core.CreateProjectByName("fixture-multiple", "Fixture Project Multiple 1")
+	if len(errors) >= 1 {
+		t.Error("Factory returned error", errors)
+	}
+	if project.Name != "Fixture Project Multiple 1" {
+		t.Error("Expected name 'Fixture Project Multiple 1'")
+	}
+
+	application, e := project.FindApplication("app1")
+	if e != nil {
+		t.Error("Project returned error when expecting app1", e)
+	}
+	if application.Name != "app1" {
+		t.Error("Expected application with Name app1")
+	}
+
+	if application.Properties["git"] != "here" {
+		t.Error("Expected property git with value here")
+	}
+
+	application3, e := project.FindApplication("app3")
+	if e != nil {
+		t.Error("Project returned error when expecting app3", e)
+	}
+
+	if application3.Category != core.CORE.Value() {
+		t.Error("Expected category for app3 was core", e)
+	}
+}
+
+func TestCreateProjectFromMultiple2 (t *testing.T) {
+
+	project, errors := core.CreateProjectByName("fixture-multiple", "Fixture Project Multiple 2")
+	if len(errors) >= 1 {
+		t.Error("Factory returned error", errors)
+	}
+	if project.Name != "Fixture Project Multiple 2" {
+		t.Error("Expected name 'Fixture Project Multiple 2'")
+	}
+
+	application, e := project.FindApplication("app3")
+	if e == nil {
+		t.Error("Expected application app3 to be missing but is available: " + application.Name)
+	}
+}
+
+func TestCreateProjectFromBoProject (t *testing.T) {
+
+	project, errors := core.CreateProject("fixture-noproject")
+	if len(errors) >= 1 {
+		t.Error("Factory returned error", errors)
+	}
+	if project.Name != "Full Repository" {
+		t.Error("Expected name 'Full Repository'")
+	}
+
+	application, e := project.FindApplication("app5")
+	if e != nil {
+		t.Error("Project returned error when expecting app5", e)
+	}
+	if application.Name != "app5" {
+		t.Error("Expected application with Name app5")
+	}
+}
+
+func TestNoDefinitionFound (t *testing.T) {
+
+	_, errors := core.CreateProjectByName("fake-dir", "")
+	if errors == nil {
+		t.Error("Expected errors to be filled", errors)
+	}
+	if strings.Contains(errors[0].Error(), "Could not build repository: No files found in folder") {
+		t.Error("Expected error: 'Could not build repository: No files found in folder'")
+	}
+}
+
+func TestExampleProjects (t *testing.T) {
+
+	project, errors := core.CreateProject("../example/demoproject")
+	if len(errors) >= 1 {
+		t.Error("Factory returned error", errors)
+	}
+	if project.Name != "Demo Project" {
+		t.Error("Expected name 'Demo Project'")
+	}
+
+	project, errors = core.CreateProject("../example/ports-and-adapters-architecture")
+	if len(errors) >= 1 {
+		t.Error("Factory returned error", errors)
+	}
+	if project.Name != "Ports and Adapters DDD Architecture" {
+		t.Error("Expected name 'Ports and Adapters DDD Architecture'")
+	}
+
+	project, errors = core.CreateProject("../example/sample-architecture")
+	if len(errors) >= 1 {
+		t.Error("Factory returned error", errors)
+	}
+	if project.Name != "Sample" {
+		t.Error("Expected name 'Sample'")
+	}
+
 }

@@ -1,3 +1,7 @@
 {
-  "name": "Demo Project"
+  "projects": [
+    {
+      "name": "Demo Project"
+    }
+  ]
 }

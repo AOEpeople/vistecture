@@ -9,10 +9,11 @@ import (
 
 type AnalyzeController struct {
 	ProjectConfigPath *string
+	ProjectName *string
 }
 
 func (AnalyzeController AnalyzeController) AnalyzeAction() {
-	var project = loadProject(*AnalyzeController.ProjectConfigPath)
+	var project = loadProject(*AnalyzeController.ProjectConfigPath, *AnalyzeController.ProjectName)
 	var ProjectAnalyzer analyze.ProjectAnalyzer
 	errors := ProjectAnalyzer.AnalyzeCyclicDependencies(project)
 	if errors != nil {
@@ -35,6 +36,6 @@ func (AnalyzeController AnalyzeController) AnalyzeAction() {
 }
 
 func (AnalyzeController AnalyzeController) ValidateAction() {
-	loadProject(*AnalyzeController.ProjectConfigPath)
+	loadProject(*AnalyzeController.ProjectConfigPath, *AnalyzeController.ProjectName)
 	fmt.Println("Valid Project definition")
 }

@@ -1,103 +1,99 @@
 package core
 
-import (
-	"encoding/json"
-	"errors"
-	"fmt"
-	"io/ioutil"
-	"os"
-	"path/filepath"
-	"strings"
-
-	"gopkg.in/yaml.v2"
-)
-
 // we need this to bind the interface funcs
 type ProjectFactory struct{}
 
 // Factory
-func CreateProject(filePath string) (*Project, error) {
-	var factory ProjectFactory
-	return factory.LoadFromFilePath(filePath)
+func CreateProject(filePath string) (*Project, []error) {
+	var factory RepositoryFactory
+	var foundErrors []error
+	var projectName string
+
+	repository, error := factory.LoadFromFilePath(filePath)
+	if error != nil {
+		foundErrors = append(foundErrors, error)
+		return &Project{}, foundErrors
+	}
+
+	//Collects errors for repository validation
+	foundErrors = append(foundErrors, repository.Validate()...)
+
+	project, projectErrors := CreateProjectFromRepository(repository, projectName)
+	//Collects errors for project building
+	foundErrors = append(foundErrors, projectErrors...)
+	//Collects errors for project validation
+	foundErrors = append(foundErrors, project.Validate()...)
+
+	return project, foundErrors
 }
 
-//Loads from JSON file or Folder and returns reference to new Project with all data merged
-func (factory *ProjectFactory) LoadFromFilePath(filePath string) (*Project, error) {
-	fileStat, err := os.Stat(filePath)
-	if err != nil {
-		return nil, errors.New(fmt.Sprintf("No valid filepath - error: %v\n", err))
+// Factory for using a dedicated project name
+func CreateProjectByName(filePath string, projectName string) (*Project, []error) {
+	var factory RepositoryFactory
+	var foundErrors []error
+
+	repository, error := factory.LoadFromFilePath(filePath)
+	if error != nil {
+		foundErrors = append(foundErrors, error)
+		return &Project{}, foundErrors
 	}
 
-	var newProject *Project
+	//Collects errors for repository validation
+	foundErrors = append(foundErrors, repository.Validate()...)
 
-	switch mode := fileStat.Mode(); {
-	case mode.IsDir():
-		newProject, err = factory.createFromFolder(filePath)
-	case mode.IsRegular():
-		newProject, err = factory.createFromFile(filePath)
-	}
+	project, projectErrors := CreateProjectFromRepository(repository, projectName)
+	//Collects errors for project building
+	foundErrors = append(foundErrors, projectErrors...)
+	//Collects errors for project validation
+	foundErrors = append(foundErrors, project.Validate()...)
 
-	if err != nil {
-		return nil, err
-	}
-
-	return newProject, nil
+	return project, foundErrors
 }
 
-func (factory *ProjectFactory) createFromFolder(folderPath string) (*Project, error) {
-	files, err := filepath.Glob(strings.TrimRight(folderPath, "/") + "/*")
-	if err != nil {
-		return nil, err
-	}
+func CreateProjectFromRepository(repository *Repository, projectName string) (*Project, []error) {
+
 	var newProject Project
-	if len(files) == 0 {
-		return nil, errors.New("No files found in folder \"" + folderPath + "\"")
-	}
-	for _, file := range files {
+	var foundErrors []error
 
-		fileInfo, fileErr := os.Stat(file)
-		if fileErr != nil {
-			return &newProject, fileErr
+
+	projectInfo := repository.GetProjectInfo(projectName)
+
+	newProject.Name = projectInfo.Name
+
+	//Filter project components if defined. If not all repo applications will be used.
+	if len(projectInfo.Components) >= 1 {
+		for _, component := range projectInfo.Components {
+			application, error := repository.FindApplicationByName(component.Name)
+			if error == nil {
+				newProject.Applications = append(newProject.Applications, &application)
+			} else {
+				foundErrors = append(foundErrors, error)
+			}
 		}
-
-		var tempProject *Project
-		var tmpError error
-
-		if fileInfo.IsDir() {
-			tempProject, tmpError = factory.createFromFolder(file)
-		} else if !fileInfo.IsDir() && (strings.Contains(fileInfo.Name(), ".json") || strings.Contains(fileInfo.Name(), ".yml")) {
-			tempProject, tmpError = factory.createFromFile(file)
-		} else {
-			continue
-		}
-
-		if tmpError != nil {
-			return &newProject, errors.New(tmpError.Error() + " in file " + file)
-		}
-		err = newProject.MergeWith(tempProject)
-		if err != nil {
-			return &newProject, errors.New(err.Error() + " in file " + file)
-		}
-	}
-	return &newProject, nil
-}
-
-func (factory *ProjectFactory) createFromFile(fileName string) (*Project, error) {
-	file, err := ioutil.ReadFile(fileName)
-	if err != nil {
-		return nil, errors.New("File error: " + err.Error())
-	}
-	var newProject Project
-	if strings.Contains(fileName, ".json") {
-		err = json.Unmarshal(file, &newProject)
-	} else if strings.Contains(fileName, ".yml") {
-		err = yaml.Unmarshal(file, &newProject)
 	} else {
-		err = errors.New("Unknown file type")
+		components := repository.FindNonCoreApplications()
+		newProject.Applications = components
 	}
 
-	if err != nil {
-		return nil, errors.New(fmt.Sprintf("File broken in %v error: %v\n", fileName, err))
+
+	//Filter project for core components if any is defined
+	if len(projectInfo.CoreComponents) >= 1 {
+		for _, component := range projectInfo.CoreComponents {
+			application, error := repository.FindApplicationByName(component.Name)
+			if error == nil {
+				dependencies := component.Dependencies
+				if component.NoDependency || len(dependencies) > 0 {
+					application.Dependencies = component.Dependencies
+				}
+				newProject.Applications = append(newProject.Applications, &application)
+			} else {
+				foundErrors = append(foundErrors, error)
+			}
+		}
+	} else {
+		for _, component := range repository.FindApplicationsByCategory(CORE) {
+			newProject.Applications = append(newProject.Applications, component)
+		}
 	}
-	return &newProject, nil
+	return &newProject, foundErrors
 }

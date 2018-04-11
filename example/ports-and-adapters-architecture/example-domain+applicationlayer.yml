@@ -1,5 +1,6 @@
 ---
-name: Ports and Adapters DDD Architecture
+projects:
+- name: Ports and Adapters DDD Architecture
 applications:
 - name: domain
   group: component-internal-bounded-context

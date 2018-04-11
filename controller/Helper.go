@@ -6,14 +6,14 @@ import (
 	"github.com/AOEpeople/vistecture/model/core"
 )
 
-func loadProject(ProjectConfigPath string) *core.Project {
-	project, err := core.CreateProject(ProjectConfigPath)
-	if err != nil {
-		log.Fatal("Project JSON is not valid:", err)
-	}
-	err = project.Validate()
-	if err != nil {
-		log.Fatal("Validation Errors:", err)
+func loadProject(ProjectConfigPath string, ProjectName string) *core.Project {
+	project, errors := core.CreateProjectByName(ProjectConfigPath, ProjectName)
+
+	if len(errors) > 0 {
+		for _, err := range errors {
+			log.Print("Project creation failed because of: ", err)
+		}
+		log.Fatal("Project loading aborted.")
 	}
 	return project
 }

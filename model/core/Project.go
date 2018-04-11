@@ -5,29 +5,34 @@ import (
 )
 
 type Project struct {
-	Name         string         `json:"name" yaml:"name" `
-	Applications []*Application `json:"applications" yaml:"applications"`
+	Name         string
+	Applications []*Application
 	// TODO - add services
 }
 
 const NOGROUP = "nogroup"
 
 //Validates Project and Components
-func (Project *Project) Validate() error {
+func (Project *Project) Validate() []error {
+
+	var foundErrors []error
+
 	for _, application := range Project.Applications {
 		if application.Validate() == false {
-			return errors.New("Component not valid")
+			foundErrors = append(foundErrors, errors.New("Component not valid"))
 		}
 		dependencies := application.GetAllDependencies()
+
 		for _, dependency := range dependencies {
 			dependendComponentName, serviceName := dependency.GetComponentAndServiceNames()
+
 			error := Project.doesServiceExists(dependendComponentName, serviceName)
 			if error != nil {
-				return errors.New("Component " + application.Name + " Dependencies has Error:" + error.Error())
+				foundErrors = append(foundErrors, errors.New("Component " + application.Name + " Dependencies has Error:" + error.Error()))
 			}
 		}
 	}
-	return nil
+	return foundErrors
 }
 
 //Find by Name
@@ -51,14 +56,6 @@ func (Project *Project) FindApplicationThatReferenceTo(application *Application,
 
 }
 
-//Check if a component with Name exist
-func (Project *Project) HasApplicationWithName(nameToMatch string) bool {
-	if _, e := Project.FindApplication(nameToMatch); e != nil {
-		return false
-	}
-	return true
-}
-
 // Get Map with components grouped by Group.
 // NOGROUP is used for ungrouped components
 func (Project *Project) GetApplicationByGroup() map[string][]*Application {
@@ -71,20 +68,6 @@ func (Project *Project) GetApplicationByGroup() map[string][]*Application {
 		}
 	}
 	return m
-}
-
-//Merges the given Project with another. The current project is the one who will be modified.
-func (Project *Project) MergeWith(OtherProject *Project) error {
-	for _, component := range OtherProject.Applications {
-		if Project.HasApplicationWithName(component.Name) {
-			return errors.New(component.Name + " Is duplicated")
-		}
-		Project.Applications = append(Project.Applications, component)
-	}
-	if OtherProject.Name != "" {
-		Project.Name = OtherProject.Name
-	}
-	return nil
 }
 
 func (Project *Project) findAllApplicationsThatReferenceComponent(componentReferenced *Application) []*Application {

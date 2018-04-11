@@ -1,5 +1,14 @@
 {
-  "name": "Fixture with 2 apps",
+  "projects": [
+    {
+    "name": "Fixture Project",
+    "core-components": [
+      {
+        "name": "app3"
+      }
+    ]
+  }
+  ],
   "applications": [
     {
       "name": "app1",
@@ -26,6 +35,11 @@
           "name": "service1"
         }
       ]
+    },
+    {
+      "name": "app3",
+      "description": "app3 description",
+      "category": "core"
     }
   ]
 }

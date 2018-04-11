@@ -17,6 +17,7 @@ import (
 type (
 	DocumentationController struct {
 		ProjectConfigPath *string
+		ProjectName *string
 	}
 
 	TemplateData struct {
@@ -25,7 +26,7 @@ type (
 )
 
 func (DocumentationController DocumentationController) GraphvizAction(componentName string, iconPath string) {
-	Project := loadProject(*DocumentationController.ProjectConfigPath)
+	Project := loadProject(*DocumentationController.ProjectConfigPath, *DocumentationController.ProjectName)
 	ProjectDrawer := graphviz.CreateProjectDrawer(Project, iconPath)
 	if componentName != "" {
 		Component, e := Project.FindApplication(componentName)
@@ -41,7 +42,7 @@ func (DocumentationController DocumentationController) GraphvizAction(componentN
 }
 
 func (DocumentationController DocumentationController) HTMLDocumentAction(templatePath string, iconPath string) {
-	project := loadProject(*DocumentationController.ProjectConfigPath)
+	project := loadProject(*DocumentationController.ProjectConfigPath, *DocumentationController.ProjectName)
 	tpl := template.New(filepath.Base(templatePath))
 
 	tpl.Funcs(template.FuncMap{
