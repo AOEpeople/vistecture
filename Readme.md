@@ -62,8 +62,15 @@ You can also clone the repository and use golang tools.
 
 ```yaml
 ---
-project:
+projects:
 - name: Ports and Adapters DDD Architecture
+- name: Ports and Adapters DDD Architecture minimum
+  core-components:
+  - name: infrastructure
+    no-dependency: true
+  components:
+  - name: domain
+  - name: application
 applications:
 - name: domain
   group: component-internal-bounded-context
@@ -107,9 +114,23 @@ applications:
     dependencies:
     - reference: domain.eventpublish-interfaces
       relationship: implements
+- name: infrastructure
+  title: Infrastructure
+  category: core
+  description: Framework, Technical Details, Database Access
+  dependencies:
+  - reference: admin-interface
+- name: admin-interface
+  title: Administration Interface
+  category: core
+  description: Interface for administration
+- name: adapter
+  title: Individual Adapter
+  category: individual
+  description: Individual System
 
 ```
-The project configuration is optional and define which components (application configurations) should be used. Please
+The project configuration is optional and define which components (application configurations) should be used for processing. Please
 also see chapter 'Domain Language / Concepts' for more information
 
 ## Usage
@@ -156,6 +177,7 @@ Check for cyclic dependencies and get a very basic impact analysis:
 ## Domain Language / Concepts:
 
 This tool defines:
+
 **Repository**
 The repository represents all found entities under the defined config folder.
 

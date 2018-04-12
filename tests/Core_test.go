@@ -130,8 +130,13 @@ func TestCreateProjectFromMultiple2 (t *testing.T) {
 	}
 
 	application, e := project.FindApplication("app3")
+	if len(application.Dependencies) >= 1 {
+		t.Error("Expected application app3 to have no dependencies because 'no-dependencies' is set to true.")
+	}
+
+	application, e = project.FindApplication("app4")
 	if e == nil {
-		t.Error("Expected application app3 to be missing but is available: " + application.Name)
+		t.Error("Expected application app4 to be missing but is available: " + application.Name)
 	}
 }
 
@@ -151,6 +156,18 @@ func TestCreateProjectFromBoProject (t *testing.T) {
 	}
 	if application.Name != "app5" {
 		t.Error("Expected application with Name app5")
+	}
+}
+
+func TestCreateReadmeExample (t *testing.T) {
+
+	_, errors := core.CreateProjectByName("fixture-readme", "Ports and Adapters DDD Architecture")
+	if len(errors) >= 1 {
+		t.Error("Factory returned error", errors)
+	}
+	_, errors = core.CreateProjectByName("fixture-readme", "Ports and Adapters DDD Architecture minimum")
+	if len(errors) >= 1 {
+		t.Error("Factory returned error", errors)
 	}
 }
 

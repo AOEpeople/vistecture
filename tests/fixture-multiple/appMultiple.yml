@@ -3,10 +3,15 @@ projects:
 - name: Fixture Project Multiple 1
   core-components:
   - name: app3
-    no-dependency: false
+    dependencies:
+    - reference: app1
+  - name: app4
+  components:
+  - name: app1
 - name: Fixture Project Multiple 2
   core-components:
-  - name: app4
+  - name: app3
+    no-dependency: true
   components:
   - name: app2
 applications:
@@ -35,7 +40,9 @@ applications:
     deployment: kubernetes
     main-docker-registry: core
     healthcheck: /health
+  dependencies:
+    - reference: app4
 - name: app4
   title: Core2
-  category: individual
-  description: Individual System
+  category: core
+  description: Core System
