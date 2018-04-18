@@ -27,18 +27,7 @@ func (Repository *Repository) FindApplicationByName(nameToMatch string) (Applica
 			return *component, nil
 		}
 	}
-	return Application{}, errors.New("Component with name '" + nameToMatch + "' not found")
-}
-
-func (Repository *Repository) FindNonCoreApplications() []*Application {
-
-	var resultApplications []*Application
-	for _, currentApplications := range Repository.Applications {
-		if currentApplications.Category != CORE.Value() {
-			resultApplications = append(resultApplications, currentApplications)
-		}
-	}
-	return resultApplications
+	return Application{}, errors.New("Application with name '" + nameToMatch + "' not found")
 }
 
 func (Repository *Repository) FindApplicationsByCategory(categoryToMatch Category) []*Application {
@@ -61,31 +50,32 @@ func (Repository *Repository) HasApplicationWithName(nameToMatch string) bool {
 }
 
 //Find project info by Name
-func (Repository *Repository) FindProjectInfoByName(nameToMatch string) (ProjectConfig, error) {
-	for _, projectInfo := range Repository.ProjectConfig {
-		if projectInfo.Name == nameToMatch {
-			return *projectInfo, nil
+func (Repository *Repository) FindProjectConfigByName(nameToMatch string) (ProjectConfig, error) {
+	for _, projectConfig := range Repository.ProjectConfig {
+		if projectConfig.Name == nameToMatch {
+			return *projectConfig, nil
 		}
 	}
 	return ProjectConfig{}, errors.New("Project info with name '" + nameToMatch + "' not found")
 }
 
 //Gets the project info by name. If the name is not found, return the first available one.
-func (Repository *Repository) GetProjectInfo(nameToMatch string) (*ProjectConfig) {
-	projectInfo, error := Repository.FindProjectInfoByName(nameToMatch)
+func (Repository *Repository) GetProjectConfig(nameToMatch string) (*ProjectConfig) {
+	projectConfig, error := Repository.FindProjectConfigByName(nameToMatch)
 	if error != nil {
 		if len(Repository.ProjectConfig) >= 1 {
 			return Repository.ProjectConfig[0]
+
 		} else {
 			return &ProjectConfig{Name:"Full Repository"}
 		}
 	}
-	return  &projectInfo
+	return  &projectConfig
 }
 
 //Check if a component with Name exist
 func (Repository *Repository) HasProjectInfoWithName(nameToMatch string) bool {
-	if _, e := Repository.FindProjectInfoByName(nameToMatch); e != nil {
+	if _, e := Repository.FindProjectConfigByName(nameToMatch); e != nil {
 		return false
 	}
 	return true

@@ -18,9 +18,7 @@ func (Project *Project) Validate() []error {
 	var foundErrors []error
 
 	for _, application := range Project.Applications {
-		if application.Validate() == false {
-			foundErrors = append(foundErrors, errors.New("Component not valid"))
-		}
+		foundErrors = append(foundErrors, application.Validate()...)
 		dependencies := application.GetAllDependencies()
 
 		for _, dependency := range dependencies {
@@ -28,7 +26,7 @@ func (Project *Project) Validate() []error {
 
 			error := Project.doesServiceExists(dependendComponentName, serviceName)
 			if error != nil {
-				foundErrors = append(foundErrors, errors.New("Component " + application.Name + " Dependencies has Error:" + error.Error()))
+				foundErrors = append(foundErrors, errors.New("Application '" + application.Name + "' Dependencies has Error: " + error.Error()))
 			}
 		}
 	}
@@ -42,7 +40,7 @@ func (Project *Project) FindApplication(nameToMatch string) (Application, error)
 			return *component, nil
 		}
 	}
-	return Application{}, errors.New("Component with name " + nameToMatch + " not found")
+	return Application{}, errors.New("Application with name '" + nameToMatch + "' not found")
 }
 
 //Find by Name

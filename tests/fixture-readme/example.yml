@@ -2,12 +2,26 @@
 projects:
 - name: Ports and Adapters DDD Architecture
 - name: Ports and Adapters DDD Architecture minimum
-  core-components:
+  included-applications:
   - name: infrastructure
-    no-dependency: true
-  components:
+    title: Infrastructure Minimum
+    display:
+      rotate: true
+      bordercolor: "#4e668c"
   - name: domain
+    title: Domain Minimum
+    technology: play
+    provided-services:
+    - name: domain-objects
+      type: inbound-port
   - name: application
+    title: Domain Minimum
+    provided-services:
+    - name: application-services
+      type: inbound-port
+      description: Main Application API
+      dependencies:
+      - reference: domain.domain-objects
 applications:
 - name: domain
   group: component-internal-bounded-context

@@ -56,44 +56,22 @@ func CreateProjectFromRepository(repository *Repository, projectName string) (*P
 	var foundErrors []error
 
 
-	projectInfo := repository.GetProjectInfo(projectName)
+	projectConfig := repository.GetProjectConfig(projectName)
 
-	newProject.Name = projectInfo.Name
+	newProject.Name = projectConfig.Name
 
-	//Filter project components if defined. If not all repo applications will be used.
-	if len(projectInfo.Components) >= 1 {
-		for _, component := range projectInfo.Components {
-			application, error := repository.FindApplicationByName(component.Name)
+	if len(projectConfig.IncludedApplication) >= 1 {
+		for _, application := range projectConfig.IncludedApplication {
+			projectApplication, error := repository.FindApplicationByName(application.Name)
 			if error == nil {
-				newProject.Applications = append(newProject.Applications, &application)
+				projectApplication.MergeWith(*application)
+				newProject.Applications = append(newProject.Applications, &projectApplication)
 			} else {
 				foundErrors = append(foundErrors, error)
 			}
 		}
 	} else {
-		components := repository.FindNonCoreApplications()
-		newProject.Applications = components
-	}
-
-
-	//Filter project for core components if any is defined
-	if len(projectInfo.CoreComponents) >= 1 {
-		for _, component := range projectInfo.CoreComponents {
-			application, error := repository.FindApplicationByName(component.Name)
-			if error == nil {
-				dependencies := component.Dependencies
-				if component.NoDependency || len(dependencies) > 0 {
-					application.Dependencies = component.Dependencies
-				}
-				newProject.Applications = append(newProject.Applications, &application)
-			} else {
-				foundErrors = append(foundErrors, error)
-			}
-		}
-	} else {
-		for _, component := range repository.FindApplicationsByCategory(CORE) {
-			newProject.Applications = append(newProject.Applications, component)
-		}
+		newProject.Applications = repository.Applications
 	}
 	return &newProject, foundErrors
 }

@@ -1,18 +1,19 @@
 ---
 projects:
 - name: Fixture Project Multiple 1
-  core-components:
+  included-applications:
   - name: app3
     dependencies:
     - reference: app1
   - name: app4
-  components:
   - name: app1
+    properties:
+      git: here
 - name: Fixture Project Multiple 2
-  core-components:
+  included-applications:
   - name: app3
-    no-dependency: true
-  components:
+    dependencies:
+    - reference: app2
   - name: app2
 applications:
 - name: app1

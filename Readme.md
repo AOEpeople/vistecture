@@ -178,25 +178,18 @@ Check for cyclic dependencies and get a very basic impact analysis:
 
 This tool defines:
 
-**Repository**
+**Repository:**
 The repository represents all found entities under the defined config folder.
 
 **Project:**
-A project defines the components and core components to be used for processing at runtime.
+A project defines which applications to be included for processing at runtime.
 In general, a project acts as an repository "overwrite" to minimize configuration effort.
 
-E.g.:
-- If no project is configured, all available information in the repository will be used for processing.
-- If no core component is configured, all applications with category 'core' available in the repository will be used.
-- If no dependency in a core component is configured, the referenced applications dependencies will be used.
-- If no component is configured, all available 'non core' applications will be taken.
-
+If no project or no "included applications" are configured, all available applications in the repository will be taken.
 If multiple projects are available and no one is explicit mentioned in the commanline call, the first found will be taken.
-The case that explicit no component or core compontent should be used is currently not covered.
 
-**(Core)Component**
-A component is an application in a project context. It references an application by name. Core components are applications with catergory 'core'and can overwrite the applications dependencies.
-Core components gets a special treatment because they are potentially designed to be used in multiple repositories.
+The "included-applications" container references defined applications by name but can overwrite all other root attributes
+of an applpication like title, properties etc.
 
 **Application:**
 A Application is normally something that offers one or more service-components (or interfaces).
