@@ -2,11 +2,10 @@ package core
 
 import (
 	"errors"
-	"strings"
 	"html/template"
+	"strings"
+
 	"github.com/russross/blackfriday"
-	"bytes"
-	"encoding/json"
 )
 
 type Application struct {
@@ -98,7 +97,7 @@ func (GivenApplication Application) GetDependencyTo(ComponentName string) (Depen
 }
 
 //returns the depending Dependencies
-func (GivenApplication Application) GetAllDependencies() []Dependency {
+func (GivenApplication *Application) GetAllDependencies() []Dependency {
 	var result []Dependency
 	for _, dependency := range GivenApplication.Dependencies {
 		result = append(result, dependency)
@@ -112,16 +111,37 @@ func (GivenApplication Application) GetAllDependencies() []Dependency {
 }
 
 //Merges the given application with another. The current application is the one who will be modified.
-func (Application *Application) MergeWith(OtherApplication Application) error {
+func (app *Application) GetMerged(applicationReference ApplicationReference) (Application, error) {
+	newApplication := *app
 
-	marshaledApplication, error := json.Marshal(OtherApplication)
-
-	if error != nil {
-		return error
+	if applicationReference.Name != "" {
+		newApplication.Name = applicationReference.Name
 	}
-	error = json.NewDecoder(bytes.NewReader(marshaledApplication)).Decode(&Application)
-	if error != nil {
-		return error
+	if applicationReference.Category != "" {
+		newApplication.Category = applicationReference.Category
 	}
-	return nil
+	if applicationReference.Description != "" {
+		newApplication.Description = applicationReference.Description
+	}
+	if applicationReference.AddDependencies != nil {
+		newApplication.Dependencies = append(app.Dependencies, applicationReference.AddDependencies...)
+	}
+	if applicationReference.AddProvidedServices != nil {
+		newApplication.ProvidedServices = append(app.ProvidedServices, applicationReference.AddProvidedServices...)
+	}
+	if applicationReference.Category != "" {
+		newApplication.Category = applicationReference.Category
+	}
+	if applicationReference.Group != "" {
+		newApplication.Group = applicationReference.Group
+	}
+	if applicationReference.Properties != nil {
+		if newApplication.Properties == nil {
+			newApplication.Properties = make(map[string]string)
+		}
+		for k, v := range applicationReference.Properties {
+			newApplication.Properties[k] = v
+		}
+	}
+	return newApplication, nil
 }

@@ -55,17 +55,20 @@ func CreateProjectFromRepository(repository *Repository, projectName string) (*P
 	var newProject Project
 	var foundErrors []error
 
-
 	projectConfig := repository.GetProjectConfig(projectName)
 
 	newProject.Name = projectConfig.Name
 
 	if len(projectConfig.IncludedApplication) >= 1 {
-		for _, application := range projectConfig.IncludedApplication {
-			projectApplication, error := repository.FindApplicationByName(application.Name)
+		for _, referencedApplication := range projectConfig.IncludedApplication {
+			projectApplication, error := repository.FindApplicationByName(referencedApplication.Name)
 			if error == nil {
-				projectApplication.MergeWith(*application)
-				newProject.Applications = append(newProject.Applications, &projectApplication)
+				mergedApplication, err := projectApplication.GetMerged(*referencedApplication)
+				if err != nil {
+					foundErrors = append(foundErrors, err)
+					continue
+				}
+				newProject.Applications = append(newProject.Applications, &mergedApplication)
 			} else {
 				foundErrors = append(foundErrors, error)
 			}

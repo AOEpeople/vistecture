@@ -6,8 +6,8 @@ import (
 )
 
 type ProjectConfig struct {
-	Name           string           	`json:"name" yaml:"name" `
-	IncludedApplication []*Application 	`json:"included-applications" yaml:"included-applications"`
+	Name                string                  `json:"name" yaml:"name" `
+	IncludedApplication []*ApplicationReference `json:"included-applications" yaml:"included-applications"`
 }
 
 //Validates Project and Components
@@ -22,4 +22,3 @@ func (ProjectConfig *ProjectConfig) Validate() []error {
 	}
 	return foundErrors
 }
-
