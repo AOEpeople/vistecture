@@ -265,7 +265,8 @@ go test ./tests/...
 //build binaries:
 make all
 
-//docker
+// releasing: docker publish
+// push changes to github / adjust version number in Makefile and run:
 make dockerpublish
 
 

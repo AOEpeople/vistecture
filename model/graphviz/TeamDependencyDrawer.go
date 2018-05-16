@@ -56,6 +56,15 @@ func (d *TeamDependencyDrawer) DrawComplete() string {
 						relationShip = "open-host"
 					}
 				}
+				referenceToApplicationAlreadyPResent := false
+				for _, rel := range teamOutgoing[application.Team] {
+					if rel.ForApplication == dependencyApplication.Name {
+						referenceToApplicationAlreadyPResent = true
+					}
+				}
+				if referenceToApplicationAlreadyPResent {
+					continue
+				}
 				teamOutgoing[application.Team] = append(teamOutgoing[application.Team],
 					OutgoingTeamRelation{
 						Relationship:   relationShip,
