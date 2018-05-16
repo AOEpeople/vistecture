@@ -17,7 +17,7 @@ import (
 type (
 	DocumentationController struct {
 		ProjectConfigPath *string
-		ProjectName *string
+		ProjectName       *string
 	}
 
 	TemplateData struct {
@@ -39,6 +39,12 @@ func (DocumentationController DocumentationController) GraphvizAction(componentN
 		fmt.Print(ProjectDrawer.DrawComplete())
 	}
 
+}
+
+func (DocumentationController DocumentationController) TeamGraphvizAction(summaryRelation string) {
+	Project := loadProject(*DocumentationController.ProjectConfigPath, *DocumentationController.ProjectName)
+	Drawer := graphviz.CreateTeamDependencyDrawer(Project, summaryRelation != "")
+	fmt.Print(Drawer.DrawComplete())
 }
 
 func (DocumentationController DocumentationController) HTMLDocumentAction(templatePath string, iconPath string) {

@@ -9,7 +9,7 @@ import (
 
 type AnalyzeController struct {
 	ProjectConfigPath *string
-	ProjectName *string
+	ProjectName       *string
 }
 
 func (AnalyzeController AnalyzeController) AnalyzeAction() {
@@ -37,5 +37,5 @@ func (AnalyzeController AnalyzeController) AnalyzeAction() {
 
 func (AnalyzeController AnalyzeController) ValidateAction() {
 	loadProject(*AnalyzeController.ProjectConfigPath, *AnalyzeController.ProjectName)
-	fmt.Println("Valid Project definition")
+	fmt.Println("Valid project definition")
 }

@@ -1,4 +1,5 @@
 SOURCES=vistecture.go
+VERSION=0.5.1
 
 .PHONY: all templates darwin linux windows default
 
@@ -17,3 +18,8 @@ linux: $(SOURCES) templates
 
 windows: $(SOURCES) templates
 	GOOS=windows go build -o build-artifacts/vistecture.exe $(SOURCES)
+
+dockerpublish:
+	docker build --no-cache -t aoepeople/vistecture .
+	docker tag aoepeople/vistecture:latest aoepeople/vistecture:$(VERSION)
+	docker push aoepeople/vistecture

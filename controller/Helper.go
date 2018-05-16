@@ -11,9 +11,9 @@ func loadProject(ProjectConfigPath string, ProjectName string) *core.Project {
 
 	if len(errors) > 0 {
 		for _, err := range errors {
-			log.Print("Project creation failed because of: ", err)
+			log.Print("project creation failed because of: ", err)
 		}
-		log.Fatal("Project loading aborted.")
+		log.Fatal("project loading aborted.")
 	}
 	return project
 }

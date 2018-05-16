@@ -10,15 +10,15 @@ type ProjectConfig struct {
 	IncludedApplication []*ApplicationReference `json:"included-applications" yaml:"included-applications"`
 }
 
-//Validates Project and Components
+//Validates project and Components
 func (ProjectConfig *ProjectConfig) Validate() []error {
 	var foundErrors []error
 
 	if len(ProjectConfig.Name) <= 0 {
-		foundErrors = append(foundErrors, errors.New("Project config with no name found."))
+		foundErrors = append(foundErrors, errors.New("project config with no name found."))
 	}
 	if strings.Contains(ProjectConfig.Name, ".") {
-		foundErrors = append(foundErrors, errors.New("Project config name contains '.'"))
+		foundErrors = append(foundErrors, errors.New("project config name contains '.'"))
 	}
 	return foundErrors
 }

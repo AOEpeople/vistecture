@@ -9,7 +9,7 @@ import (
 
 type ProjectAnalyzer struct{}
 
-//Analyze validates Project and Components
+//Analyze validates project and Components
 func (projectAnalyzer *ProjectAnalyzer) AnalyzeCyclicDependencies(project *core.Project) []error {
 	//Walk dependencies add add service to called stack
 	var stack []string
@@ -23,7 +23,7 @@ func (projectAnalyzer *ProjectAnalyzer) AnalyzeCyclicDependencies(project *core.
 	return errors
 }
 
-//Analyze validates Project and Components
+//Analyze validates project and Components
 func (projectAnalyzer *ProjectAnalyzer) ImpactAnalyze(project *core.Project) []string {
 	//Walk dependencies add add service to called stack
 	var impactsPerComponent []string

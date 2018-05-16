@@ -8,6 +8,7 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+
 	"gopkg.in/yaml.v2"
 )
 
@@ -20,7 +21,7 @@ func CreateRepository(filePath string) (*Repository, error) {
 	return factory.LoadFromFilePath(filePath)
 }
 
-//Loads from JSON file or Folder and returns reference to new Project with all data merged
+//Loads from JSON file or Folder and returns reference to new project with all data merged
 func (factory *RepositoryFactory) LoadFromFilePath(filePath string) (*Repository, error) {
 	fileStat, err := os.Stat(filePath)
 	if err != nil {

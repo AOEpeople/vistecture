@@ -15,7 +15,7 @@ func action(cb func()) func(c *cli.Context) error {
 }
 
 func main() {
-	var projectConfigPath, componentName, templatePath, iconPath, projectName string
+	var projectConfigPath, componentName, templatePath, iconPath, projectName, summaryRelation string
 
 	app := cli.NewApp()
 	app.Name = "vistecture tool "
@@ -86,6 +86,19 @@ func main() {
 					Value:       "templates/icons",
 					Usage:       "Path of icons that will be in drawing components",
 					Destination: &iconPath,
+				},
+			},
+		},
+		{
+			Name:   "teamGraph",
+			Usage:  "Build a overview of involved teams and the relations based from the architecture (Conways law)",
+			Action: action(func() { documentationController.TeamGraphvizAction(summaryRelation) }),
+			Flags: []cli.Flag{
+				cli.StringFlag{
+					Name:        "summaryRelation",
+					Value:       "",
+					Usage:       "if set then only one arrow is drawn between the teams",
+					Destination: &summaryRelation,
 				},
 			},
 		},

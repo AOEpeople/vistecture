@@ -12,7 +12,7 @@ type Project struct {
 
 const NOGROUP = "nogroup"
 
-//Validates Project and Components
+//Validates project and Components
 func (Project *Project) Validate() []error {
 
 	var foundErrors []error
@@ -26,7 +26,7 @@ func (Project *Project) Validate() []error {
 
 			error := Project.doesServiceExists(dependendComponentName, serviceName)
 			if error != nil {
-				foundErrors = append(foundErrors, errors.New("Application '" + application.Name + "' Dependencies has Error: " + error.Error()))
+				foundErrors = append(foundErrors, errors.New("Application '"+application.Name+"' Dependencies has Error: "+error.Error()))
 			}
 		}
 	}

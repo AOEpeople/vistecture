@@ -5,8 +5,8 @@ import (
 )
 
 type Repository struct {
-	ProjectConfig  []*ProjectConfig   `json:"projects" yaml:"projects"`
-	Applications []*Application `json:"applications" yaml:"applications"`
+	ProjectConfig []*ProjectConfig `json:"projects" yaml:"projects"`
+	Applications  []*Application   `json:"applications" yaml:"applications"`
 }
 
 //Validates repository
@@ -56,21 +56,21 @@ func (Repository *Repository) FindProjectConfigByName(nameToMatch string) (Proje
 			return *projectConfig, nil
 		}
 	}
-	return ProjectConfig{}, errors.New("Project info with name '" + nameToMatch + "' not found")
+	return ProjectConfig{}, errors.New("project info with name '" + nameToMatch + "' not found")
 }
 
 //Gets the project info by name. If the name is not found, return the first available one.
-func (Repository *Repository) GetProjectConfig(nameToMatch string) (*ProjectConfig) {
+func (Repository *Repository) GetProjectConfig(nameToMatch string) *ProjectConfig {
 	projectConfig, error := Repository.FindProjectConfigByName(nameToMatch)
 	if error != nil {
 		if len(Repository.ProjectConfig) >= 1 {
 			return Repository.ProjectConfig[0]
 
 		} else {
-			return &ProjectConfig{Name:"Full Repository"}
+			return &ProjectConfig{Name: "Full Repository"}
 		}
 	}
-	return  &projectConfig
+	return &projectConfig
 }
 
 //Check if a component with Name exist
@@ -92,7 +92,7 @@ func (Repository *Repository) MergeWith(OtherRepository *Repository) error {
 
 	for _, projectInfo := range OtherRepository.ProjectConfig {
 		if Repository.HasProjectInfoWithName(projectInfo.Name) {
-			return errors.New("Project name: '" + projectInfo.Name + "' Is duplicated")
+			return errors.New("project name: '" + projectInfo.Name + "' Is duplicated")
 		}
 		Repository.ProjectConfig = append(Repository.ProjectConfig, projectInfo)
 	}

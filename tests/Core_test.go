@@ -3,8 +3,9 @@ package tests
 import (
 	"testing"
 
-	core "github.com/AOEpeople/vistecture/model/core"
 	"strings"
+
+	core "github.com/AOEpeople/vistecture/model/core"
 )
 
 func TestCreateProjectFromFixture(t *testing.T) {
@@ -13,13 +14,13 @@ func TestCreateProjectFromFixture(t *testing.T) {
 	if len(errors) >= 1 {
 		t.Error("Factory returned error", errors)
 	}
-	if project.Name != "Fixture Project" {
-		t.Error("Expected name 'Fixture Project'")
+	if project.Name != "Fixture project" {
+		t.Error("Expected name 'Fixture project'")
 	}
 
 	application, e := project.FindApplication("app1")
 	if e != nil {
-		t.Error("Project returned error when expecting app1", e)
+		t.Error("project returned error when expecting app1", e)
 	}
 	if application.Name != "app1" {
 		t.Error("Expected application with Name app2")
@@ -32,13 +33,13 @@ func TestCreateProjectFromFixtureFolderWithMerge(t *testing.T) {
 	if len(errors) >= 1 {
 		t.Error("Factory returned error", errors)
 	}
-	if project.Name != "Fixture Project Merge" {
-		t.Error("Expected name 'Fixture Project Merge'")
+	if project.Name != "Fixture project Merge" {
+		t.Error("Expected name 'Fixture project Merge'")
 	}
 
 	application, e := project.FindApplication("app1")
 	if e != nil {
-		t.Error("Project returned error when expecting app1", e)
+		t.Error("project returned error when expecting app1", e)
 	}
 	if application.Name != "app1" {
 		t.Error("Expected application with Name app2")
@@ -87,19 +88,19 @@ func contains(searchIn []*core.Application, findApp *core.Application) bool {
 	return false
 }
 
-func TestCreateProjectFromMultiple1 (t *testing.T) {
+func TestCreateProjectFromMultiple1(t *testing.T) {
 
-	project, errors := core.CreateProjectByName("fixture-multiple", "Fixture Project Multiple 1")
+	project, errors := core.CreateProjectByName("fixture-multiple", "Fixture project Multiple 1")
 	if len(errors) >= 1 {
 		t.Error("Factory returned error", errors)
 	}
-	if project.Name != "Fixture Project Multiple 1" {
-		t.Error("Expected name 'Fixture Project Multiple 1'")
+	if project.Name != "Fixture project Multiple 1" {
+		t.Error("Expected name 'Fixture project Multiple 1'")
 	}
 
 	application, e := project.FindApplication("app1")
 	if e != nil {
-		t.Error("Project returned error when expecting app1", e)
+		t.Error("project returned error when expecting app1", e)
 	}
 	if application.Name != "app1" {
 		t.Error("Expected application with Name app1")
@@ -111,7 +112,7 @@ func TestCreateProjectFromMultiple1 (t *testing.T) {
 
 	application3, e := project.FindApplication("app3")
 	if e != nil {
-		t.Error("Project returned error when expecting app3", e)
+		t.Error("project returned error when expecting app3", e)
 	}
 
 	if application3.Category != core.CORE.Value() {
@@ -119,14 +120,14 @@ func TestCreateProjectFromMultiple1 (t *testing.T) {
 	}
 }
 
-func TestCreateProjectFromMultiple2 (t *testing.T) {
+func TestCreateProjectFromMultiple2(t *testing.T) {
 
-	project, errors := core.CreateProjectByName("fixture-multiple", "Fixture Project Multiple 2")
+	project, errors := core.CreateProjectByName("fixture-multiple", "Fixture project Multiple 2")
 	if len(errors) >= 1 {
 		t.Error("Factory returned error", errors)
 	}
-	if project.Name != "Fixture Project Multiple 2" {
-		t.Error("Expected name 'Fixture Project Multiple 2'")
+	if project.Name != "Fixture project Multiple 2" {
+		t.Error("Expected name 'Fixture project Multiple 2'")
 	}
 
 	application, e := project.FindApplication("app4")
@@ -135,7 +136,7 @@ func TestCreateProjectFromMultiple2 (t *testing.T) {
 	}
 }
 
-func TestCreateProjectFromBoProject (t *testing.T) {
+func TestCreateProjectFromBoProject(t *testing.T) {
 
 	project, errors := core.CreateProject("fixture-noproject")
 	if len(errors) >= 1 {
@@ -147,14 +148,14 @@ func TestCreateProjectFromBoProject (t *testing.T) {
 
 	application, e := project.FindApplication("app5")
 	if e != nil {
-		t.Error("Project returned error when expecting app5", e)
+		t.Error("project returned error when expecting app5", e)
 	}
 	if application.Name != "app5" {
 		t.Error("Expected application with Name app5")
 	}
 }
 
-func TestCreateReadmeExample (t *testing.T) {
+func TestCreateReadmeExample(t *testing.T) {
 
 	_, errors := core.CreateProjectByName("fixture-readme", "Ports and Adapters DDD Architecture")
 	if len(errors) >= 1 {
@@ -167,12 +168,12 @@ func TestCreateReadmeExample (t *testing.T) {
 
 	application, _ := project.FindApplication("domain")
 	if application.Technology != "play" {
-		t.Error("Expected applications technology to be the value 'play', but was: "  + application.Technology)
+		t.Error("Expected applications technology to be the value 'play', but was: " + application.Technology)
 	}
 
 }
 
-func TestNoDefinitionFound (t *testing.T) {
+func TestNoDefinitionFound(t *testing.T) {
 
 	_, errors := core.CreateProjectByName("fake-dir", "")
 	if errors == nil {
@@ -183,14 +184,14 @@ func TestNoDefinitionFound (t *testing.T) {
 	}
 }
 
-func TestExampleProjects (t *testing.T) {
+func TestExampleProjects(t *testing.T) {
 
 	project, errors := core.CreateProject("../example/demoproject")
 	if len(errors) >= 1 {
 		t.Error("Factory returned error", errors)
 	}
-	if project.Name != "Demo Project" {
-		t.Error("Expected name 'Demo Project'")
+	if project.Name != "Demo project" {
+		t.Error("Expected name 'Demo project'")
 	}
 
 	project, errors = core.CreateProject("../example/ports-and-adapters-architecture")

@@ -64,22 +64,19 @@ You can also clone the repository and use golang tools.
 ---
 projects:
 - name: Ports and Adapters DDD Architecture
-- name: Ports and Adapters DDD Architecture minimum
+- name: Ports and Adapters DDD Architecture Modified
   included-applications:
   - name: infrastructure
-    title: Infrastructure Minimum
-    display:
-      rotate: true
-      bordercolor: "#4e668c"
+    title: Override Infrastructure
   - name: domain
-    title: Domain Minimum
+    title: Domain Extended
     technology: play
-    provided-services:
+    add-provided-services:
     - name: domain-objects
       type: inbound-port
   - name: application
-    title: Domain Minimum
-    provided-services:
+    title: Modified Applikation
+    add-provided-services:
     - name: application-services
       type: inbound-port
       description: Main Application API
@@ -118,7 +115,7 @@ applications:
     dependencies:
     - reference: domain.domain-objects
     - reference: domain.repository-interfaces
-      relationship: uses
+      relationship: partnership
       description: The Application layer implements interfaces (secondary ports) from domain layer
   - name: eventpublish-interfaces
     type: outbound-port
@@ -144,7 +141,7 @@ applications:
   description: Individual System
 
 ```
-The project configuration is optional and define which components (application configurations) should be used for processing. Please
+The project configuration is optional and defines which components (application configurations) should be used for processing. Please
 also see chapter 'Domain Language / Concepts' for more information
 
 ## Usage
@@ -239,6 +236,7 @@ Dependency Properties:
 - partnership: Very close collaboration
 - customer-supplier: (use this where a strong dependency exists that the supplier delivers whats required by the customer. A stronger collaboration between the teams of the components need to exist.)
 - conformist: (use this to emphasise also a strong dependency that we need the services provided. But there is no chance to influence the interface - so the downstream component is forced to be conform to whatever is provided - and need to make it work.)
+- (please note that on a per service level it is possible to define the service as isOpenHost - this normaly means that the applications consuming this services fall in the relationship "open-host")
 - acl: (Anti corruption layer: If the provided interface is complex or very different from the applications bounded context internal model. The acl emphasizes that the downstream component takes care to isolate his domain with a acl pattern)
 
 (See https://www.aoe.com/tech-radar/strategic-domain-driven-design.html )
@@ -267,8 +265,8 @@ go test ./tests/...
 //build binaries:
 make all
 
-//build docker
-docker build --no-cache -t aoepeople/vistecture .
+//docker
+make dockerpublish
 
 
 

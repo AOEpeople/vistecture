@@ -10,6 +10,7 @@ import (
 
 type Application struct {
 	Name                       string                     `json:"name" yaml:"name"`
+	Team                       string                     `json:"team" yaml:"team"`
 	Title                      string                     `json:"title,omitempty" yaml:"title,omitempty"`
 	Summary                    string                     `json:"summary,omitempty" yaml:"summary,omitempty"`
 	Description                string                     `json:"description,omitempty" yaml:"description,omitempty"`
@@ -108,6 +109,18 @@ func (GivenApplication *Application) GetAllDependencies() []Dependency {
 		}
 	}
 	return result
+}
+
+func (GivenApplication *Application) IsOpenHostApp() bool {
+	if len(GivenApplication.ProvidedServices) == 0 {
+		return false
+	}
+	for _, service := range GivenApplication.ProvidedServices {
+		if !service.IsOpenHost && service.Type != "gui" {
+			return false
+		}
+	}
+	return true
 }
 
 //Merges the given application with another. The current application is the one who will be modified.
