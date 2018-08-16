@@ -63,28 +63,25 @@ You can also clone the repository and use golang tools.
 ```yaml
 ---
 projects:
-- name: Ports and Adapters DDD Architecture
-- name: Ports and Adapters DDD Architecture Modified
+- name: Demo Project Name
+- name: Demo Project Name - Variant 2
   included-applications:
-  - name: infrastructure
-    title: Override Infrastructure
-  - name: domain
-    title: Domain Extended
-    technology: play
+  - name: service1
+    title: Override the Title if you like
+  - name: service2
     add-provided-services:
     - name: domain-objects
       type: inbound-port
-  - name: application
-    title: Modified Applikation
+  - name: service3
     add-provided-services:
     - name: application-services
       type: inbound-port
       description: Main Application API
       dependencies:
-      - reference: domain.domain-objects
+      - reference: service4
 applications:
-- name: domain
-  group: component-internal-bounded-context
+- name: service1
+  group: group1
   technology: scala
   display:
     bordercolor: "#c922b3"
@@ -97,48 +94,43 @@ applications:
         * one
         * tow
   provided-services:
-  - name: domain-objects
-    type: inbound-port
-  - name: repository-interfaces
-    type: outbound-port
-  - name: eventpublish-interfaces
-    type: outbound-port
+  - name: someApi
+    type: api
+  - name: otherApi
+    type: api
+  - name: eventpublish
+    type: exchange
   infrastructure-dependencies:
   - type: mysql
 - name: application
-  group: component-internal-bounded-context
-  description: Application Use Cases
+  group: group1
+  description: Application Description
   provided-services:
-  - name: application-services
-    type: inbound-port
-    description: Main Application API. Also internaly works with eventpublish-interfaces
+  - name: userinterface
+    type: gui
+    description: Main Application UI
     dependencies:
-    - reference: domain.domain-objects
-    - reference: domain.repository-interfaces
+    - reference: service1.someApi
       relationship: partnership
-      description: The Application layer implements interfaces (secondary ports) from domain layer
-  - name: eventpublish-interfaces
-    type: outbound-port
+      description: Some description here
+  - name: api
+    type: api
   - name: domainEventAdapter
-    type: "(logic)"
-    description: Listen for (some) domain events. Also internaly works with eventpublish-interfaces
-    dependencies:
-    - reference: domain.eventpublish-interfaces
-      relationship: implements
-- name: infrastructure
-  title: Infrastructure
+- name: service2
+  title: Service 2
   category: core
   description: Framework, Technical Details, Database Access
   dependencies:
-  - reference: admin-interface
-- name: admin-interface
-  title: Administration Interface
-  category: core
+  - reference: service1
+- name: service3
+  title: Service 3
+  category: group1
   description: Interface for administration
-- name: adapter
-  title: Individual Adapter
-  category: individual
+- name: service4
+  title: Service 4
+  category: group1
   description: Individual System
+  status: planned
 
 ```
 The project configuration is optional and defines which components (application configurations) should be used for processing. Please

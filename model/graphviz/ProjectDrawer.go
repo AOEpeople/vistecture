@@ -26,7 +26,7 @@ func (ProjectDrawer *ProjectDrawer) DrawComplete(hidePlanned bool) string {
 				continue
 			}
 			drawer := ApplicationDrawer{originalComponent: component, iconPath: ProjectDrawer.iconPath}
-			drawingResultInGroup = drawingResultInGroup + drawer.Draw()
+			drawingResultInGroup = drawingResultInGroup + drawer.Draw(hidePlanned)
 		}
 
 		if key != model.NOGROUP {
@@ -51,21 +51,21 @@ func (ProjectDrawer *ProjectDrawer) DrawComponent(Component *model.Application) 
 	var result string
 	result = "digraph { graph [] \n"
 	drawer := ApplicationDrawer{originalComponent: Component, iconPath: ProjectDrawer.iconPath}
-	result = result + drawer.Draw()
+	result = result + drawer.Draw(false)
 
 	// Draw outgoing:
 	result = result + ProjectDrawer.drawComponentOutgoingRelations(Component, false)
 	allRelatedComponents, _ := Component.GetAllDependencyApplications(ProjectDrawer.originalProject)
 	for _, relatedComponent := range allRelatedComponents {
 		drawer := ApplicationDrawer{originalComponent: &relatedComponent, iconPath: ProjectDrawer.iconPath}
-		result = result + drawer.Draw()
+		result = result + drawer.Draw(false)
 	}
 	//Draw incoming
 
 	allDependendComponents := ProjectDrawer.originalProject.FindApplicationThatReferenceTo(Component, false)
 	for _, relatedComponent := range allDependendComponents {
 		drawer := ApplicationDrawer{originalComponent: relatedComponent, iconPath: ProjectDrawer.iconPath}
-		result = result + drawer.Draw()
+		result = result + drawer.Draw(false)
 		dependency, e := relatedComponent.GetDependencyTo(Component.Name)
 		if e == nil {
 			result += "\"" + relatedComponent.Name + "\" ->" + getGraphVizReference(dependency) + getEdgeLayoutFromDependency(dependency, relatedComponent.Display) + "\n"

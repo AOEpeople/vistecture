@@ -16,7 +16,7 @@ type ApplicationDrawer struct {
 }
 
 // Decorate Draw function
-func (ComponentDrawer ApplicationDrawer) Draw() string {
+func (ComponentDrawer ApplicationDrawer) Draw(hidePlanned bool) string {
 	var result string
 	Component := ComponentDrawer.originalComponent
 	icon := ""
@@ -56,6 +56,9 @@ func (ComponentDrawer ApplicationDrawer) Draw() string {
 		result += " <TR ><TD COLSPAN=\"2\" BGCOLOR=\"#aaaaaa\"><FONT POINT-SIZE=\"10\">" + escape(Component.Title) + "</FONT></TD></TR> \n"
 	}
 	for _, service := range Component.ProvidedServices {
+		if hidePlanned && service.Status == model.STATUS_PLANNED {
+			continue
+		}
 		var color string
 		switch service.Type {
 		case "api":
@@ -66,6 +69,9 @@ func (ComponentDrawer ApplicationDrawer) Draw() string {
 			color = "#BEE8D2"
 		default:
 			color = "#CFCFCF"
+		}
+		if service.Status == model.STATUS_PLANNED {
+			color = "#BBBBB"
 		}
 		result += "<TR><TD COLSPAN=\"2\"  align=\"CENTER\" PORT=\"" + escape(service.Name) + "\" BGCOLOR=\"" + color + "\">"
 		result += "<FONT POINT-SIZE=\"10\">" + service.Type + ":" + escape(service.Name) + "</FONT>"
