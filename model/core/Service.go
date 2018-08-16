@@ -10,4 +10,5 @@ type Service struct {
 	IsOpenHost    bool         `json:"isOpenHost,omitempty" yaml:"isOpenHost,omitempty"`
 	SecurityLevel string       `json:"securityLevel" yaml:"securityLevel"`
 	Dependencies  []Dependency `json:"dependencies" yaml:"dependencies"`
+	Status        string       `json:"status" yaml:"status"`
 }

@@ -14,8 +14,8 @@ func TestCreateProjectFromFixture(t *testing.T) {
 	if len(errors) >= 1 {
 		t.Error("Factory returned error", errors)
 	}
-	if project.Name != "Fixture project" {
-		t.Error("Expected name 'Fixture project'")
+	if project.Name != "Fixture Project" {
+		t.Error("Expected name 'Fixture Project' Got " + project.Name)
 	}
 
 	application, e := project.FindApplication("app1")
@@ -33,8 +33,8 @@ func TestCreateProjectFromFixtureFolderWithMerge(t *testing.T) {
 	if len(errors) >= 1 {
 		t.Error("Factory returned error", errors)
 	}
-	if project.Name != "Fixture project Merge" {
-		t.Error("Expected name 'Fixture project Merge'")
+	if project.Name != "Fixture Project Merge" {
+		t.Error("Expected name 'Fixture Project Merge'")
 	}
 
 	application, e := project.FindApplication("app1")
@@ -94,8 +94,8 @@ func TestCreateProjectFromMultiple1(t *testing.T) {
 	if len(errors) >= 1 {
 		t.Error("Factory returned error", errors)
 	}
-	if project.Name != "Fixture project Multiple 1" {
-		t.Error("Expected name 'Fixture project Multiple 1'")
+	if project.Name != "Fixture Project Multiple 1" {
+		t.Error("Expected name 'Fixture Project Multiple 1'")
 	}
 
 	application, e := project.FindApplication("app1")
@@ -122,12 +122,12 @@ func TestCreateProjectFromMultiple1(t *testing.T) {
 
 func TestCreateProjectFromMultiple2(t *testing.T) {
 
-	project, errors := core.CreateProjectByName("fixture-multiple", "Fixture project Multiple 2")
+	project, errors := core.CreateProjectByName("fixture-multiple", "Fixture Project Multiple 2")
 	if len(errors) >= 1 {
 		t.Error("Factory returned error", errors)
 	}
-	if project.Name != "Fixture project Multiple 2" {
-		t.Error("Expected name 'Fixture project Multiple 2'")
+	if project.Name != "Fixture Project Multiple 2" {
+		t.Error("Expected name 'Fixture project Multiple 2' / Got" + project.Name)
 	}
 
 	application, e := project.FindApplication("app4")
@@ -190,8 +190,8 @@ func TestExampleProjects(t *testing.T) {
 	if len(errors) >= 1 {
 		t.Error("Factory returned error", errors)
 	}
-	if project.Name != "Demo project" {
-		t.Error("Expected name 'Demo project'")
+	if project.Name != "Demo Project" {
+		t.Error("Expected name 'Demo Project'")
 	}
 
 	project, errors = core.CreateProject("../example/ports-and-adapters-architecture")

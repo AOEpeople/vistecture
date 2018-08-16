@@ -83,6 +83,9 @@ func (Repository *Repository) HasProjectInfoWithName(nameToMatch string) bool {
 
 //Merges the given repository with another. The current repository is the one who will be modified.
 func (Repository *Repository) MergeWith(OtherRepository *Repository) error {
+	if OtherRepository == nil {
+		return errors.New("No OtherRepository given")
+	}
 	for _, application := range OtherRepository.Applications {
 		if Repository.HasApplicationWithName(application.Name) {
 			return errors.New("Application name: '" + application.Name + "' Is duplicated")

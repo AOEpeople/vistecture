@@ -15,13 +15,16 @@ type ProjectDrawer struct {
 }
 
 // Decorate Draw function
-func (ProjectDrawer *ProjectDrawer) DrawComplete() string {
+func (ProjectDrawer *ProjectDrawer) DrawComplete(hidePlanned bool) string {
 	var result string
 	result = "digraph { graph [bgcolor=\"transparent\",overlap=false] \n"
 	// Nodes
 	for key, componentList := range ProjectDrawer.originalProject.GetApplicationByGroup() {
 		drawingResultInGroup := ""
 		for _, component := range componentList {
+			if component.Status == model.STATUS_PLANNED && hidePlanned {
+				continue
+			}
 			drawer := ApplicationDrawer{originalComponent: component, iconPath: ProjectDrawer.iconPath}
 			drawingResultInGroup = drawingResultInGroup + drawer.Draw()
 		}
@@ -34,7 +37,10 @@ func (ProjectDrawer *ProjectDrawer) DrawComplete() string {
 	}
 	// Paths
 	for _, component := range ProjectDrawer.originalProject.Applications {
-		result = result + drawComponentOutgoingRelations(component)
+		if component.Status == model.STATUS_PLANNED && hidePlanned {
+			continue
+		}
+		result = result + ProjectDrawer.drawComponentOutgoingRelations(component, hidePlanned)
 	}
 	result = result + "}"
 	return result
@@ -48,7 +54,7 @@ func (ProjectDrawer *ProjectDrawer) DrawComponent(Component *model.Application) 
 	result = result + drawer.Draw()
 
 	// Draw outgoing:
-	result = result + drawComponentOutgoingRelations(Component)
+	result = result + ProjectDrawer.drawComponentOutgoingRelations(Component, false)
 	allRelatedComponents, _ := Component.GetAllDependencyApplications(ProjectDrawer.originalProject)
 	for _, relatedComponent := range allRelatedComponents {
 		drawer := ApplicationDrawer{originalComponent: &relatedComponent, iconPath: ProjectDrawer.iconPath}
@@ -60,7 +66,7 @@ func (ProjectDrawer *ProjectDrawer) DrawComponent(Component *model.Application) 
 	for _, relatedComponent := range allDependendComponents {
 		drawer := ApplicationDrawer{originalComponent: relatedComponent, iconPath: ProjectDrawer.iconPath}
 		result = result + drawer.Draw()
-		dependency, e :=relatedComponent.GetDependencyTo(Component.Name)
+		dependency, e := relatedComponent.GetDependencyTo(Component.Name)
 		if e == nil {
 			result += "\"" + relatedComponent.Name + "\" ->" + getGraphVizReference(dependency) + getEdgeLayoutFromDependency(dependency, relatedComponent.Display) + "\n"
 		}
@@ -75,15 +81,29 @@ func (ProjectDrawer *ProjectDrawer) DrawComponent(Component *model.Application) 
 	return result
 }
 
-func drawComponentOutgoingRelations(Component *model.Application) string {
+func (ProjectDrawer *ProjectDrawer) drawComponentOutgoingRelations(Component *model.Application, hidePlanned bool) string {
 	result := ""
 	// Relation from components
 	for _, dependency := range Component.Dependencies {
+		if dependency.Status == model.STATUS_PLANNED && hidePlanned {
+			continue
+		}
+		dependencyComponent, err := dependency.GetComponent(ProjectDrawer.originalProject)
+		if err == nil && dependencyComponent.Status == model.STATUS_PLANNED && hidePlanned {
+			continue
+		}
 		result += "\"" + Component.Name + "\" ->" + getGraphVizReference(dependency) + getEdgeLayoutFromDependency(dependency, Component.Display) + "\n"
 	}
 	// Relation from components/interfaces
 	for _, providedInterface := range Component.ProvidedServices {
 		for _, dependency := range providedInterface.Dependencies {
+			if dependency.Status == model.STATUS_PLANNED && hidePlanned {
+				continue
+			}
+			dependencyComponent, err := dependency.GetComponent(ProjectDrawer.originalProject)
+			if err == nil && dependencyComponent.Status == model.STATUS_PLANNED && hidePlanned {
+				continue
+			}
 			result += "\"" + Component.Name + "\":\"" + providedInterface.Name + "\"->" + getGraphVizReference(dependency) + getEdgeLayoutFromDependency(dependency, Component.Display) + "\n"
 		}
 	}
@@ -121,9 +141,12 @@ func getEdgeLayoutFromDependency(dependency model.Dependency, display model.Appl
 		edgeLayout += ", weight=3"
 	}
 
-	if dependency.IsBrowserBased {
+	if dependency.Status == model.STATUS_PLANNED {
+		edgeLayout += ", style=\"dotted\""
+	} else if dependency.IsBrowserBased {
 		edgeLayout += ", style=\"dashed\""
 	}
+
 	if dependency.IsSameLevel {
 		edgeLayout += ", constraint=false"
 	}

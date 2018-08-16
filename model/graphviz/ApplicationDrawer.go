@@ -35,12 +35,22 @@ func (ComponentDrawer ApplicationDrawer) Draw() string {
 	}
 	// see http://www.graphviz.org/doc/info/shapes.html
 	// see http://4webmaster.de/wiki/Graphviz-Tutorial#Die_Darstellung_von_Edges_ver.C3.A4ndern
-	result += "\"" + Component.Name + "\" [shape=plaintext "
-	if Component.Display.BorderColor != "" {
-		result += ", color=\"" + Component.Display.BorderColor + "\""
+
+	if Component.Status == model.STATUS_PLANNED {
+		result += "\"" + Component.Name + "\" [xlabel=\"planned\", shape=plaintext "
+		if Component.Display.BorderColor != "" {
+			result += ", color=\"#BBBBBB\""
+		}
+		result += ", label=<<TABLE BGCOLOR=\"#1B4E5E\" ROWS=\"*\" CELLPADDING=\"3\" BORDER=\"0\" CELLBORDER=\"0\" CELLSPACING=\"0\"> \n"
+		tableHeaderColor = "#BBBBBB"
+	} else {
+		result += "\"" + Component.Name + "\" [style=dotted, shape=plaintext "
+		if Component.Display.BorderColor != "" {
+			result += ", color=\"" + Component.Display.BorderColor + "\""
+		}
+		result += ", label=<<TABLE BGCOLOR=\"#1B4E5E\" ROWS=\"*\" CELLPADDING=\"3\" BORDER=\"2\" CELLBORDER=\"0\" CELLSPACING=\"0\"> \n"
 	}
 
-	result += ", label=<<TABLE BGCOLOR=\"#1B4E5E\" ROWS=\"*\" CELLPADDING=\"3\" BORDER=\"2\" CELLBORDER=\"0\" CELLSPACING=\"0\"> \n"
 	result += " <TR ><TD BGCOLOR=\"" + tableHeaderColor + "\"><FONT COLOR=\"#fefefe\">" + strings.Replace(strings.ToTitle(Component.Name), " / ", "\n<BR />", 1) + "</FONT></TD><TD BGCOLOR=\"" + tableHeaderColor + "\" width=\"50\" height=\"30\" fixedsize=\"true\" >" + icon + "</TD></TR> \n"
 	if Component.Title != "" {
 		result += " <TR ><TD COLSPAN=\"2\" BGCOLOR=\"#aaaaaa\"><FONT POINT-SIZE=\"10\">" + escape(Component.Title) + "</FONT></TD></TR> \n"

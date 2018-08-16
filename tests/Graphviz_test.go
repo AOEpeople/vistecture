@@ -15,14 +15,14 @@ func TestCanGetGraph(t *testing.T) {
 		t.Error("Factory returned error", e)
 	}
 	drawer := graphviz.CreateProjectDrawer(project, "")
-	if graph := drawer.DrawComplete(); !strings.Contains(graph, "graph [") {
+	if graph := drawer.DrawComplete(false); !strings.Contains(graph, "graph [") {
 		t.Error("Graph contains no graph [] declaration ", graph)
 	}
 
-	if graph := drawer.DrawComplete(); !strings.Contains(graph, "\"app1\" ->\"app2\"") {
+	if graph := drawer.DrawComplete(false); !strings.Contains(graph, "\"app1\" ->\"app2\"") {
 		t.Error("Graph contains no edge", graph)
 	}
-	if graph := drawer.DrawComplete(); !strings.Contains(graph, "\"app3\"") {
+	if graph := drawer.DrawComplete(false); !strings.Contains(graph, "\"app3\"") {
 		t.Error("Graph contains no core app3", graph)
 	}
 }

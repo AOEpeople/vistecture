@@ -25,7 +25,7 @@ projects:
 applications:
 - name: domain
   group: component-internal-bounded-context
-  technology: scala
+  technology: play
   display:
     bordercolor: "#c922b3"
   summary: Short description

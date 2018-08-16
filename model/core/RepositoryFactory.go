@@ -64,7 +64,6 @@ func (factory *RepositoryFactory) createFromFolder(folderPath string) (*Reposito
 		var tmpError error
 
 		if fileInfo.IsDir() {
-			//TODO: Configurable ignore paths
 			if !strings.Contains(fileInfo.Name(), ".git") {
 				tempRepository, tmpError = factory.createFromFolder(file)
 			}

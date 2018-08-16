@@ -15,7 +15,7 @@ func action(cb func()) func(c *cli.Context) error {
 }
 
 func main() {
-	var projectConfigPath, componentName, templatePath, iconPath, projectName, summaryRelation string
+	var projectConfigPath, componentName, templatePath, iconPath, projectName, summaryRelation, hidePlanned string
 
 	app := cli.NewApp()
 	app.Name = "vistecture tool "
@@ -73,7 +73,7 @@ func main() {
 		{
 			Name:   "graph",
 			Usage:  "Build graphviz format which can be used by dot or any other graphviz command. \n go run main.go graph | dot -Tpng -o graph.png \n See: http://www.graphviz.org/pdf/twopi.1.pdf",
-			Action: action(func() { documentationController.GraphvizAction(componentName, iconPath) }),
+			Action: action(func() { documentationController.GraphvizAction(componentName, iconPath, hidePlanned) }),
 			Flags: []cli.Flag{
 				cli.StringFlag{
 					Name:        "application",
@@ -86,6 +86,12 @@ func main() {
 					Value:       "templates/icons",
 					Usage:       "Path of icons that will be in drawing components",
 					Destination: &iconPath,
+				},
+				cli.StringFlag{
+					Name:        "hidePlanned",
+					Value:       "",
+					Usage:       "Flag if planned applications should be drawn or not",
+					Destination: &hidePlanned,
 				},
 			},
 		},

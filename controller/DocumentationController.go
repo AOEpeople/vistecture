@@ -25,7 +25,7 @@ type (
 	}
 )
 
-func (DocumentationController DocumentationController) GraphvizAction(componentName string, iconPath string) {
+func (DocumentationController DocumentationController) GraphvizAction(componentName string, iconPath string, hidePlanned string) {
 	Project := loadProject(*DocumentationController.ProjectConfigPath, *DocumentationController.ProjectName)
 	ProjectDrawer := graphviz.CreateProjectDrawer(Project, iconPath)
 	if componentName != "" {
@@ -36,7 +36,7 @@ func (DocumentationController DocumentationController) GraphvizAction(componentN
 		}
 		fmt.Print(ProjectDrawer.DrawComponent(&Component))
 	} else {
-		fmt.Print(ProjectDrawer.DrawComplete())
+		fmt.Print(ProjectDrawer.DrawComplete(hidePlanned == "1"))
 	}
 
 }

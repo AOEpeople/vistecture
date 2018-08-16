@@ -9,6 +9,7 @@ type Dependency struct {
 	IsSameLevel    bool   `json:"isSameLevel" yaml:"isSameLevel"`
 	Resilience     bool   `json:"resilience" yaml:"resilience"`
 	IsBrowserBased bool   `json:"isBrowserBased" yaml:"isBrowserBased"`
+	Status         string `json:"status" yaml:"status"`
 }
 
 // Returns the name of the "component" and "service" this dependecy points to

@@ -22,7 +22,12 @@ type Application struct {
 	Dependencies               []Dependency               `json:"dependencies" yaml:"dependencies"`
 	Display                    ApplicationDisplaySettings `json:"display,omitempty" yaml:"display,omitempty"`
 	Properties                 map[string]string          `json:"properties" yaml:"properties"`
+	Status                     string                     `json:"status" yaml:"status"`
 }
+
+const (
+	STATUS_PLANNED = "planned"
+)
 
 func (Application Application) Validate() []error {
 	var foundErrors []error
