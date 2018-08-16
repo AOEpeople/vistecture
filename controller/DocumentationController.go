@@ -25,8 +25,8 @@ type (
 	}
 )
 
-func (DocumentationController DocumentationController) GraphvizAction(componentName string, iconPath string, hidePlanned string) {
-	Project := loadProject(*DocumentationController.ProjectConfigPath, *DocumentationController.ProjectName)
+func (DocumentationController DocumentationController) GraphvizAction(componentName string, iconPath string, hidePlanned string, skipValidation bool) {
+	Project := loadProject(*DocumentationController.ProjectConfigPath, *DocumentationController.ProjectName, skipValidation)
 	ProjectDrawer := graphviz.CreateProjectDrawer(Project, iconPath)
 	if componentName != "" {
 		Component, e := Project.FindApplication(componentName)
@@ -42,13 +42,13 @@ func (DocumentationController DocumentationController) GraphvizAction(componentN
 }
 
 func (DocumentationController DocumentationController) TeamGraphvizAction(summaryRelation string) {
-	Project := loadProject(*DocumentationController.ProjectConfigPath, *DocumentationController.ProjectName)
+	Project := loadProject(*DocumentationController.ProjectConfigPath, *DocumentationController.ProjectName, false)
 	Drawer := graphviz.CreateTeamDependencyDrawer(Project, summaryRelation != "")
 	fmt.Print(Drawer.DrawComplete())
 }
 
 func (DocumentationController DocumentationController) HTMLDocumentAction(templatePath string, iconPath string) {
-	project := loadProject(*DocumentationController.ProjectConfigPath, *DocumentationController.ProjectName)
+	project := loadProject(*DocumentationController.ProjectConfigPath, *DocumentationController.ProjectName, false)
 	tpl := template.New(filepath.Base(templatePath))
 
 	tpl.Funcs(template.FuncMap{

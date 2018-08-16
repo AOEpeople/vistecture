@@ -13,7 +13,7 @@ type AnalyzeController struct {
 }
 
 func (AnalyzeController AnalyzeController) AnalyzeAction() {
-	var project = loadProject(*AnalyzeController.ProjectConfigPath, *AnalyzeController.ProjectName)
+	var project = loadProject(*AnalyzeController.ProjectConfigPath, *AnalyzeController.ProjectName, false)
 	var ProjectAnalyzer analyze.ProjectAnalyzer
 	errors := ProjectAnalyzer.AnalyzeCyclicDependencies(project)
 	if errors != nil {
@@ -36,6 +36,6 @@ func (AnalyzeController AnalyzeController) AnalyzeAction() {
 }
 
 func (AnalyzeController AnalyzeController) ValidateAction() {
-	loadProject(*AnalyzeController.ProjectConfigPath, *AnalyzeController.ProjectName)
+	loadProject(*AnalyzeController.ProjectConfigPath, *AnalyzeController.ProjectName, false)
 	fmt.Println("Valid project definition")
 }

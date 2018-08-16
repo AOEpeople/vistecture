@@ -4,7 +4,7 @@ package core
 type ProjectFactory struct{}
 
 // Factory
-func CreateProject(filePath string) (*Project, []error) {
+func CreateProject(filePath string, skipValidation bool) (*Project, []error) {
 	var factory RepositoryFactory
 	var foundErrors []error
 	var projectName string
@@ -22,13 +22,15 @@ func CreateProject(filePath string) (*Project, []error) {
 	//Collects errors for project building
 	foundErrors = append(foundErrors, projectErrors...)
 	//Collects errors for project validation
-	foundErrors = append(foundErrors, project.Validate()...)
+	if !skipValidation {
+		foundErrors = append(foundErrors, project.Validate()...)
+	}
 
 	return project, foundErrors
 }
 
 // Factory for using a dedicated project name
-func CreateProjectByName(filePath string, projectName string) (*Project, []error) {
+func CreateProjectByName(filePath string, projectName string, skipValidation bool) (*Project, []error) {
 	var factory RepositoryFactory
 	var foundErrors []error
 
@@ -45,8 +47,9 @@ func CreateProjectByName(filePath string, projectName string) (*Project, []error
 	//Collects errors for project building
 	foundErrors = append(foundErrors, projectErrors...)
 	//Collects errors for project validation
-	foundErrors = append(foundErrors, project.Validate()...)
-
+	if !skipValidation {
+		foundErrors = append(foundErrors, project.Validate()...)
+	}
 	return project, foundErrors
 }
 

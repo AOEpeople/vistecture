@@ -16,10 +16,10 @@ func action(cb func()) func(c *cli.Context) error {
 
 func main() {
 	var projectConfigPath, componentName, templatePath, iconPath, projectName, summaryRelation, hidePlanned string
-
+	var skipValidation bool
 	app := cli.NewApp()
 	app.Name = "vistecture tool "
-	app.Version = "0.5.0"
+	app.Version = "0.5.3"
 	app.Usage = "describing and analysing distributed or microservice-style architectures with its depenendcy!"
 
 	app.Flags = []cli.Flag{
@@ -34,6 +34,11 @@ func main() {
 			Value:       "None",
 			Usage:       "Name of the project configuration",
 			Destination: &projectName,
+		},
+		cli.BoolFlag{
+			Name:        "skipValidation",
+			Usage:       "Name of the project configuration",
+			Destination: &skipValidation,
 		},
 	}
 
@@ -73,7 +78,7 @@ func main() {
 		{
 			Name:   "graph",
 			Usage:  "Build graphviz format which can be used by dot or any other graphviz command. \n go run main.go graph | dot -Tpng -o graph.png \n See: http://www.graphviz.org/pdf/twopi.1.pdf",
-			Action: action(func() { documentationController.GraphvizAction(componentName, iconPath, hidePlanned) }),
+			Action: action(func() { documentationController.GraphvizAction(componentName, iconPath, hidePlanned, skipValidation) }),
 			Flags: []cli.Flag{
 				cli.StringFlag{
 					Name:        "application",

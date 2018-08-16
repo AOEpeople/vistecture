@@ -10,7 +10,7 @@ import (
 
 func TestCreateProjectFromFixture(t *testing.T) {
 
-	project, errors := core.CreateProject("fixture")
+	project, errors := core.CreateProject("fixture", false)
 	if len(errors) >= 1 {
 		t.Error("Factory returned error", errors)
 	}
@@ -29,7 +29,7 @@ func TestCreateProjectFromFixture(t *testing.T) {
 
 func TestCreateProjectFromFixtureFolderWithMerge(t *testing.T) {
 
-	project, errors := core.CreateProject("fixture-merge")
+	project, errors := core.CreateProject("fixture-merge", false)
 	if len(errors) >= 1 {
 		t.Error("Factory returned error", errors)
 	}
@@ -90,7 +90,7 @@ func contains(searchIn []*core.Application, findApp *core.Application) bool {
 
 func TestCreateProjectFromMultiple1(t *testing.T) {
 
-	project, errors := core.CreateProjectByName("fixture-multiple", "Fixture project Multiple 1")
+	project, errors := core.CreateProjectByName("fixture-multiple", "Fixture project Multiple 1", false)
 	if len(errors) >= 1 {
 		t.Error("Factory returned error", errors)
 	}
@@ -122,7 +122,7 @@ func TestCreateProjectFromMultiple1(t *testing.T) {
 
 func TestCreateProjectFromMultiple2(t *testing.T) {
 
-	project, errors := core.CreateProjectByName("fixture-multiple", "Fixture Project Multiple 2")
+	project, errors := core.CreateProjectByName("fixture-multiple", "Fixture Project Multiple 2", false)
 	if len(errors) >= 1 {
 		t.Error("Factory returned error", errors)
 	}
@@ -138,7 +138,7 @@ func TestCreateProjectFromMultiple2(t *testing.T) {
 
 func TestCreateProjectFromBoProject(t *testing.T) {
 
-	project, errors := core.CreateProject("fixture-noproject")
+	project, errors := core.CreateProject("fixture-noproject", false)
 	if len(errors) >= 1 {
 		t.Error("Factory returned error", errors)
 	}
@@ -157,11 +157,11 @@ func TestCreateProjectFromBoProject(t *testing.T) {
 
 func TestCreateReadmeExample(t *testing.T) {
 
-	_, errors := core.CreateProjectByName("fixture-readme", "Ports and Adapters DDD Architecture")
+	_, errors := core.CreateProjectByName("fixture-readme", "Ports and Adapters DDD Architecture", false)
 	if len(errors) >= 1 {
 		t.Error("Factory returned error", errors)
 	}
-	project, errors := core.CreateProjectByName("fixture-readme", "Ports and Adapters DDD Architecture minimum")
+	project, errors := core.CreateProjectByName("fixture-readme", "Ports and Adapters DDD Architecture minimum", false)
 	if len(errors) >= 1 {
 		t.Error("Factory returned error", errors)
 	}
@@ -175,7 +175,7 @@ func TestCreateReadmeExample(t *testing.T) {
 
 func TestNoDefinitionFound(t *testing.T) {
 
-	_, errors := core.CreateProjectByName("fake-dir", "")
+	_, errors := core.CreateProjectByName("fake-dir", "", false)
 	if errors == nil {
 		t.Error("Expected errors to be filled", errors)
 	}
@@ -186,7 +186,7 @@ func TestNoDefinitionFound(t *testing.T) {
 
 func TestExampleProjects(t *testing.T) {
 
-	project, errors := core.CreateProject("../example/demoproject")
+	project, errors := core.CreateProject("../example/demoproject", false)
 	if len(errors) >= 1 {
 		t.Error("Factory returned error", errors)
 	}
@@ -194,7 +194,7 @@ func TestExampleProjects(t *testing.T) {
 		t.Error("Expected name 'Demo Project'")
 	}
 
-	project, errors = core.CreateProject("../example/ports-and-adapters-architecture")
+	project, errors = core.CreateProject("../example/ports-and-adapters-architecture", false)
 	if len(errors) >= 1 {
 		t.Error("Factory returned error", errors)
 	}
@@ -202,7 +202,7 @@ func TestExampleProjects(t *testing.T) {
 		t.Error("Expected name 'Ports and Adapters DDD Architecture'")
 	}
 
-	project, errors = core.CreateProject("../example/sample-architecture")
+	project, errors = core.CreateProject("../example/sample-architecture", false)
 	if len(errors) >= 1 {
 		t.Error("Factory returned error", errors)
 	}

@@ -6,8 +6,8 @@ import (
 	"github.com/AOEpeople/vistecture/model/core"
 )
 
-func loadProject(ProjectConfigPath string, ProjectName string) *core.Project {
-	project, errors := core.CreateProjectByName(ProjectConfigPath, ProjectName)
+func loadProject(ProjectConfigPath string, ProjectName string, skipValidation bool) *core.Project {
+	project, errors := core.CreateProjectByName(ProjectConfigPath, ProjectName, skipValidation)
 
 	if len(errors) > 0 {
 		for _, err := range errors {

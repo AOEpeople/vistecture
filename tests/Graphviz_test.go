@@ -10,7 +10,7 @@ import (
 
 func TestCanGetGraph(t *testing.T) {
 
-	project, e := core.CreateProject("fixture")
+	project, e := core.CreateProject("fixture", false)
 	if e != nil {
 		t.Error("Factory returned error", e)
 	}
