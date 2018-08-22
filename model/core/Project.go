@@ -11,6 +11,7 @@ type Project struct {
 }
 
 const NOGROUP = "nogroup"
+const NOTEAM = "noteam"
 
 //Validates project and Components
 func (Project *Project) Validate() []error {
@@ -54,7 +55,7 @@ func (Project *Project) FindApplicationThatReferenceTo(application *Application,
 
 }
 
-// Get Map with components grouped by Group.
+// GetApplicationByGroup - Get Map with components grouped by Group.
 // NOGROUP is used for ungrouped components
 func (Project *Project) GetApplicationByGroup() map[string][]*Application {
 	m := make(map[string][]*Application)
@@ -63,6 +64,20 @@ func (Project *Project) GetApplicationByGroup() map[string][]*Application {
 			m[component.Group] = append(m[component.Group], component)
 		} else {
 			m[NOGROUP] = append(m[NOGROUP], component)
+		}
+	}
+	return m
+}
+
+// GetApplicationByTeam - Get Map with components grouped by Group.
+// NOGROUP is used for ungrouped components
+func (Project *Project) GetApplicationByTeam() map[string][]*Application {
+	m := make(map[string][]*Application)
+	for _, component := range Project.Applications {
+		if len(component.Team) > 0 {
+			m[component.Team] = append(m[component.Team], component)
+		} else {
+			m[NOTEAM] = append(m[NOTEAM], component)
 		}
 	}
 	return m
