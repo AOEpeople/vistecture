@@ -30,6 +30,11 @@ func (Dependency *Dependency) GetComponentName() string {
 	return Dependency.Reference
 }
 
+func (Dependency *Dependency) GetServiceName() string {
+	_, s := Dependency.GetComponentAndServiceNames()
+	return s
+}
+
 func (Dependency *Dependency) GetComponent(Project *Project) (Application, error) {
 	componentName, _ := Dependency.GetComponentAndServiceNames()
 	return Project.FindApplication(componentName)

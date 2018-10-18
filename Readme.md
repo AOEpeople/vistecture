@@ -275,7 +275,8 @@ go test ./tests/...
 make all
 
 // releasing: docker publish
-// push changes to github / adjust version number in Makefile and run:
+// push changes to github /
+// adjust version number in Makefile (!!)  and run
 make dockerpublish
 
 ```
