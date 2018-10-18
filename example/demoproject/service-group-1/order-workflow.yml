@@ -1,7 +1,8 @@
 ---
 applications:
-- name: orbital-storage-adapter
-  description: ISS Warehouse
+- name: order-workflow
+  description: Order Workflow
+  team: team1
   technology: scala
   properties:
     deployment: kubernetes
@@ -10,5 +11,10 @@ applications:
   provided-services:
   - name: api
     type: api
+  - name: events
+    type: exchange
+  infrastructure-dependencies:
+    - type: rdbms
   dependencies:
     - reference: paymentprovider
+    - reference: warehouse-logistics-adapter

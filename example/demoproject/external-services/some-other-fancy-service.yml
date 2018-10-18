@@ -1,6 +1,7 @@
 ---
 applications:
-- name: some-other-fancy-adapter
+- name: some-other-fancy-service
+  group: external
   category: external
   properties:
     deployment: external

@@ -1,0 +1,8 @@
+---
+projects:
+- name: "Demoproject"
+- name: "Demoproject minimal"
+  included-applications:
+  - name: customer-portal
+  - name: single-sign-on
+  - name: order-workflow

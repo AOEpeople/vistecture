@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>{{.Project.Name}} application architecture documentation</title>
+    <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
+<style>
+    h1, h2 {
+        font-weight: 300;
+    }
+    h2,h3,h4,h5 {
+        color:#000;
+    }
+    div.svg-container {
+        background-color:white;
+        padding:4px;
+        overflow:hidden;
+        border:1px solid black;
+        box-sizing: border-box;
+        text-align:center;
+        margin-left:20px;
+        margin-right:20px;
+    }
+
+    svg {max-width: 100%;}
+    table a:link,
+    table a:visited {
+    	color: #333;
+    	font-weight: bold;
+    	text-decoration:none;
+    }
+
+    table a:active,
+    table a:hover {
+    	color: #bd5a35;
+    	text-decoration:underline;
+    }
+    table {
+    	font-family:Arial, Helvetica, sans-serif;
+    	color:#111;
+    	border:0 none;
+        width:100%;
+        box-sizing: border-box;
+    }
+    table > tbody > tr > th {
+    	padding:15px 25px 5px 25px;
+        font-size:110%;
+    	background: #ededed;
+        color:#000;
+
+    }
+    table > tbody > tr > th:first-child {
+    	text-align: left;
+    	padding-left:20px;
+    }
+
+    table tr {
+    	text-align: center;
+    	padding-left:20px;
+    }
+    table td:first-child {
+    	text-align: left;
+    	padding-left:20px;
+    	border-left: 0;
+        vertical-align: top;
+    }
+    table td {
+    	padding:5px;
+    	background: #fafafa;
+        font-size:0.9rem;
+
+    }
+    table tr:nth-child(even) td {
+    	background: #f3f3f3;
+
+    }
+    table tr:last-child td {
+    	border-bottom:0;
+    }
+
+    body > nav {
+        width: 100%;
+        height: 100%;
+        position: fixed;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        z-index: 0;
+        background: #f2f2f2;
+        padding:16px;
+        padding-left:0;
+        overflow:auto;
+        overflow-y:scroll;
+
+    }
+
+    body > nav ul {
+        list-style: none;
+        margin:0;
+        padding:0;
+        margin-left:16px;
+    }
+
+    body > nav ul li {
+        display:inline-block;
+        width:100%;
+        padding-bottom:8px;
+    }
+
+    body > nav ul li a {
+        color:#bd5a35;
+        text-decoration:none;
+    }
+
+    body > nav ul li a:hover {
+        text-decoration: underline;
+    }
+
+    body > section {
+        min-height: 100%;
+        position: relative;
+        bottom: 100%;
+        top:0;
+        left: 0;
+        z-index: 1;
+        background-color: #fff;
+        color: #222;
+        padding-top:70px;
+    }
+    body > section > h2 {
+        margin-left:20px;
+        margin-right:20px;
+    }
+
+    body > section > header {
+        height:30px;
+        padding:20px;
+        background-color:#4a6580;
+        color:#fff;
+        position:fixed;
+        width:100%;
+        top:0;
+    }
+    body > section > header > h1 {
+        margin:0;
+        padding:0;
+        padding-left:35px;
+        line-height:30px;
+    }
+
+    body > section > section {
+       padding:20px;
+    }
+
+    body > section > section:nth-child(even) {
+        background-color:#fafaff;
+    }
+    .nav-trigger {
+        position: fixed;
+        clip: rect(0, 0, 0, 0);
+    }
+    label[for="nav-trigger"] {
+        position: fixed;
+        top: 15px;
+        left: 15px;
+        z-index: 2;
+        width: 30px;
+        height: 30px;
+        cursor: pointer;
+        background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' version='1.1' x='0px' y='0px' width='30px' height='30px' viewBox='0 0 30 30' enable-background='new 0 0 30 30' xml:space='preserve'><rect width='30' height='6' style='fill:rgb(255,255,255)'/><rect y='24' width='30' height='6' style='fill:rgb(255,255,255)'/><rect y='12' width='30' height='6' style='fill:rgb(255,255,255)'/></svg>");
+        background-size: contain;
+    }
+    .nav-trigger:checked + label {
+        left: 215px;
+    }
+
+    .nav-trigger:checked ~ section {
+        margin-left: 200px;
+        box-shadow: 0 0 5px 5px rgba(0,0,0,0.5);
+    }
+    .nav-trigger + label {
+        transition: left 0.2s;
+    }
+    body > section {
+        transition: margin 0.2s;
+
+    }
+    body {
+        padding:0;
+        margin:0;
+        font-family: 'Roboto', sans-serif;
+    }
+</style>
+</head>
+<body>
+<nav>
+    <ul>
+        <li><a href="#overview">Overview</a></li>
+        <li><a href="#details">Applications details</a>
+            <ul>
+                {{ range $key, $application := .Project.Applications }}
+                <li><a href="#details-{{$application.Name}}">{{$application.Title}}</a>
+                </li>
+                {{ end }}
+            </ul>
+        </li>
+    </ul>
+</nav>
+<input type="checkbox" id="nav-trigger" class="nav-trigger" />
+<label for="nav-trigger"></label>
+<section>
+    <header>
+        <h1>{{.Project.Name}} application architecture documentation</h1>
+    </header>
+
+    <h2 id="overview">Overview</h2>
+    <table>
+        <tr><th>name</th><th>provided components</th><tr>
+        {{ range .Project.Applications }}
+        <tr>
+            <td><a href="#details-{{ .Name }}">{{ .Name }}</a><br /><small>{{ renderContent .GetSummary }}</small></td>
+            <td>
+                <table>
+                    <tr><th>name</th><th>type</th><tr>
+                    {{ range .ProvidedServices }}
+                        <tr><td>{{ .Name }}</td><td>{{ .Type }}</td></tr>
+                    {{ end }}
+                </table>
+            </td>
+        </tr>
+        {{ end }}
+    </table>
+
+
+
+    <h2 id="details">Application Details</h2>
+
+    {{ range $key, $component := .Project.Applications }}
+     <section id="details-{{ .Name }}">
+       <h3 >{{$component.Title}} ({{ .Name }})</h3>
+       <p><b>{{ $component.Summary }}</b></p>
+       <p> {{ $component.GetDescriptionHtml }} </p>
+       <div class="svg-container">
+       {{ renderSVGInlineImage $component }}
+       </div>
+        <h4 id="details-{{ .Name }}-services">Components provided</h4>
+              <p>The application provides the following service components:</p>
+              <ul>
+                  {{ range $service := $component.ProvidedServices }}
+                       <li>
+                        <b>{{$service.Name}} {{if $service.IsPublic}} (Public Service) {{end}}</b>
+                        <br> {{$service.Description}}
+                       </li>
+                  {{ end }}
+              </ul>
+       <h4 id="details-{{ .Name }}-dependencies">dependencies</h4>
+       <p>The application requires the following services:</p>
+       <ul>
+           {{$dependencies := $component.GetAllDependencies }}
+           {{ range $dependency := $dependencies }}
+                <li>{{$dependency.Reference}}</li>
+           {{ end }}
+       </ul>
+        <p>The application requires the following infrastructure services:</p>
+              <ul>
+                  {{ range $infraDependencies := $component.InfrastructureDependencies }}
+                       <li>{{$infraDependencies.Type}}-{{$component.Name}}</li>
+                  {{ end }}
+              </ul>
+
+     </section>
+    {{ end }}
+</section>
+</body>
+</html>

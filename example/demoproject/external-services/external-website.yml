@@ -1,0 +1,10 @@
+---
+applications:
+- name: external-website
+  description: External Payment Provider
+  properties:
+    deployment: saas
+  category: external
+  provided-services:
+  - name: gui
+    type: gui

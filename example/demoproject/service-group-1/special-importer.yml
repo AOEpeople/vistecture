@@ -2,6 +2,7 @@
 applications:
 - name: some-special-data-importer
   description: Imports important Data
+  team: team1
   technology: Cobol
   properties:
     deployment: kubernetes

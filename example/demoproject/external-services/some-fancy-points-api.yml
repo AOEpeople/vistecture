@@ -1,0 +1,8 @@
+---
+applications:
+- name: some-fancy-points-api
+  group: external
+  category: external
+  properties:
+    deployment: external
+  description: External System with awesome Functionality

@@ -2,7 +2,8 @@
 applications:
 - name: warehouse-logistics-adapter
   description: Some Stuff on Shelves
-  technology: Turbo Pascal
+  technology: php
+  team: team1
   properties:
     deployment: kubernetes
     main-docker-registry: project
@@ -10,3 +11,9 @@ applications:
   provided-services:
   - name: api
     type: api
+  dependencies:
+  - reference: some-other-fancy-service
+    relationship: acl
+  - reference: some-fancy-points-api
+    relationship: acl
+    status: planned

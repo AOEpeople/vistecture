@@ -1,0 +1,17 @@
+---
+applications:
+- name: single-sign-on
+  description: SSO System
+  technology: keycloak
+  team: team3
+  properties:
+    deployment: kubernetes
+    main-docker-registry: project
+    healthcheck: /api/monitor/healthCheck
+  provided-services:
+  - name: admin-api
+    type: api
+  - name: openIdConnect
+    type: gui
+  - name: oauth
+    type: api
