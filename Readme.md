@@ -2,21 +2,27 @@
 
 A tool for visualizing and analyzing distributed (micro) service oriented architectures.
 
-![Kiku](templates/example.jpg)
+![Kiku](readme-example.png.jpg)
 
 ## Define your application architecture:
 
-Describe your architecture in JSON (use .json) or YAML (use .yml). You can do this in two ways
-- one json file or
-- in multiple json files that are all in one directory. (preferred for structuring bigger definitions)
+Describe your architecture in YAML in a machine readable format and generate various documentation artefacts out of it.
 
-### Installation Options:
-#### Go Get
+For an example see the "demoproject" in the example folder.
+
+You can put your definition in one (big) file or split it up in  multiple files in structured directories (which is preferred for structuring bigger definitions).
+
+It is also possible to use json instead of yml if you like.
+
+
+
+## Installation Options:
+### Go Get
 
 ```
 go get github.com/AOEpeople/vistecture
 ```
-#### Use a Docker container
+### Use a Docker container
 
 It has graphviz and vistecture installed and can be used directly:
 ```
@@ -31,7 +37,7 @@ docker run -v $(pwd):/workspace aoepeople/vistecture  sh -c "vistecture --config
 ```
 
 
-#### Download Binaries
+### Or Download Binaries
 You can also download a published release from github:
 
 E.g. for mac:
@@ -57,7 +63,7 @@ vistecture help
 You can also clone the repository and use golang tools.
 
 
-### Example definition ( example.yml ):
+## Example definition ( example.yml ):
 
 
 ```yaml
@@ -83,6 +89,7 @@ applications:
 - name: service1
   group: group1
   technology: scala
+  team: team1
   display:
     bordercolor: "#c922b3"
   summary: Short description
@@ -136,31 +143,40 @@ applications:
 The project configuration is optional and defines which components (application configurations) should be used for processing. Please
 also see chapter 'Domain Language / Concepts' for more information
 
-## Usage
+## Usage Options
 
-Currently the main feature is generating graphviz compatible graph descriptions that can be used by any of the graphviz layouters like this:
+### Generate Graphs:
+
+A main feature is generating graphviz compatible graph descriptions that can be used by any of the graphviz layouters like this:
 
 Complete Graph:
 ```
-> vistecture --config=pathtojson graph | dot -Tpng -o graph.png
+> vistecture --config=pathtodefinitions graph | dot -Tpng -o graph.png
 ```
 
 Graph for a dedicated project configuration:
 ```
-> vistecture --config=pathtojson graph --projectname=nameoftheproject | dot -Tpng -o graph.png
+> vistecture --config=pathtodefinitions graph --projectname=nameoftheproject | dot -Tpng -o graph.png
 ```
 
 Graph for one application and its direct dependencies (including infrastructure dependencies):
 ```
-> vistecture --config=pathtojson graph --application=applicationame | dot -Tpng -o graph.png
+> vistecture --config=pathtodefinitions graph --application=applicationame | dot -Tpng -o graph.png
 ```
 
 The generation of the graph can add small icons to the applications. Therefore the tool looks in `iconPath` for a .png file matching the defined "technology".
 
+***Team Graphs***
+You can also draw the resulting relationships between the teams:
+```
+> vistecture --config=pathtodefinitions teamGraph  --summaryRelation 1 | dot -Tpng -Gbgcolor=white -o teamgraph.png
+```
+
+### Generate documentations:
 You can also render a documentation - expecting the dot command is executable for the application it will embed svg images:
 
 ```
-> vistecture --config=pathtojson documentation > documentation.html
+> vistecture --config=pathtodefinitions documentation > documentation.html
 ```
 The rendering needs a go html template. The "template" folder comes with a nice example.
 You can download the templates to your local filesystem and use or modify them.
@@ -168,16 +184,17 @@ You can download the templates to your local filesystem and use or modify them.
 E.g.:
 
 ```
-> vistecture --config=pathtojson documentation --templatePath=$GOPATH/github.com/AOEpeople/vistecture/templates/htmldocument.tmpl > documentation.html
+> vistecture --config=pathtodefinitions documentation --templatePath=$GOPATH/github.com/AOEpeople/vistecture/templates/htmldocument.tmpl > documentation.html
 ```
 
+### Other artefacts:
 Check for cyclic dependencies and get a very basic impact analysis:
 
 ```
-> vistecture --config=pathtojson analyze
+> vistecture --config=pathtodefinitions analyze
 ```
 
-## Domain Language / Concepts:
+## Concepts and the Domain Language of the Service definition:
 
 This tool defines:
 
@@ -233,16 +250,16 @@ Dependency Properties:
 
 (See https://www.aoe.com/tech-radar/strategic-domain-driven-design.html )
 
-**Business Services:**
+**Groups (Business Services):**
+Applications can be grouped. This can for example be used to visualize Business Services:
+
 Several service components are typically composed to business services.
 For example an ecommerce shop business service may consist of services from  ecommerce application, login application, search application.
 
 
 ## Todos
 
--  [ ] Introduce useful resilience pattern types for the dependencies
--  [ ] Introduce Business Services as Composite of Applications (Service Components)
--  [ ] Better Impact Analysis for application failures - inlcuing resilience evaluation
+-  [ ] Better Impact Analysis for application failures - including resilience evaluation
 -  [ ] Generate useful artifacts for infrastructure pipeline (e.g. consul acls, service discovery tests...)
 
 ## Development
@@ -261,17 +278,4 @@ make all
 // push changes to github / adjust version number in Makefile and run:
 make dockerpublish
 
-
-
-```
-
-
-
-## Jenkins Tip
-
-Disable CSP Header in Jenkins to allow inline styles (required for a direct view of the generated documentation as jenkins artefact)
-Open Jenkins script console and type:
-
-```
-System.setProperty("hudson.model.DirectoryBrowserSupport.CSP", "")
 ```
