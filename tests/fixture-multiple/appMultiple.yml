@@ -3,8 +3,9 @@ projects:
 - name: Fixture Project Multiple 1
   included-applications:
   - name: app3
-    dependencies:
+    add-dependencies:
     - reference: app1
+    - reference: app4
   - name: app4
   - name: app1
     properties:
@@ -12,7 +13,7 @@ projects:
 - name: Fixture Project Multiple 2
   included-applications:
   - name: app3
-    dependencies:
+    add-dependencies:
     - reference: app2
   - name: app2
 applications:
@@ -41,8 +42,6 @@ applications:
     deployment: kubernetes
     main-docker-registry: core
     healthcheck: /health
-  dependencies:
-    - reference: app4
 - name: app4
   title: Core2
   category: core

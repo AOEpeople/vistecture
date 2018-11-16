@@ -190,24 +190,8 @@ func TestExampleProjects(t *testing.T) {
 	if len(errors) >= 1 {
 		t.Error("Factory returned error", errors)
 	}
-	if project.Name != "Demo Project" {
-		t.Error("Expected name 'Demo Project'")
-	}
-
-	project, errors = core.CreateProject("../example/ports-and-adapters-architecture", false)
-	if len(errors) >= 1 {
-		t.Error("Factory returned error", errors)
-	}
-	if project.Name != "Ports and Adapters DDD Architecture" {
-		t.Error("Expected name 'Ports and Adapters DDD Architecture'")
-	}
-
-	project, errors = core.CreateProject("../example/sample-architecture", false)
-	if len(errors) >= 1 {
-		t.Error("Factory returned error", errors)
-	}
-	if project.Name != "Sample" {
-		t.Error("Expected name 'Sample'")
+	if project.Name != "Demoproject" {
+		t.Error("Expected name 'Demoproject'")
 	}
 
 }

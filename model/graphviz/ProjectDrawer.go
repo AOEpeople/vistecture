@@ -15,34 +15,42 @@ type ProjectDrawer struct {
 }
 
 // Decorate Draw function
-func (ProjectDrawer *ProjectDrawer) DrawComplete(hidePlanned bool) string {
+func (projectDrawer *ProjectDrawer) DrawComplete(hidePlanned bool) string {
 	var result string
 	result = "digraph { graph [bgcolor=\"transparent\",overlap=false] \n"
 	// Nodes
-	for key, componentList := range ProjectDrawer.originalProject.GetApplicationByGroup() {
-		drawingResultInGroup := ""
-		for _, component := range componentList {
-			if component.Status == model.STATUS_PLANNED && hidePlanned {
-				continue
-			}
-			drawer := ApplicationDrawer{originalComponent: component, iconPath: ProjectDrawer.iconPath}
-			drawingResultInGroup = drawingResultInGroup + drawer.Draw(hidePlanned)
-		}
+	result += projectDrawer.drawGroups(projectDrawer.originalProject.GetApplicationsRootGroup(), hidePlanned)
 
-		if key != model.NOGROUP {
-			result += "subgraph \"cluster_" + key + "\" { label=\"" + key + "\"; \n " + drawingResultInGroup + "\n}\n"
-		} else {
-			result += drawingResultInGroup
-		}
-	}
 	// Paths
-	for _, component := range ProjectDrawer.originalProject.Applications {
+	for _, component := range projectDrawer.originalProject.Applications {
 		if component.Status == model.STATUS_PLANNED && hidePlanned {
 			continue
 		}
-		result = result + ProjectDrawer.drawComponentOutgoingRelations(component, hidePlanned)
+		result = result + projectDrawer.drawComponentOutgoingRelations(component, hidePlanned)
 	}
 	result = result + "}"
+	return result
+}
+
+//drawGroups - draws Nodes in the group and recursive calls drawGroup for subGroups
+func (projectDrawer *ProjectDrawer) drawGroups(appsByGroup *model.ApplicationsByGroup, hidePlanned bool) string {
+	result := ""
+
+	for _, subGroup := range appsByGroup.SubGroups {
+		result += projectDrawer.drawGroups(subGroup, hidePlanned)
+	}
+
+	for _, component := range appsByGroup.Applications {
+		if component.Status == model.STATUS_PLANNED && hidePlanned {
+			continue
+		}
+		drawer := ApplicationDrawer{originalComponent: component, iconPath: projectDrawer.iconPath}
+		result += drawer.Draw(hidePlanned)
+	}
+	if !appsByGroup.IsRoot {
+		result = "subgraph \"cluster_" + appsByGroup.GroupName + "\" { label=\"" + appsByGroup.GroupName + "\"; \n " + result + "\n}\n"
+	}
+
 	return result
 }
 

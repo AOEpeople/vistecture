@@ -128,6 +128,11 @@ func (GivenApplication *Application) IsOpenHostApp() bool {
 	return true
 }
 
+//GetGroupPath - returns the list of Groups the application is part of (parent to leaf)
+func (a *Application) GetGroupPath() []string {
+	return strings.Split(a.Group, "/")
+}
+
 //Merges the given application with another. The current application is the one who will be modified.
 func (app *Application) GetMerged(applicationReference ApplicationReference) (Application, error) {
 	newApplication := *app

@@ -4,11 +4,20 @@ import (
 	"errors"
 )
 
-type Project struct {
-	Name         string
-	Applications []*Application
-	// TODO - add services
-}
+type (
+	Project struct {
+		Name         string
+		Applications []*Application
+		// TODO - add services
+	}
+
+	ApplicationsByGroup struct {
+		SubGroups    []*ApplicationsByGroup
+		Applications []*Application
+		GroupName    string
+		IsRoot       bool
+	}
+)
 
 const NOGROUP = "nogroup"
 const NOTEAM = "noteam"
@@ -55,18 +64,15 @@ func (Project *Project) FindApplicationThatReferenceTo(application *Application,
 
 }
 
-// GetApplicationByGroup - Get Map with components grouped by Group.
-// NOGROUP is used for ungrouped components
-func (Project *Project) GetApplicationByGroup() map[string][]*Application {
-	m := make(map[string][]*Application)
-	for _, component := range Project.Applications {
-		if len(component.Group) > 0 {
-			m[component.Group] = append(m[component.Group], component)
-		} else {
-			m[NOGROUP] = append(m[NOGROUP], component)
-		}
+// GetApplicationsRootGroup - Returns the Root Group
+func (Project *Project) GetApplicationsRootGroup() *ApplicationsByGroup {
+	appsByGroup := ApplicationsByGroup{
+		IsRoot: true,
 	}
-	return m
+	for _, app := range Project.Applications {
+		appsByGroup.add(app)
+	}
+	return &appsByGroup
 }
 
 // GetApplicationByTeam - Get Map with components grouped by Group.
@@ -140,4 +146,32 @@ func (Project *Project) doesServiceExists(dependendComponentName string, service
 		return errorOnServiceFound
 	}
 	return nil
+}
+
+// Add a Application to the Value object and takes care that it is added to the correct subgroup
+func (a *ApplicationsByGroup) add(app *Application) error {
+	if !a.IsRoot {
+		return errors.New("Only add to route group")
+	}
+	groupPath := app.GetGroupPath()
+	groupToAddApp := a
+	for _, group := range groupPath {
+		groupToAddApp = groupToAddApp.getSubgroup(group)
+	}
+	groupToAddApp.Applications = append(groupToAddApp.Applications, app)
+	return nil
+}
+
+// Add a Application to the Value object and takes care that it is added to the correct subgroup
+func (a *ApplicationsByGroup) getSubgroup(groupName string) *ApplicationsByGroup {
+	for _, subGroup := range a.SubGroups {
+		if subGroup.GroupName == groupName {
+			return subGroup
+		}
+	}
+	newGroup := ApplicationsByGroup{
+		GroupName: groupName,
+	}
+	a.SubGroups = append(a.SubGroups, &newGroup)
+	return &newGroup
 }
