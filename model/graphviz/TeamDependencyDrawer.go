@@ -42,7 +42,7 @@ func (d *TeamDependencyDrawer) DrawComplete() string {
 		teams[application.Team] = append(teams[application.Team], application)
 		dependencies := application.GetAllDependencies()
 		for _, dependency := range dependencies {
-			dependencyApplication, e := dependency.GetComponent(d.project)
+			dependencyApplication, e := dependency.GetApplication(d.project)
 			if e != nil {
 				continue
 			}

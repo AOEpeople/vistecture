@@ -65,7 +65,7 @@ func (ProjectDrawer *ProjectDrawer) DrawComponent(Component *model.Application) 
 	result = result + ProjectDrawer.drawComponentOutgoingRelations(Component, false)
 	allRelatedComponents, _ := Component.GetAllDependencyApplications(ProjectDrawer.originalProject)
 	for _, relatedComponent := range allRelatedComponents {
-		drawer := ApplicationDrawer{originalComponent: &relatedComponent, iconPath: ProjectDrawer.iconPath}
+		drawer := ApplicationDrawer{originalComponent: relatedComponent, iconPath: ProjectDrawer.iconPath}
 		result = result + drawer.Draw(false)
 	}
 	//Draw incoming
@@ -74,9 +74,14 @@ func (ProjectDrawer *ProjectDrawer) DrawComponent(Component *model.Application) 
 	for _, relatedComponent := range allDependendComponents {
 		drawer := ApplicationDrawer{originalComponent: relatedComponent, iconPath: ProjectDrawer.iconPath}
 		result = result + drawer.Draw(false)
-		dependency, e := relatedComponent.GetDependencyTo(Component.Name)
-		if e == nil {
-			result += "\"" + relatedComponent.Name + "\" ->" + getGraphVizReference(dependency) + getEdgeLayoutFromDependency(dependency, relatedComponent.Display) + "\n"
+		dependencies, e := relatedComponent.GetDependenciesTo(Component.Name)
+		if e != nil {
+			continue
+		}
+		for _, dependency := range dependencies {
+			if e == nil {
+				result += "\"" + relatedComponent.Name + "\" ->" + getGraphVizReference(dependency) + getEdgeLayoutFromDependency(dependency, relatedComponent.Display) + "\n"
+			}
 		}
 	}
 
@@ -96,7 +101,7 @@ func (ProjectDrawer *ProjectDrawer) drawComponentOutgoingRelations(Component *mo
 		if dependency.Status == model.STATUS_PLANNED && hidePlanned {
 			continue
 		}
-		dependencyComponent, err := dependency.GetComponent(ProjectDrawer.originalProject)
+		dependencyComponent, err := dependency.GetApplication(ProjectDrawer.originalProject)
 		if err == nil && dependencyComponent.Status == model.STATUS_PLANNED && hidePlanned {
 			continue
 		}
@@ -108,7 +113,7 @@ func (ProjectDrawer *ProjectDrawer) drawComponentOutgoingRelations(Component *mo
 			if dependency.Status == model.STATUS_PLANNED && hidePlanned {
 				continue
 			}
-			dependencyComponent, err := dependency.GetComponent(ProjectDrawer.originalProject)
+			dependencyComponent, err := dependency.GetApplication(ProjectDrawer.originalProject)
 			if err == nil && dependencyComponent.Status == model.STATUS_PLANNED && hidePlanned {
 				continue
 			}

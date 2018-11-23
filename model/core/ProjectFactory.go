@@ -71,7 +71,7 @@ func CreateProjectFromRepository(repository *Repository, projectName string) (*P
 					foundErrors = append(foundErrors, err)
 					continue
 				}
-				newProject.Applications = append(newProject.Applications, &mergedApplication)
+				newProject.Applications = append(newProject.Applications, mergedApplication)
 			} else {
 				foundErrors = append(foundErrors, error)
 			}

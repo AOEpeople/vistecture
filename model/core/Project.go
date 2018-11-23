@@ -23,18 +23,18 @@ const NOGROUP = "nogroup"
 const NOTEAM = "noteam"
 
 //Validates project and Components
-func (Project *Project) Validate() []error {
+func (p *Project) Validate() []error {
 
 	var foundErrors []error
 
-	for _, application := range Project.Applications {
+	for _, application := range p.Applications {
 		foundErrors = append(foundErrors, application.Validate()...)
 		dependencies := application.GetAllDependencies()
 
 		for _, dependency := range dependencies {
-			dependendComponentName, serviceName := dependency.GetComponentAndServiceNames()
+			dependendComponentName, serviceName := dependency.GetApplicationAndServiceNames()
 
-			error := Project.doesServiceExists(dependendComponentName, serviceName)
+			error := p.doesServiceExists(dependendComponentName, serviceName)
 			if error != nil {
 				foundErrors = append(foundErrors, errors.New("Application '"+application.Name+"' Dependencies has Error: "+error.Error()))
 			}
@@ -44,32 +44,32 @@ func (Project *Project) Validate() []error {
 }
 
 //Find by Name
-func (Project *Project) FindApplication(nameToMatch string) (Application, error) {
-	for _, component := range Project.Applications {
+func (p *Project) FindApplication(nameToMatch string) (*Application, error) {
+	for _, component := range p.Applications {
 		if component.Name == nameToMatch {
-			return *component, nil
+			return component, nil
 		}
 	}
-	return Application{}, errors.New("Application with name '" + nameToMatch + "' not found")
+	return nil, errors.New("Application with name '" + nameToMatch + "' not found")
 }
 
 //Find by Name
-func (Project *Project) FindApplicationThatReferenceTo(application *Application, recursive bool) []*Application {
+func (p *Project) FindApplicationThatReferenceTo(application *Application, recursive bool) []*Application {
 	if recursive {
 		// api.2 -> ma -> api.1
-		return Project.findAllApplicationsThatReferenceComponent(application)
+		return p.findAllApplicationsThatReferenceComponent(application)
 	} else {
-		return Project.findApplicationsThatReferenceComponent(application)
+		return p.findApplicationsThatReferenceComponent(application)
 	}
 
 }
 
 // GetApplicationsRootGroup - Returns the Root Group
-func (Project *Project) GetApplicationsRootGroup() *ApplicationsByGroup {
+func (p *Project) GetApplicationsRootGroup() *ApplicationsByGroup {
 	appsByGroup := ApplicationsByGroup{
 		IsRoot: true,
 	}
-	for _, app := range Project.Applications {
+	for _, app := range p.Applications {
 		appsByGroup.add(app)
 	}
 	return &appsByGroup
@@ -77,9 +77,9 @@ func (Project *Project) GetApplicationsRootGroup() *ApplicationsByGroup {
 
 // GetApplicationByTeam - Get Map with components grouped by Group.
 // NOGROUP is used for ungrouped components
-func (Project *Project) GetApplicationByTeam() map[string][]*Application {
+func (p *Project) GetApplicationByTeam() map[string][]*Application {
 	m := make(map[string][]*Application)
-	for _, component := range Project.Applications {
+	for _, component := range p.Applications {
 		if len(component.Team) > 0 {
 			m[component.Team] = append(m[component.Team], component)
 		} else {
@@ -89,11 +89,11 @@ func (Project *Project) GetApplicationByTeam() map[string][]*Application {
 	return m
 }
 
-func (Project *Project) findAllApplicationsThatReferenceComponent(componentReferenced *Application) []*Application {
+func (p *Project) findAllApplicationsThatReferenceComponent(componentReferenced *Application) []*Application {
 	var referencingComponents []*Application
-	for _, currentComponent := range Project.findApplicationsThatReferenceComponent(componentReferenced) {
+	for _, currentComponent := range p.findApplicationsThatReferenceComponent(componentReferenced) {
 		referencingComponents = append(referencingComponents, currentComponent)
-		recursiveReferencingComponents := Project.findAllApplicationsThatReferenceComponent(currentComponent)
+		recursiveReferencingComponents := p.findAllApplicationsThatReferenceComponent(currentComponent)
 		for _, currentComponent := range recursiveReferencingComponents {
 			referencingComponents = append(referencingComponents, currentComponent)
 			if sliceContains(referencingComponents, currentComponent) {
@@ -105,13 +105,13 @@ func (Project *Project) findAllApplicationsThatReferenceComponent(componentRefer
 }
 
 // returns all components that have a direct dependency to the given component
-func (Project *Project) findApplicationsThatReferenceComponent(componentReferenced *Application) []*Application {
+func (p *Project) findApplicationsThatReferenceComponent(componentReferenced *Application) []*Application {
 	var referencingComponents []*Application
 	//walk through all registered compoents and return those who match
-	for _, currentComponent := range Project.Applications {
+	for _, currentComponent := range p.Applications {
 		currentComponentsDependencies := currentComponent.GetAllDependencies()
 		for _, dependency := range currentComponentsDependencies {
-			if dependency.GetComponentName() != componentReferenced.Name {
+			if dependency.GetApplicationName() != componentReferenced.Name {
 				continue
 			}
 			if sliceContains(referencingComponents, currentComponent) {
@@ -134,8 +134,8 @@ func sliceContains(searchInList []*Application, searchFor *Application) bool {
 }
 
 // internal method - Checks if a service exists and returns error if not
-func (Project *Project) doesServiceExists(dependendComponentName string, serviceName string) error {
-	dependendComponent, errorOnComponentFound := Project.FindApplication(dependendComponentName)
+func (p *Project) doesServiceExists(dependendComponentName string, serviceName string) error {
+	dependendComponent, errorOnComponentFound := p.FindApplication(dependendComponentName)
 	if errorOnComponentFound != nil {
 		return errorOnComponentFound
 	}

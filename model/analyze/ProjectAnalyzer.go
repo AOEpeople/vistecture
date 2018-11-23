@@ -55,8 +55,8 @@ func (projectAnalyzer *ProjectAnalyzer) walkDependencies(project *core.Project, 
 	//Walk Dependcies that are global for the given component
 	dependencies := component.Dependencies
 	for _, dependency := range dependencies {
-		nextComponent, _ := dependency.GetComponent(project)
-		err := projectAnalyzer.walkDependencies(project, &nextComponent, callStack)
+		nextComponent, _ := dependency.GetApplication(project)
+		err := projectAnalyzer.walkDependencies(project, nextComponent, callStack)
 		if err != nil {
 			return err
 		}
@@ -66,8 +66,8 @@ func (projectAnalyzer *ProjectAnalyzer) walkDependencies(project *core.Project, 
 	if e == nil {
 		dependencies2 := service.Dependencies
 		for _, dependency := range dependencies2 {
-			nextComponent, _ := dependency.GetComponent(project)
-			err := projectAnalyzer.walkDependencies(project, &nextComponent, callStack)
+			nextComponent, _ := dependency.GetApplication(project)
+			err := projectAnalyzer.walkDependencies(project, nextComponent, callStack)
 			if err != nil {
 				return err
 			}

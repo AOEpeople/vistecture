@@ -34,7 +34,7 @@ func (DocumentationController DocumentationController) GraphvizAction(componentN
 			fmt.Println(e)
 			os.Exit(-1)
 		}
-		fmt.Print(ProjectDrawer.DrawComponent(&Component))
+		fmt.Print(ProjectDrawer.DrawComponent(Component))
 	} else {
 		fmt.Print(ProjectDrawer.DrawComplete(hidePlanned == "1"))
 	}
