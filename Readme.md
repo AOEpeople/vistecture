@@ -2,7 +2,7 @@
 
 A tool for visualizing and analyzing distributed (micro) service oriented architectures.
 
-![Kiku](readme-example.png.jpg)
+![Example](readme-example.png)
 
 ## Define your application architecture:
 
