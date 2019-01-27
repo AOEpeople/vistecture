@@ -5,17 +5,20 @@ import (
 	"log"
 
 	"github.com/AOEpeople/vistecture/model/analyze"
+	"github.com/AOEpeople/vistecture/model/core"
 )
 
 type AnalyzeController struct {
-	ProjectConfigPath *string
-	ProjectName       *string
+	project *core.Project
 }
 
-func (AnalyzeController AnalyzeController) AnalyzeAction() {
-	var project = loadProject(*AnalyzeController.ProjectConfigPath, *AnalyzeController.ProjectName, false)
+func (a *AnalyzeController) Inject(project *core.Project) {
+	a.project = project
+}
+
+func (a *AnalyzeController) AnalyzeAction() {
 	var ProjectAnalyzer analyze.ProjectAnalyzer
-	errors := ProjectAnalyzer.AnalyzeCyclicDependencies(project)
+	errors := ProjectAnalyzer.AnalyzeCyclicDependencies(a.project)
 	if errors != nil {
 		for _, error := range errors {
 			fmt.Println(error)
@@ -26,16 +29,11 @@ func (AnalyzeController AnalyzeController) AnalyzeAction() {
 
 	fmt.Println()
 	fmt.Println("Impact Analysis: \n(How many other components may be influenced if a component fails)")
-	impacts := ProjectAnalyzer.ImpactAnalyze(project)
+	impacts := ProjectAnalyzer.ImpactAnalyze(a.project)
 	fmt.Println("Direct\t\tIndirect\tComponent")
 	fmt.Println("------\t\t--------\t--------")
 	for _, impact := range impacts {
 		fmt.Println(impact)
 	}
 
-}
-
-func (AnalyzeController AnalyzeController) ValidateAction() {
-	loadProject(*AnalyzeController.ProjectConfigPath, *AnalyzeController.ProjectName, false)
-	fmt.Println("Valid project definition")
 }

@@ -1,8 +1,14 @@
 # vistecture: Service Architecture Tool
 
 A tool for visualizing and analyzing distributed (micro) service oriented architectures.
+Just define your applications (microservices) with its dependencies in a simpel yaml file.
 
-![Example](readme-example.png)
+You can use the online browser:
+![Example](doc/onlinebrowser.png)
+
+Or you can use it to render graphviz based images and any kind of text documentations.
+
+![Example](doc/readme-example.png)
 
 ## Define your application architecture:
 
@@ -65,12 +71,20 @@ You can also clone the repository and use golang tools.
 
 ## Example definition ( example.yml ):
 
+The definition is the key essential input for vistecture to get its information.
+A project definition contains of:
+
+* a list of "applications". This is used to directly document the available applications.
+* a (optional) list of "projects". Projects are used to reference a certain subset of the defined applications (white list).
+
+
+The definition should be provided as yaml format in on or multiple files. In case it is splitted in multiple files, vistecture will load and merge each file.
 
 ```yaml
 ---
 projects:
 - name: Demo Project Name
-- name: Demo Project Name - Variant 2
+- name: Demo Project Name - Subset
   included-applications:
   - name: service1
     title: Override the Title if you like
@@ -140,8 +154,9 @@ applications:
   status: planned
 
 ```
-The project configuration is optional and defines which components (application configurations) should be used for processing. Please
-also see chapter 'Domain Language / Concepts' for more information
+
+
+Please also see chapter 'Domain Language / Concepts' for more information
 
 ## Usage Options
 
@@ -197,9 +212,6 @@ Check for cyclic dependencies and get a very basic impact analysis:
 ## Concepts and the Domain Language of the Service definition:
 
 This tool defines:
-
-**Repository:**
-The repository represents all found entities under the defined config folder.
 
 **Project:**
 A project defines which applications to be included for processing at runtime.

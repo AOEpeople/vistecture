@@ -8,7 +8,6 @@ applications:
     deployment: kubernetes
     main-docker-registry: project
     healthcheck: /api/monitor/healthCheck
-  technology: anypoint
   provided-services:
   - name: file
     type: s3

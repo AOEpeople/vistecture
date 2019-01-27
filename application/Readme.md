@@ -1,0 +1,1 @@
+This package contains the application layer, that is used to return a initialized project.

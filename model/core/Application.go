@@ -10,6 +10,8 @@ import (
 
 type (
 	Application struct {
+		//Id - generated Integer as Id
+		Id                         int                        `json:"id" yaml:"id"`
 		Name                       string                     `json:"name" yaml:"name"`
 		Team                       string                     `json:"team" yaml:"team"`
 		Title                      string                     `json:"title,omitempty" yaml:"title,omitempty"`
@@ -26,18 +28,30 @@ type (
 		Status                     string                     `json:"status" yaml:"status"`
 	}
 
+	ApplicationDisplaySettings struct {
+		Rotate      bool   `json:"rotate" yaml:"rotate"`
+		BorderColor string `json:"color,omitempty" yaml:"bordercolor,omitempty"`
+		Color       string `json:"color,omitempty" yaml:"color,omitempty"`
+	}
+
 	//DependenciesGrouped Value object represents all Dependencies to one Application
 	DependenciesGrouped struct {
-		Application       *Application
-		SourceApplication *Application
-		Dependencies      []Dependency
+		Application       *Application `json:"application"`
+		SourceApplication *Application `json:"sourceApplication"`
+		Dependencies      []Dependency `json:"dependencies"`
+	}
+
+	InfrastructureDependency struct {
+		Type string `json:"type" yaml:"type"`
 	}
 )
 
 const (
-	STATUS_PLANNED = "planned"
+	STATUS_PLANNED    = "planned"
+	CATEGORY_EXTERNAL = "external"
 )
 
+//Validate - validates the Application
 func (a *Application) Validate() []error {
 	var foundErrors []error
 
@@ -50,11 +64,12 @@ func (a *Application) Validate() []error {
 	return foundErrors
 }
 
+//GetDescriptionHtml - helper that renders the description text as markdown - to be used in HTML documentations
 func (a *Application) GetDescriptionHtml() template.HTML {
 	return template.HTML(blackfriday.MarkdownCommon([]byte(a.Description)))
 }
 
-// Returns summary. If summary is not set the first 100 letters from description
+//GetSummary -  returns summary. If summary is not set the first 100 letters from description
 func (a *Application) GetSummary() string {
 	if a.Summary != "" {
 		return a.Summary
@@ -65,51 +80,53 @@ func (a *Application) GetSummary() string {
 	return a.Description
 }
 
+//FindService - returns service object or error
 func (a *Application) FindService(nameToMatch string) (*Service, error) {
 	for _, service := range a.ProvidedServices {
 		if service.Name == nameToMatch {
 			return &service, nil
 		}
 	}
-
-	return nil, errors.New("a '" + a.Name + "' has no Interface with Name " + nameToMatch)
+	return nil, errors.New("a '" + a.Name + "' has no service with Name " + nameToMatch)
 }
 
-//returns the  Applications that are a dependency of the current application
+//returns the  Applications that are a dependency of the current application in the passed project
 func (a *Application) GetAllDependencyApplications(Project *Project) ([]*Application, error) {
 	var result []*Application
-	// Walk dependencies from current component
-	for _, dependency := range a.Dependencies {
+	for _, dependency := range a.GetAllDependencies() {
 		foundComponent, e := dependency.GetApplication(Project)
 		if e != nil {
 			return nil, e
 		}
 		result = append(result, foundComponent)
 	}
-	// Walk dependencies - modeled from current components provides Services
-	for _, service := range a.ProvidedServices {
-		for _, dependency := range service.Dependencies {
-			foundComponent, e := dependency.GetApplication(Project)
-			if e != nil {
-				return nil, e
-			}
-			result = append(result, foundComponent)
-		}
-	}
-
 	return result, nil
 }
 
-//returns the depending Dependencies
-func (a *Application) GetDependenciesTo(ComponentName string) ([]Dependency, error) {
+//returns all the  Dependencies objects from the current application to others
+func (a *Application) GetAllDependencies() []Dependency {
+	var result []Dependency
+	for _, dependency := range a.Dependencies {
+		result = append(result, dependency)
+	}
+	for _, service := range a.ProvidedServices {
+		for _, dependency := range service.Dependencies {
+			result = append(result, dependency)
+		}
+	}
+	return result
+}
+
+//GetDependenciesTo returns the Dependencies to a specified other application
+func (a *Application) GetDependenciesTo(applicationName string) ([]Dependency, error) {
 	var result []Dependency
 	for _, dependency := range a.GetAllDependencies() {
-		if dependency.GetApplicationName() == ComponentName {
+		if dependency.GetApplicationName() == applicationName {
 			result = append(result, dependency)
 		}
 	}
 	if len(result) == 0 {
-		return nil, errors.New("Dependency to '" + ComponentName + "' Not found")
+		return nil, errors.New("Dependency to '" + applicationName + "' Not found")
 	}
 	return result, nil
 }
@@ -130,20 +147,7 @@ func (a *Application) GetServiceForDependency(dependency *Dependency) *Service {
 	return service
 }
 
-//returns the depending Dependencies
-func (a *Application) GetAllDependencies() []Dependency {
-	var result []Dependency
-	for _, dependency := range a.Dependencies {
-		result = append(result, dependency)
-	}
-	for _, service := range a.ProvidedServices {
-		for _, dependency := range service.Dependencies {
-			result = append(result, dependency)
-		}
-	}
-	return result
-}
-
+//IsOpenHostApp - returns true if the APIs provided by this service are all declared as IsOpenHost.
 func (a *Application) IsOpenHostApp() bool {
 	if len(a.ProvidedServices) == 0 {
 		return false
@@ -161,64 +165,38 @@ func (a *Application) GetGroupPath() []string {
 	return strings.Split(a.Group, "/")
 }
 
-//GetDependenciesGrouped - returns a list of grouped dependencies by application
+//GetDependenciesGrouped - returns a list of grouped dependencies for this application to others. Useful if you are not interested in the indivudual dependencies but only the general "links" from this app to others
 func (a *Application) GetDependenciesGrouped(project *Project) []*DependenciesGrouped {
 	var result []*DependenciesGrouped
+
+	//private helper func
+	getGroupedDepToAppInList := func(list []*DependenciesGrouped, depApp *Application) *DependenciesGrouped {
+		for _, group := range list {
+			if group.Application == depApp {
+				return group
+
+			}
+		}
+		return nil
+	}
+
 	for _, dep := range a.Dependencies {
 		depApp, err := dep.GetApplication(project)
 		if err != nil {
 			continue
 		}
-		inList := false
-		for _, group := range result {
-			if group.Application == depApp {
-				inList = true
-				group.Dependencies = append(group.Dependencies, dep)
-			}
+		//add dependency to existing depGrouped if found
+		groupedDep := getGroupedDepToAppInList(result, depApp)
+		if groupedDep != nil {
+			groupedDep.Dependencies = append(groupedDep.Dependencies, dep)
+			continue
 		}
-		if !inList {
-			result = append(result, &DependenciesGrouped{
-				Application:       depApp,
-				SourceApplication: a,
-				Dependencies:      []Dependency{dep},
-			})
-		}
+		//else append new
+		result = append(result, &DependenciesGrouped{
+			Application:       depApp,
+			SourceApplication: a,
+			Dependencies:      []Dependency{dep},
+		})
 	}
 	return result
-}
-
-//Merges the given application with another. The current application is the one who will be modified.
-func (a *Application) GetMerged(applicationReference ApplicationReference) (*Application, error) {
-	newApplication := *a
-
-	if applicationReference.Name != "" {
-		newApplication.Name = applicationReference.Name
-	}
-	if applicationReference.Category != "" {
-		newApplication.Category = applicationReference.Category
-	}
-	if applicationReference.Description != "" {
-		newApplication.Description = applicationReference.Description
-	}
-	if applicationReference.AddDependencies != nil {
-		newApplication.Dependencies = append(a.Dependencies, applicationReference.AddDependencies...)
-	}
-	if applicationReference.AddProvidedServices != nil {
-		newApplication.ProvidedServices = append(a.ProvidedServices, applicationReference.AddProvidedServices...)
-	}
-	if applicationReference.Category != "" {
-		newApplication.Category = applicationReference.Category
-	}
-	if applicationReference.Group != "" {
-		newApplication.Group = applicationReference.Group
-	}
-	if applicationReference.Properties != nil {
-		if newApplication.Properties == nil {
-			newApplication.Properties = make(map[string]string)
-		}
-		for k, v := range applicationReference.Properties {
-			newApplication.Properties[k] = v
-		}
-	}
-	return &newApplication, nil
 }

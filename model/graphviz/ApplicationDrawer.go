@@ -27,7 +27,7 @@ func (ComponentDrawer ApplicationDrawer) Draw(hidePlanned bool) string {
 
 	tableHeaderColor := ""
 	switch Component.Category {
-	case "external":
+	case model.CATEGORY_EXTERNAL:
 		tableHeaderColor = "#8e0909"
 	default:
 		tableHeaderColor = "#1B4E5E"
@@ -66,6 +66,7 @@ func (ComponentDrawer ApplicationDrawer) Draw(hidePlanned bool) string {
 		case "gui":
 			color = "#D4C1E0"
 		case "exchange":
+		case "topic":
 			color = "#BEE8D2"
 		default:
 			color = "#CFCFCF"

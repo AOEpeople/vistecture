@@ -16,8 +16,7 @@ import (
 
 type (
 	DocumentationController struct {
-		ProjectConfigPath *string
-		ProjectName       *string
+		project *core.Project
 	}
 
 	TemplateData struct {
@@ -25,35 +24,36 @@ type (
 	}
 )
 
-func (DocumentationController DocumentationController) GraphvizAction(componentName string, iconPath string, hidePlanned string, skipValidation bool) {
-	Project := loadProject(*DocumentationController.ProjectConfigPath, *DocumentationController.ProjectName, skipValidation)
-	ProjectDrawer := graphviz.CreateProjectDrawer(Project, iconPath)
+func (d *DocumentationController) Inject(project *core.Project) {
+	d.project = project
+}
+
+func (d *DocumentationController) GraphvizAction(componentName string, iconPath string, hidePlanned string, skipValidation bool) {
+	projectDrawer := graphviz.CreateProjectDrawer(d.project, iconPath)
 	if componentName != "" {
-		Component, e := Project.FindApplication(componentName)
+		Component, e := d.project.FindApplication(componentName)
 		if e != nil {
 			fmt.Println(e)
 			os.Exit(-1)
 		}
-		fmt.Print(ProjectDrawer.DrawComponent(Component))
+		fmt.Print(projectDrawer.DrawComponent(Component))
 	} else {
-		fmt.Print(ProjectDrawer.DrawComplete(hidePlanned == "1"))
+		fmt.Print(projectDrawer.DrawComplete(hidePlanned == "1"))
 	}
 
 }
 
-func (DocumentationController DocumentationController) TeamGraphvizAction(summaryRelation string) {
-	Project := loadProject(*DocumentationController.ProjectConfigPath, *DocumentationController.ProjectName, false)
-	Drawer := graphviz.CreateTeamDependencyDrawer(Project, summaryRelation != "")
-	fmt.Print(Drawer.DrawComplete())
+func (d *DocumentationController) TeamGraphvizAction(summaryRelation string) {
+	drawer := graphviz.CreateTeamDependencyDrawer(d.project, summaryRelation != "")
+	fmt.Print(drawer.DrawComplete())
 }
 
-func (DocumentationController DocumentationController) HTMLDocumentAction(templatePath string, iconPath string) {
-	project := loadProject(*DocumentationController.ProjectConfigPath, *DocumentationController.ProjectName, false)
+func (d *DocumentationController) HTMLDocumentAction(templatePath string, iconPath string) {
 	tpl := template.New(filepath.Base(templatePath))
 
 	tpl.Funcs(template.FuncMap{
 		"renderSVGInlineImage": func(Component core.Application) template.HTML {
-			ProjectDrawer := graphviz.CreateProjectDrawer(project, iconPath)
+			ProjectDrawer := graphviz.CreateProjectDrawer(d.project, iconPath)
 			stdInContent := ProjectDrawer.DrawComponent(&Component)
 
 			commandName := "dot"
@@ -80,7 +80,7 @@ func (DocumentationController DocumentationController) HTMLDocumentAction(templa
 	}
 
 	data := TemplateData{
-		Project: project,
+		Project: d.project,
 	}
 	err = tpl.Execute(os.Stdout, data)
 	if err != nil {
