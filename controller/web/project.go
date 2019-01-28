@@ -3,13 +3,17 @@ package web
 import (
 	"encoding/json"
 	"net/http"
+	"os"
 
 	"fmt"
 
 	"strings"
 
+	"log"
+
 	"github.com/AOEpeople/vistecture/application"
 	"github.com/AOEpeople/vistecture/model/core"
+	"github.com/gobuffalo/packr/v2"
 )
 
 type (
@@ -30,16 +34,41 @@ type (
 	}
 )
 
+var (
+	fileServerInstance http.Handler
+)
+
 func (p *ProjectController) Inject(definitions *application.ProjectDefinitions) {
 	p.projectDefinitions = definitions
 }
 
-func (p *ProjectController) ShowProjectAction() {
+func (p *ProjectController) IndexAction(w http.ResponseWriter, r *http.Request, localTemplateFolder string) {
 
+	handler := initFileServerInstance(localTemplateFolder)
+	handler.ServeHTTP(w, r)
 }
 
-func (p *ProjectController) IndexAction(w http.ResponseWriter, r *http.Request) {
-	fs := http.FileServer(http.Dir("templates/web"))
+func initFileServerInstance(localFolder string) http.Handler {
+	if fileServerInstance != nil {
+		return fileServerInstance
+	}
+	var fileSystem http.FileSystem
+	if localFolder != "" {
+		log.Printf("Using filesystem % templates for serving", localFolder)
+		if _, err := os.Stat(localFolder); os.IsNotExist(err) {
+			panic(fmt.Sprintf("Cannot start - Folder %v not exitend", localFolder))
+		}
+		fileSystem = http.Dir(localFolder)
+	} else {
+		log.Printf("Using templateBox templates for serving")
+		fileSystem = packr.New("templateBox", "./template")
+	}
+	fileServerInstance = http.FileServer(fileSystem)
+	return fileServerInstance
+}
+
+func (p *ProjectController) HostDocumentsAction(w http.ResponseWriter, r *http.Request, documentsFolder string) {
+	fs := http.FileServer(http.Dir(documentsFolder))
 	fs.ServeHTTP(w, r)
 }
 

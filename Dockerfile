@@ -1,5 +1,10 @@
-FROM golang:1.9 as build
-RUN go get github.com/AOEpeople/vistecture
+FROM golang:1.11 as build
+RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go get -u github.com/gobuffalo/packr/v2/packr2
+RUN mkdir -p /go/src/github.com/AOEpeople/
+COPY . /go/src/github.com/AOEpeople/vistecture
+RUN cd /go/src/github.com/AOEpeople/vistecture && CGO_ENABLED=0 GOOS=linux GOARCH=amd64 packr2 -v
+RUN cd /go/src/github.com/AOEpeople/vistecture && CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build .
+RUN ls -al /go/src/github.com/AOEpeople/
 
 FROM alpine:latest
 RUN apk add --no-cache \
@@ -7,4 +12,4 @@ RUN apk add --no-cache \
   font-bitstream-type1 \
   inotify-tools \
   tini
-COPY --from=build /go/bin/vistecture /usr/local/bin
+COPY --from=build /go/src/github.com/AOEpeople/vistecture/vistecture /usr/local/bin

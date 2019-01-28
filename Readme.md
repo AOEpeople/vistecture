@@ -37,6 +37,10 @@ docker pull aoepeople/vistecture
 
 Example usage with a definition from current folder:
 ```
+cd /your/path/with_vistecture_defintions
+
+docker run -v $(pwd):/workspace -p 8080:8080 aoepeople/vistecture vistecture --config=/workspace serve
+
 docker run -v $(pwd):/workspace aoepeople/vistecture  vistecture --config /workspace analyze
 
 docker run -v $(pwd):/workspace aoepeople/vistecture  sh -c "vistecture --config /workspace/definition graph --iconPath /usr/src/go/src/github.com/AOEpeople/vistecture/templates/icons | dot -Tpng -o /workspace/graph.png"
@@ -78,7 +82,7 @@ A project definition contains of:
 * a (optional) list of "projects". Projects are used to reference a certain subset of the defined applications (white list).
 
 
-The definition should be provided as yaml format in on or multiple files. In case it is splitted in multiple files, vistecture will load and merge each file.
+The definition should be provided as yaml format in one or in multiple files. In case it is splitted in multiple files, vistecture will load and merge each file.
 
 ```yaml
 ---
@@ -159,6 +163,14 @@ applications:
 Please also see chapter 'Domain Language / Concepts' for more information
 
 ## Usage Options
+
+### Run Browser based view:
+```
+> vistecture --config=pathtodefinitions serve
+```
+or
+
+
 
 ### Generate Graphs:
 

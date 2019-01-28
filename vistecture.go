@@ -24,8 +24,9 @@ var (
 	//global cli flags
 	projectConfigPath, projectName string
 	skipValidation                 bool
-	//server cli flag
-	serverPort int
+	//server cli flags
+	serverPort          int
+	localTemplateFolder string
 )
 
 func actionFunc(lazyProjectInjectAble projectInjectAble, cb func()) func(c *cli.Context) error {
@@ -147,6 +148,12 @@ func main() {
 					Usage:       "set the port (default 8080)",
 					Destination: &serverPort,
 				},
+				cli.StringFlag{
+					Name:        "localTemplateFolder",
+					Value:       "",
+					Usage:       "if set then this template folder will be used to serve the view - otherwise a standard template gets loaded automatically",
+					Destination: &localTemplateFolder,
+				},
 			},
 		},
 	}
@@ -182,7 +189,7 @@ func startServer(c *cli.Context) error {
 
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 
-		webProjectController.IndexAction(w, r)
+		webProjectController.IndexAction(w, r, localTemplateFolder)
 	})
 
 	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%v", serverPort), nil))

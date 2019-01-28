@@ -3,3 +3,4 @@ build-artifacts
 templates.zip
 .DS_Store
 .idea
+*-packr.go
