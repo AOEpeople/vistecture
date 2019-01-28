@@ -188,7 +188,7 @@ func startServer(c *cli.Context) error {
 
 	srv := &http.Server{
 		Handler:      r,
-		Addr:         fmt.Sprintf("127.0.0.1:%v", serverPort),
+		Addr:         fmt.Sprintf(":%v", serverPort),
 		WriteTimeout: 15 * time.Second,
 		ReadTimeout:  15 * time.Second,
 	}
@@ -201,7 +201,7 @@ func startServer(c *cli.Context) error {
 	}
 	webProjectController.Inject(definitions)
 
-	// This will serve files under http://localhost:8000/static/<filename>
+	// This will serve files under http://localhost:8000/documents/<filename>
 	r.PathPrefix("/documents/").Handler(http.StripPrefix("/documents/", http.FileServer(http.Dir(staticDocumentsFolder))))
 
 	r.HandleFunc("/data", func(w http.ResponseWriter, r *http.Request) {

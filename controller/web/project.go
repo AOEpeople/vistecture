@@ -120,16 +120,24 @@ func getStaticDocuments(folder string) ([]string, error) {
 	if folder == "" {
 		return result, nil
 	}
-	err := filepath.Walk(folder, func(path string, info os.FileInfo, err error) error {
-		if err != nil {
-			return err
+
+	files, err := filepath.Glob(strings.TrimRight(folder, "/") + "/*")
+	if err != nil {
+		return nil, err
+	}
+	for _, file := range files {
+		fileInfo, fileErr := os.Stat(file)
+		if fileErr != nil {
+			return nil, fileErr
 		}
-		if info.IsDir() {
-			return nil
+
+		if fileInfo.IsDir() {
+			continue
 		}
-		path = strings.TrimLeft(path, folder)
+		path := strings.TrimLeft(file, folder)
 		result = append(result, path)
-		return nil
-	})
+
+	}
+
 	return result, err
 }

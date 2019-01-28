@@ -6,7 +6,7 @@ RUN cd /go/src/github.com/AOEpeople/vistecture && CGO_ENABLED=0 GOOS=linux GOARC
 RUN cd /go/src/github.com/AOEpeople/vistecture && CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build .
 RUN ls -al /go/src/github.com/AOEpeople/
 
-FROM alpine:latest
+FROM alpine:3.6
 RUN apk add --no-cache \
   graphviz \
   font-bitstream-type1 \

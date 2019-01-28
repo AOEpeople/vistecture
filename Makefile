@@ -8,6 +8,9 @@ default: darwin
 all: darwin linux windows
 
 templates:
+    dep ensure
+	packr2
+	mkdir -p build-artifacts
 	zip -qr build-artifacts/templates.zip templates
 
 darwin: $(SOURCES) templates
