@@ -26,6 +26,7 @@ applicationInit.DrawConfiguredGraph = function() {
     visTectureHelper.LoadVistectureData(selectedProject,function(projectData) {
         applicationInit.updateProjectDropdown(projectData.availableProjectNames, config)
         applicationInit.updateGroups(projectData.applicationsByGroup, config)
+        layout.SetDocumentsMenu(projectData.staticDocumentations)
         visRenderer.RenderNetwork(document.getElementById('maincontent'),projectData, config)
     })
 }

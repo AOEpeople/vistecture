@@ -43,6 +43,7 @@ layout.SetGraphPresets = function(preset) {
     $("#networkPhysics").prop('checked', config["physics"])
 
 }
+
 layout.ShowSideContentModal = function(title, commontab,servicetab, deptab) {
     $( "#sidecontent .close" ).click(function() {
         layout.hideSideContentModal()
@@ -52,6 +53,15 @@ layout.ShowSideContentModal = function(title, commontab,servicetab, deptab) {
     $( "#sidecontent #services" ).html(servicetab)
     $( "#sidecontent #dependencies" ).html(deptab)
     $( "#sidecontent" ).fadeIn()
+}
+
+
+layout.SetDocumentsMenu = function(documents) {
+  for (var i in documents) {
+      let document = documents[i]
+      let urlname = encodeURI(document)
+      $( "#documentations" ).append( `<a class="dropdown-item" href="/documents/${urlname}" target="blank">${document}</a>` );
+  }
 }
 
 layout.hideSideContentModal = function() {

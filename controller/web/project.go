@@ -11,6 +11,8 @@ import (
 
 	"log"
 
+	"path/filepath"
+
 	"github.com/AOEpeople/vistecture/application"
 	"github.com/AOEpeople/vistecture/model/core"
 	"github.com/gobuffalo/packr/v2"
@@ -26,6 +28,7 @@ type (
 		AvailableProjectNames []string                  `json:"availableProjectNames"`
 		ApplicationsByGroup   *core.ApplicationsByGroup `json:"applicationsByGroup"`
 		ApplicationsDto       []*ApplicationDto         `json:"applications"`
+		StaticDocumentations  []string                  `json:"staticDocumentations"`
 	}
 
 	ApplicationDto struct {
@@ -67,12 +70,7 @@ func initFileServerInstance(localFolder string) http.Handler {
 	return fileServerInstance
 }
 
-func (p *ProjectController) HostDocumentsAction(w http.ResponseWriter, r *http.Request, documentsFolder string) {
-	fs := http.FileServer(http.Dir(documentsFolder))
-	fs.ServeHTTP(w, r)
-}
-
-func (p *ProjectController) DataAction(w http.ResponseWriter, r *http.Request) {
+func (p *ProjectController) DataAction(w http.ResponseWriter, r *http.Request, documentsFolder string) {
 	projectName, _ := r.URL.Query()["project"]
 	project, errors := application.CreateProjectFromProjectDefinitions(p.projectDefinitions, strings.Join(projectName, ""))
 
@@ -94,6 +92,14 @@ func (p *ProjectController) DataAction(w http.ResponseWriter, r *http.Request) {
 			DependenciesGrouped: app.GetDependenciesGrouped(project),
 		})
 	}
+	files, err := getStaticDocuments(documentsFolder)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		fmt.Fprint(w, `{"Error":"`+err.Error()+`"}`)
+		return
+	}
+	result.StaticDocumentations = files
+
 	b, err := json.Marshal(result)
 	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:63343")
 	w.Header().Set("Access-Control-Allow-Origin", "null")
@@ -101,8 +107,29 @@ func (p *ProjectController) DataAction(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		fmt.Fprint(w, `{"Error":"`+err.Error()+`"}`)
+		return
 	}
+
 	w.WriteHeader(http.StatusOK)
 	fmt.Fprint(w, string(b))
 
+}
+
+func getStaticDocuments(folder string) ([]string, error) {
+	var result []string
+	if folder == "" {
+		return result, nil
+	}
+	err := filepath.Walk(folder, func(path string, info os.FileInfo, err error) error {
+		if err != nil {
+			return err
+		}
+		if info.IsDir() {
+			return nil
+		}
+		path = strings.TrimLeft(path, folder)
+		result = append(result, path)
+		return nil
+	})
+	return result, err
 }

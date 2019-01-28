@@ -5,12 +5,15 @@ import (
 	"net/http"
 	"os"
 
+	"time"
+
 	"fmt"
 
 	"github.com/AOEpeople/vistecture/application"
 	"github.com/AOEpeople/vistecture/controller"
 	"github.com/AOEpeople/vistecture/controller/web"
 	"github.com/AOEpeople/vistecture/model/core"
+	"github.com/gorilla/mux"
 	"gopkg.in/urfave/cli.v1"
 )
 
@@ -25,8 +28,9 @@ var (
 	projectConfigPath, projectName string
 	skipValidation                 bool
 	//server cli flags
-	serverPort          int
-	localTemplateFolder string
+	serverPort            int
+	localTemplateFolder   string
+	staticDocumentsFolder string
 )
 
 func actionFunc(lazyProjectInjectAble projectInjectAble, cb func()) func(c *cli.Context) error {
@@ -154,6 +158,12 @@ func main() {
 					Usage:       "if set then this template folder will be used to serve the view - otherwise a standard template gets loaded automatically",
 					Destination: &localTemplateFolder,
 				},
+				cli.StringFlag{
+					Name:        "staticDocumentsFolder",
+					Value:       "",
+					Usage:       "if set then this  folder will be scanned for files that are linked in the mainmenu then",
+					Destination: &staticDocumentsFolder,
+				},
 			},
 		},
 	}
@@ -174,6 +184,15 @@ func loadProject(ProjectConfigPath string, ProjectName string, skipValidation bo
 }
 
 func startServer(c *cli.Context) error {
+	r := mux.NewRouter()
+
+	srv := &http.Server{
+		Handler:      r,
+		Addr:         fmt.Sprintf("127.0.0.1:%v", serverPort),
+		WriteTimeout: 15 * time.Second,
+		ReadTimeout:  15 * time.Second,
+	}
+
 	webProjectController := web.ProjectController{}
 	definitions, err := application.LoadProjectDefinitions(projectConfigPath)
 	if err != nil {
@@ -182,16 +201,18 @@ func startServer(c *cli.Context) error {
 	}
 	webProjectController.Inject(definitions)
 
-	http.HandleFunc("/data", func(w http.ResponseWriter, r *http.Request) {
+	// This will serve files under http://localhost:8000/static/<filename>
+	r.PathPrefix("/documents/").Handler(http.StripPrefix("/documents/", http.FileServer(http.Dir(staticDocumentsFolder))))
 
-		webProjectController.DataAction(w, r)
+	r.HandleFunc("/data", func(w http.ResponseWriter, r *http.Request) {
+		webProjectController.DataAction(w, r, staticDocumentsFolder)
 	})
 
-	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-
+	r.PathPrefix("/").HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		webProjectController.IndexAction(w, r, localTemplateFolder)
 	})
 
-	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%v", serverPort), nil))
+	log.Printf("Starting server:%v \n", serverPort)
+	log.Fatal(srv.ListenAndServe())
 	return nil
 }

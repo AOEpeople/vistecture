@@ -1,6 +1,7 @@
 vendor
 build-artifacts
 templates.zip
+vistecture
 .DS_Store
 .idea
 *-packr.go
