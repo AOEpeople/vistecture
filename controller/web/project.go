@@ -126,6 +126,7 @@ func getStaticDocuments(folder string) ([]string, error) {
 		return nil, err
 	}
 	for _, file := range files {
+
 		fileInfo, fileErr := os.Stat(file)
 		if fileErr != nil {
 			return nil, fileErr
@@ -134,7 +135,7 @@ func getStaticDocuments(folder string) ([]string, error) {
 		if fileInfo.IsDir() {
 			continue
 		}
-		path := strings.TrimLeft(file, folder)
+		path := strings.TrimPrefix(file, folder)
 		result = append(result, path)
 
 	}

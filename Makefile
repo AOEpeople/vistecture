@@ -1,5 +1,5 @@
 SOURCES=vistecture.go
-VERSION=1.0.0
+VERSION=1.0.1
 
 .PHONY: all templates darwin linux windows default
 
@@ -8,7 +8,7 @@ default: darwin
 all: darwin linux windows
 
 templates:
-    dep ensure
+	dep ensure
 	packr2
 	mkdir -p build-artifacts
 	zip -qr build-artifacts/templates.zip templates
