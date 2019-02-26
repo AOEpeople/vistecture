@@ -13,8 +13,8 @@ import (
 
 	"path/filepath"
 
-	"github.com/AOEpeople/vistecture/application"
-	"github.com/AOEpeople/vistecture/model/core"
+	"github.com/AOEpeople/vistecture/v2/application"
+	"github.com/AOEpeople/vistecture/v2/model/core"
 	"github.com/gobuffalo/packr/v2"
 )
 

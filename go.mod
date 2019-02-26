@@ -1,4 +1,4 @@
-module github.com/AOEpeople/vistecture
+module github.com/AOEpeople/vistecture/v2
 
 go 1.12
 

@@ -6,12 +6,11 @@ import (
 	"html/template"
 	"os"
 	"os/exec"
+	"path/filepath"
 	"strings"
 
-	"path/filepath"
-
-	"github.com/AOEpeople/vistecture/model/core"
-	"github.com/AOEpeople/vistecture/model/graphviz"
+	"github.com/AOEpeople/vistecture/v2/model/core"
+	"github.com/AOEpeople/vistecture/v2/model/graphviz"
 )
 
 type (

@@ -1,21 +1,19 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 	"os"
 	"path"
-
 	"time"
 
-	"fmt"
-
-	"github.com/AOEpeople/vistecture/application"
-	"github.com/AOEpeople/vistecture/controller"
-	"github.com/AOEpeople/vistecture/controller/web"
-	"github.com/AOEpeople/vistecture/model/core"
+	"github.com/AOEpeople/vistecture/v2/application"
+	"github.com/AOEpeople/vistecture/v2/controller"
+	"github.com/AOEpeople/vistecture/v2/controller/web"
+	"github.com/AOEpeople/vistecture/v2/model/core"
 	"github.com/gorilla/mux"
-	"gopkg.in/urfave/cli.v1"
+	cli "gopkg.in/urfave/cli.v1"
 )
 
 type (

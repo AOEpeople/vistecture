@@ -10,8 +10,8 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/AOEpeople/vistecture/model/core"
-	"gopkg.in/yaml.v2"
+	"github.com/AOEpeople/vistecture/v2/model/core"
+	yaml "gopkg.in/yaml.v2"
 )
 
 type (

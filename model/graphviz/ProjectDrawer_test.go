@@ -5,7 +5,7 @@ import (
 
 	"strings"
 
-	"github.com/AOEpeople/vistecture/model/core"
+	"github.com/AOEpeople/vistecture/v2/model/core"
 )
 
 func TestApplicationDrawer_Draw(t *testing.T) {
