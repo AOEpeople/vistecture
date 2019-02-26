@@ -1,8 +1,0 @@
----
-applications:
-- name: app2
-  title: title1
-  category: project
-  description: Project System
-  properties:
-    git: there

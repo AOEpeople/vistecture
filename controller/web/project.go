@@ -20,15 +20,17 @@ import (
 
 type (
 	ProjectController struct {
-		projectDefinitions *application.ProjectDefinitions
+		projectDefinitions    *application.ProjectConfig
+		projectLoader         *application.ProjectLoader
+		definitionsBaseFolder string
 	}
 
 	Result struct {
-		Name                  string                    `json:"name"`
-		AvailableProjectNames []string                  `json:"availableProjectNames"`
-		ApplicationsByGroup   *core.ApplicationsByGroup `json:"applicationsByGroup"`
-		ApplicationsDto       []*ApplicationDto         `json:"applications"`
-		StaticDocumentations  []string                  `json:"staticDocumentations"`
+		Name                 string                    `json:"name"`
+		AvailableSubViews    []string                  `json:"availableSubViews"`
+		ApplicationsByGroup  *core.ApplicationsByGroup `json:"applicationsByGroup"`
+		ApplicationsDto      []*ApplicationDto         `json:"applications"`
+		StaticDocumentations []string                  `json:"staticDocumentations"`
 	}
 
 	ApplicationDto struct {
@@ -41,8 +43,10 @@ var (
 	fileServerInstance http.Handler
 )
 
-func (p *ProjectController) Inject(definitions *application.ProjectDefinitions) {
+func (p *ProjectController) Inject(definitions *application.ProjectConfig, projectLoader *application.ProjectLoader, definitionsBaseFolder string) {
 	p.projectDefinitions = definitions
+	p.projectLoader = projectLoader
+	p.definitionsBaseFolder = definitionsBaseFolder
 }
 
 func (p *ProjectController) IndexAction(w http.ResponseWriter, r *http.Request, localTemplateFolder string) {
@@ -57,7 +61,7 @@ func initFileServerInstance(localFolder string) http.Handler {
 	}
 	var fileSystem http.FileSystem
 	if localFolder != "" {
-		log.Printf("Using filesystem % templates for serving", localFolder)
+		log.Printf("Using filesystem %v templates for serving", localFolder)
 		if _, err := os.Stat(localFolder); os.IsNotExist(err) {
 			panic(fmt.Sprintf("Cannot start - Folder %v not exitend", localFolder))
 		}
@@ -71,8 +75,8 @@ func initFileServerInstance(localFolder string) http.Handler {
 }
 
 func (p *ProjectController) DataAction(w http.ResponseWriter, r *http.Request, documentsFolder string) {
-	projectName, _ := r.URL.Query()["project"]
-	project, errors := application.CreateProjectFromProjectDefinitions(p.projectDefinitions, strings.Join(projectName, ""))
+	subViewName, _ := r.URL.Query()["subview"]
+	project, errors := p.projectLoader.LoadProject(p.projectDefinitions, p.definitionsBaseFolder, strings.Join(subViewName, ""))
 
 	if errors != nil {
 		w.WriteHeader(http.StatusInternalServerError)
@@ -82,8 +86,8 @@ func (p *ProjectController) DataAction(w http.ResponseWriter, r *http.Request, d
 		Name:                project.Name,
 		ApplicationsByGroup: project.GetApplicationsRootGroup(),
 	}
-	for _, pConfig := range p.projectDefinitions.ProjectConfig {
-		result.AvailableProjectNames = append(result.AvailableProjectNames, pConfig.Name)
+	for _, subViewConfig := range p.projectDefinitions.SubViewConfig {
+		result.AvailableSubViews = append(result.AvailableSubViews, subViewConfig.Name)
 	}
 
 	for _, app := range project.Applications {

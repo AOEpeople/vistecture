@@ -1,11 +1,10 @@
 ---
 projectName: "Demoproject"
 appDefinitionsPaths:
-- external-services
-- service-group-1
-- service-group-2
+- new_format
+- old_format/app1.yml
 appOverrides:
-- name: customer-portal
+- name: app1
   add-provided-services:
   - name: loyalty
     type: gui
@@ -14,6 +13,4 @@ appOverrides:
 subViews:
 - name: "Demoproject minimal"
   included-applications:
-  - customer-portal
-  - single-sign-on
-  - order-workflow
+  - app1

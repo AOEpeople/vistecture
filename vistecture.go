@@ -4,6 +4,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"path"
 
 	"time"
 
@@ -25,8 +26,8 @@ type (
 
 var (
 	//global cli flags
-	projectConfigPath, projectName string
-	skipValidation                 bool
+	projectConfigFile, projectSubViewName string
+	skipValidation                        bool
 	//server cli flags
 	serverPort            int
 	localTemplateFolder   string
@@ -35,7 +36,7 @@ var (
 
 func actionFunc(lazyProjectInjectAble projectInjectAble, cb func()) func(c *cli.Context) error {
 	return func(c *cli.Context) error {
-		project := loadProject(projectConfigPath, projectName, skipValidation)
+		project := loadProject(projectConfigFile, projectSubViewName, skipValidation)
 		lazyProjectInjectAble.Inject(project)
 		cb()
 		return nil
@@ -52,16 +53,16 @@ func main() {
 
 	app.Flags = []cli.Flag{
 		cli.StringFlag{
-			Name:        "config, definition",
-			Value:       "project",
-			Usage:       "Path to the project definition. Can be a file or a folder with json files",
-			Destination: &projectConfigPath,
+			Name:        "config",
+			Value:       "",
+			Usage:       "Path to the project config file",
+			Destination: &projectConfigFile,
 		},
 		cli.StringFlag{
-			Name:        "project, name, projectname",
+			Name:        "subview",
 			Value:       "",
-			Usage:       "Name of the project configuration to use. If not set all definied applications will be used",
-			Destination: &projectName,
+			Usage:       "Name of the projects subview - if you want to limit the action to subview",
+			Destination: &projectSubViewName,
 		},
 		cli.BoolFlag{
 			Name:        "skipValidation",
@@ -78,6 +79,11 @@ func main() {
 			Name:   "validate",
 			Usage:  "Validates project JSON",
 			Action: actionFunc(analyzeController, func() { log.Println("valid") }),
+		},
+		{
+			Name:   "list",
+			Usage:  "lists the apps",
+			Action: listApps,
 		},
 		{
 			Name:   "analyze",
@@ -171,18 +177,24 @@ func main() {
 	app.Run(os.Args)
 }
 
-func loadProject(ProjectConfigPath string, ProjectName string, skipValidation bool) *core.Project {
-	project, errors := application.CreateProjectByName(ProjectConfigPath, ProjectName, skipValidation)
+func loadProject(configFile string, subViewName string, skipValidation bool) *core.Project {
+	loader := application.ProjectLoader{StrictMode: !skipValidation}
+	project, err := loader.LoadProjectFromConfigFile(configFile, subViewName)
 
-	if len(errors) > 0 {
-		for _, err := range errors {
-			log.Print("project creation failed because of: ", err)
-		}
+	if err != nil {
+		log.Println(err)
 		log.Fatal("project loading aborted.")
 	}
 	return project
 }
 
+func listApps(c *cli.Context) error {
+	project := loadProject(projectConfigFile, projectSubViewName, skipValidation)
+	for _, app := range project.Applications {
+		log.Printf("Name: %v Id: %v", app.Name, app.Id)
+	}
+	return nil
+}
 func startServer(c *cli.Context) error {
 	r := mux.NewRouter()
 
@@ -194,12 +206,13 @@ func startServer(c *cli.Context) error {
 	}
 
 	webProjectController := web.ProjectController{}
-	definitions, err := application.LoadProjectDefinitions(projectConfigPath)
+	loader := application.ProjectLoader{}
+	definitions, err := loader.LoadProjectConfig(projectConfigFile)
 	if err != nil {
 		log.Fatal(err)
 		return nil
 	}
-	webProjectController.Inject(definitions)
+	webProjectController.Inject(definitions, &loader, path.Dir(projectConfigFile))
 
 	// This will serve files under http://localhost:8000/documents/<filename>
 	r.PathPrefix("/documents/").Handler(http.StripPrefix("/documents/", http.FileServer(http.Dir(staticDocumentsFolder))))

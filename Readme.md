@@ -73,80 +73,86 @@ vistecture help
 You can also clone the repository and use golang tools.
 
 
-## Example definition ( example.yml ):
+## Vistecture Configuration Format:
 
-The definition is the key essential input for vistecture to get its information.
-A project definition contains of:
+Vistecture need a Project Configuration and multiple Application configurations:
 
-* a list of "applications". This is used to directly document the available applications.
-* a (optional) list of "projects". Projects are used to reference a certain subset of the defined applications (white list).
+### Project Configuration
 
+The project configuration can be used to:
 
-The definition should be provided as yaml format in one or in multiple files. In case it is splitted in multiple files, vistecture will load and merge each file.
+- load the list of applications (key "appDefinitionsPaths") this can be path to a folder or concrete file that contain the **application configuration**
+
+Here is an example:
 
 ```yaml
----
-projects:
-- name: Demo Project Name
-- name: Demo Project Name - Subset
+projectName: "Demoproject"
+appDefinitionsPaths:
+- external-services
+- service-group-1
+- service-group-2
+appOverrides:
+- name: customer-portal
+  add-provided-services:
+  - name: loyalty
+    type: gui
+    dependencies:
+    - reference: order-workflow
+subViews:
+- name: "Demoproject minimal"
   included-applications:
-  - name: service1
-    title: Override the Title if you like
-  - name: service2
-    add-provided-services:
-    - name: domain-objects
-      type: inbound-port
-  - name: service3
-    add-provided-services:
-    - name: application-services
-      type: inbound-port
-      description: Main Application API
-      dependencies:
-      - reference: service4
-applications:
-- name: service1
-  group: group1
-  technology: scala
-  team: team1
-  display:
-    bordercolor: "#c922b3"
-  summary: Short description
-  properties:
-    foo: bar
-    my-version: 0.1.latest
-  description: |
-        Use markdown to describe the service.
-        * one
-        * tow
-  provided-services:
+  - customer-portal
+  - single-sign-on
+  - order-workflow
+
+```
+
+### Application Configuration
+
+```yaml
+name: service1
+group: group1
+technology: scala
+team: team1
+display:
+  bordercolor: "#c922b3"
+summary: Short description
+properties:
+  foo: bar
+  my-version: 0.1.latest
+description: |
+  Use markdown to describe the service.
+  * one
+  * tow
+provided-services:
   - name: someApi
     type: api
   - name: otherApi
     type: api
   - name: eventpublish
     type: exchange
-  infrastructure-dependencies:
+infrastructure-dependencies:
   - type: mysql
 - name: application
   group: group1
   description: Application Description
   provided-services:
-  - name: userinterface
-    type: gui
-    description: Main Application UI
-    dependencies:
-    - reference: service1.someApi
-      relationship: partnership
-      description: Some description here
-  - name: api
-    type: api
-  - name: domainEventAdapter
+    - name: userinterface
+      type: gui
+      description: Main Application UI
+      dependencies:
+        - reference: service1.someApi
+          relationship: partnership
+          description: Some description here
+    - name: api
+      type: api
+    - name: domainEventAdapter
 - name: service2
   title: Service 2
   category: core
   description: Framework, Technical Details, Database Access
   dependencies:
-  - reference: service1
+    - reference: service1
 - name: service3
   title: Service 3
   category: group1
@@ -156,9 +162,7 @@ applications:
   category: group1
   description: Individual System
   status: planned
-
 ```
-
 
 Please also see chapter 'Domain Language / Concepts' for more information
 
@@ -169,8 +173,6 @@ Please also see chapter 'Domain Language / Concepts' for more information
 > vistecture --config=pathtodefinitions serve
 ```
 or
-
-
 
 ### Generate Graphs:
 

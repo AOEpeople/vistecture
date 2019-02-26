@@ -57,6 +57,9 @@ func (p *Project) GenerateApplicationIds() {
 
 //FindApplication - Find by Name
 func (p *Project) FindApplication(nameToMatch string) (*Application, error) {
+	if p.Applications == nil {
+		return nil, errors.New("No Applications in project!")
+	}
 	for _, component := range p.Applications {
 		if component.Name == nameToMatch {
 			return component, nil

@@ -30,7 +30,7 @@ type (
 
 	ApplicationDisplaySettings struct {
 		Rotate      bool   `json:"rotate" yaml:"rotate"`
-		BorderColor string `json:"color,omitempty" yaml:"bordercolor,omitempty"`
+		BorderColor string `json:"color,omitempty" yaml:"borderColor,omitempty"`
 		Color       string `json:"color,omitempty" yaml:"color,omitempty"`
 	}
 

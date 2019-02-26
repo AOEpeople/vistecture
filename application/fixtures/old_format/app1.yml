@@ -1,0 +1,10 @@
+---
+applications:
+- name: app1
+  description: Some External Website
+  properties:
+    deployment: saas
+  category: external
+  provided-services:
+  - name: gui
+    type: gui

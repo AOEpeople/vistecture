@@ -1,19 +1,17 @@
----
-applications:
-- name: warehouse-logistics-adapter
-  description: Some Stuff on Shelves
-  technology: php
-  team: team1
-  properties:
-    deployment: kubernetes
-    main-docker-registry: project
-    healthcheck: /health
-  provided-services:
-  - name: api
-    type: api
-  dependencies:
-  - reference: some-other-fancy-service
-    relationship: acl
-  - reference: some-fancy-points-api
-    relationship: acl
-    status: planned
+name: warehouse-logistics-adapter
+description: Some Stuff on Shelves
+technology: php
+team: team1
+properties:
+  deployment: kubernetes
+  main-docker-registry: project
+  healthcheck: /health
+provided-services:
+- name: api
+  type: api
+dependencies:
+- reference: some-other-fancy-service
+  relationship: acl
+- reference: some-fancy-points-api
+  relationship: acl
+  status: planned

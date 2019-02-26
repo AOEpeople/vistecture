@@ -1,26 +1,24 @@
----
-applications:
-- name: customer-portal
-  description: Customer Portal
-  technology: go
-  team: team2
-  properties:
-    deployment: kubernetes
-    main-docker-registry: project
-    healthcheck: /health
-  provided-services:
-  - name: api
-    type: api
-  - name: ui
-    type: gui
-  infrastructure-dependencies:
-    - type: redis
-  dependencies:
-    - reference: paymentprovider
-    - reference: order-workflow.api
-      relationship: customer-supplier
-      properties:
-        message-exchange-pattern: request/response
-    - reference: single-sign-on
-    - reference: external-website
-      isBrowserBased: true
+name: customer-portal
+description: Customer Portal
+technology: go
+team: team2
+properties:
+  deployment: kubernetes
+  main-docker-registry: project
+  healthcheck: /health
+provided-services:
+- name: api
+  type: api
+- name: ui
+  type: gui
+infrastructure-dependencies:
+  - type: redis
+dependencies:
+  - reference: paymentprovider
+  - reference: order-workflow.api
+    relationship: customer-supplier
+    properties:
+      message-exchange-pattern: request/response
+  - reference: single-sign-on
+  - reference: external-website
+    isBrowserBased: true

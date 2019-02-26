@@ -1,5 +1,5 @@
-name: external-website
-description: Some External Website
+name: app2
+description: Some External Website 2
 properties:
   deployment: saas
 category: external
