@@ -21,7 +21,30 @@ type (
 	oldApplicationFormat struct {
 		Applications []*core.Application `json:"applications" yaml:"applications"`
 	}
+
+	ErrorCollection struct {
+		Errors []error
+	}
 )
+
+func (e *ErrorCollection) Error() string {
+	return fmt.Sprintf("%v",e.Errors)
+}
+
+func (e *ErrorCollection) Add(err error) {
+	if errMany, ok := err.(*ErrorCollection); ok {
+		e.Errors = append(e.Errors,errMany.Errors...)
+	} else {
+		e.Errors = append(e.Errors,err)
+	}
+}
+
+func (e *ErrorCollection) ErrorsOrNil() error {
+	if len(e.Errors) >0 {
+		return e
+	}
+	return nil
+}
 
 func (p *ProjectLoader) LoadProjectConfig(filePath string) (*ProjectConfig, error) {
 	if !strings.Contains(filePath, ".yml") && !!strings.Contains(filePath, ".yaml") {
@@ -55,6 +78,7 @@ func (p *ProjectLoader) LoadProjectFromConfigFile(filePath string, limitToSubVie
 }
 
 func (p *ProjectLoader) LoadProject(projectConfig *ProjectConfig, baseFolder string, limitToSubView string) (*core.Project, error) {
+	collectedErrors := &ErrorCollection{}
 	var newProject core.Project
 	newProject.Name = projectConfig.ProjectName
 
@@ -62,7 +86,8 @@ func (p *ProjectLoader) LoadProject(projectConfig *ProjectConfig, baseFolder str
 	for _, pathsWithAppDefinitions := range projectConfig.AppDefinitionsPaths {
 		loadedApps, err := p.LoadApplications(path.Join(baseFolder, pathsWithAppDefinitions))
 		if err != nil {
-			return nil, err
+			collectedErrors.Add(err)
+			continue
 		}
 		applications = append(applications, loadedApps...)
 	}
@@ -76,7 +101,8 @@ func (p *ProjectLoader) LoadProject(projectConfig *ProjectConfig, baseFolder str
 
 		adjustedApplication, err := override.GetAdjustedApplication(app)
 		if err != nil {
-			return nil, err
+			collectedErrors.Add(err)
+			continue
 		}
 		applications = replaceApplication(adjustedApplication, applications)
 	}
@@ -84,40 +110,45 @@ func (p *ProjectLoader) LoadProject(projectConfig *ProjectConfig, baseFolder str
 	if limitToSubView == "" {
 		newProject.Applications = applications
 		newProject.GenerateApplicationIds()
-		return &newProject, nil
+		return &newProject, collectedErrors.ErrorsOrNil()
 	}
 	for _, subViewConfig := range projectConfig.SubViewConfig {
 		if subViewConfig.Name == limitToSubView {
 			newProject.Applications = subViewConfig.GetMatchedApps(applications)
 			newProject.GenerateApplicationIds()
-			return &newProject, nil
+			return &newProject, collectedErrors.ErrorsOrNil()
 		}
 	}
-	return nil, errors.New(fmt.Sprintf("Subview with name %v not defined", limitToSubView))
-
+	collectedErrors.Add(errors.New(fmt.Sprintf("Subview with name %v not defined", limitToSubView)))
+	return nil, collectedErrors
 }
 
 func (p *ProjectLoader) LoadApplications(filePath string) ([]*core.Application, error) {
+	collectedErrors := &ErrorCollection{}
 	if filePath == "" {
-		return nil, errors.New("No applications definitions file path given")
+		collectedErrors.Add(errors.New("No applications definitions file path given"))
+		return nil, collectedErrors
 	}
 	var applications []*core.Application
 	fileStat, err := os.Stat(filePath)
 	if err != nil {
-		return nil, errors.New(fmt.Sprintf("No valid filepath (%v) to load application - error: %v\n",filePath, err))
+		collectedErrors.Add(errors.New(fmt.Sprintf("No valid filepath (%v) to load application - error: %v\n",filePath, err)))
+		return nil, collectedErrors
 	}
 
 	switch mode := fileStat.Mode(); {
 	case mode.IsDir():
 		loadedApplications, err := p.createFromFolder(filePath)
 		if err != nil {
-			return nil, err
+			collectedErrors.Add(err)
+			return nil, collectedErrors
 		}
 		applications = append(applications, loadedApplications...)
 	case mode.IsRegular():
 		loadedApplications, err := p.createFromFile(filePath)
 		if err != nil {
-			return nil, err
+			collectedErrors.Add(err)
+			return nil, collectedErrors
 		}
 		applications = append(applications, loadedApplications...)
 	}
@@ -125,10 +156,12 @@ func (p *ProjectLoader) LoadApplications(filePath string) ([]*core.Application, 
 }
 
 func (p *ProjectLoader) createFromFolder(folderPath string) ([]*core.Application, error) {
+	collectedErrors := &ErrorCollection{}
 	var applications []*core.Application
 	files, err := filepath.Glob(strings.TrimRight(folderPath, "/") + "/*")
 	if err != nil {
-		return nil, err
+		collectedErrors.Add(err)
+		return nil, collectedErrors
 	}
 	if len(files) == 0 {
 		return nil, errors.New("No files found in folder \"" + folderPath + "\"")
@@ -137,31 +170,35 @@ func (p *ProjectLoader) createFromFolder(folderPath string) ([]*core.Application
 
 		fileInfo, fileErr := os.Stat(file)
 		if fileErr != nil {
-			return nil, fileErr
+			collectedErrors.Add(fileErr)
+			continue
 		}
 		if fileInfo.IsDir() {
 			if !strings.Contains(fileInfo.Name(), ".git") {
 				loadedApps, err := p.createFromFolder(file)
 				if err != nil {
-					return nil, err
+					collectedErrors.Add(err)
+					continue
 				}
 				applications = append(applications, loadedApps...)
 			}
 		} else if !fileInfo.IsDir() && (strings.Contains(fileInfo.Name(), ".yml") || strings.Contains(fileInfo.Name(), ".yaml")) {
 			loadedApps, err := p.createFromFile(file)
 			if err != nil {
-				return nil, err
+				collectedErrors.Add(err)
+				continue
 			}
 			applications = append(applications, loadedApps...)
 		} else {
 			continue
 		}
 	}
-	return applications, nil
+
+	return applications, collectedErrors.ErrorsOrNil()
+
 }
 
 func (p *ProjectLoader) createFromFile(fileName string) ([]*core.Application, error) {
-
 	var applications []*core.Application
 	file, err := ioutil.ReadFile(fileName)
 	if err != nil {
@@ -191,7 +228,7 @@ func (p *ProjectLoader) createFromFile(fileName string) ([]*core.Application, er
 	} else if errNewFormat == nil {
 		applications = append(applications, &loadedApplication)
 	} else {
-		return nil, errors.New(fmt.Sprintf("Cannot parse file: NewFormat: ( %v ) OldFormat ( %v )", errNewFormat, errOldFormat))
+		return nil, errors.New(fmt.Sprintf("Cannot parse file Using either New or Old Format. \n \t NewFormat Errors: %v \n \t OldFormat Errors: %v", errNewFormat, errOldFormat))
 	}
 	return applications, nil
 }
