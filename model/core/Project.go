@@ -2,6 +2,7 @@ package core
 
 import (
 	"errors"
+	"fmt"
 )
 
 type (
@@ -34,10 +35,13 @@ func (p *Project) Validate() []error {
 
 		for _, dependency := range dependencies {
 			dependendComponentName, serviceName := dependency.GetApplicationAndServiceNames()
+			if dependency.IsOptional {
+				continue
+			}
 
 			error := p.doesServiceExists(dependendComponentName, serviceName)
 			if error != nil {
-				foundErrors = append(foundErrors, errors.New("Application '"+application.Name+"' Dependencies has Error: "+error.Error()))
+				foundErrors = append(foundErrors, errors.New(fmt.Sprintf("Application '%v' Dependencies has Error: %v ( Add this application or mark the dependency as 'isOptional')",application.Name,error)))
 			}
 		}
 	}

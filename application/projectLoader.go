@@ -37,11 +37,8 @@ func (p *ProjectLoader) LoadProjectConfig(filePath string) (*ProjectConfig, erro
 	}
 
 	var projectConfig *ProjectConfig
-	if p.StrictMode {
-		err = yaml.UnmarshalStrict(file, &projectConfig)
-	} else {
-		err = yaml.Unmarshal(file, &projectConfig)
-	}
+	err = p.unmarshalYaml(file, &projectConfig)
+
 	if err != nil {
 		return nil, err
 	}
@@ -63,7 +60,7 @@ func (p *ProjectLoader) LoadProject(projectConfig *ProjectConfig, baseFolder str
 
 	var applications []*core.Application
 	for _, pathsWithAppDefinitions := range projectConfig.AppDefinitionsPaths {
-		loadedApps, err := p.loadApplications(path.Join(baseFolder, pathsWithAppDefinitions))
+		loadedApps, err := p.LoadApplications(path.Join(baseFolder, pathsWithAppDefinitions))
 		if err != nil {
 			return nil, err
 		}
@@ -100,11 +97,14 @@ func (p *ProjectLoader) LoadProject(projectConfig *ProjectConfig, baseFolder str
 
 }
 
-func (p *ProjectLoader) loadApplications(filePath string) ([]*core.Application, error) {
+func (p *ProjectLoader) LoadApplications(filePath string) ([]*core.Application, error) {
+	if filePath == "" {
+		return nil, errors.New("No applications definitions file path given")
+	}
 	var applications []*core.Application
 	fileStat, err := os.Stat(filePath)
 	if err != nil {
-		return nil, errors.New(fmt.Sprintf("No valid filepath - error: %v\n", err))
+		return nil, errors.New(fmt.Sprintf("No valid filepath (%v) to load application - error: %v\n",filePath, err))
 	}
 
 	switch mode := fileStat.Mode(); {
@@ -191,7 +191,7 @@ func (p *ProjectLoader) createFromFile(fileName string) ([]*core.Application, er
 	} else if errNewFormat == nil {
 		applications = append(applications, &loadedApplication)
 	} else {
-		return nil, errors.New(fmt.Sprintf("Cannot parse file %v / %v", errNewFormat, errOldFormat))
+		return nil, errors.New(fmt.Sprintf("Cannot parse file: NewFormat: ( %v ) OldFormat ( %v )", errNewFormat, errOldFormat))
 	}
 	return applications, nil
 }

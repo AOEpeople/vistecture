@@ -10,6 +10,7 @@ type Dependency struct {
 	IsBrowserBased bool              `json:"isBrowserBased" yaml:"isBrowserBased"`
 	Status         string            `json:"status" yaml:"status"`
 	Properties     map[string]string `json:"properties" yaml:"properties"`
+	IsOptional     bool              `json:"isOptional" yaml:"isOptional"`
 }
 
 // Returns the name of the "component" and "service" this dependecy points to
