@@ -1,5 +1,5 @@
 SOURCES=vistecture.go
-VERSION=1.0.1
+VERSION=2.0.2
 
 .PHONY: all templates darwin linux windows default
 
@@ -9,6 +9,7 @@ all: darwin linux windows
 
 templates:
 	packr2
+	echo "package web \n import _ \"github.com/AOEpeople/vistecture/v2/packrd\"" > controller/web/web-packr.go
 	mkdir -p build-artifacts
 	zip -qr build-artifacts/templates.zip templates
 
