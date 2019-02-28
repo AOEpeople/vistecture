@@ -193,9 +193,7 @@ func (p *ProjectLoader) createFromFolder(folderPath string) ([]*core.Application
 			continue
 		}
 	}
-
 	return applications, collectedErrors.ErrorsOrNil()
-
 }
 
 func (p *ProjectLoader) createFromFile(fileName string) ([]*core.Application, error) {
@@ -228,7 +226,7 @@ func (p *ProjectLoader) createFromFile(fileName string) ([]*core.Application, er
 	} else if errNewFormat == nil {
 		applications = append(applications, &loadedApplication)
 	} else {
-		return nil, errors.New(fmt.Sprintf("Cannot parse file Using either New or Old Format. \n \t NewFormat Errors: %v \n \t OldFormat Errors: %v", errNewFormat, errOldFormat))
+		return nil, errors.New(fmt.Sprintf("Cannot parse application definition file %v: \n \t Errors interpreted in 'Single App Format': %v \n \t Errors interpreted in 'Multiple App Format': %v", fileName, errNewFormat, errOldFormat))
 	}
 	return applications, nil
 }
