@@ -25,4 +25,5 @@ windows: $(SOURCES) templates
 dockerpublish:
 	docker build --no-cache -t aoepeople/vistecture .
 	docker tag aoepeople/vistecture:latest aoepeople/vistecture:$(VERSION)
-	docker push aoepeople/vistecture
+	docker push aoepeople/vistecture:latest
+	docker push aoepeople/vistecture:$(VERSION)
