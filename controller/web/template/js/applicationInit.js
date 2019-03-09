@@ -21,22 +21,22 @@ applicationInit = {}
 applicationInit.DrawConfiguredGraph = function() {
     let value = $("#select-graph").val()
     let config = layout.GetGraphConfiguration()
-    let selectedProject = $("#select-project").val()
+    let selectedSubView = $("#select-project").val()
 
-    visTectureHelper.LoadVistectureData(selectedProject,function(projectData) {
-        applicationInit.updateProjectDropdown(projectData.availableProjectNames, config)
+    visTectureHelper.LoadVistectureData(selectedSubView,function(projectData) {
+        applicationInit.updateProjectDropdown(projectData.availableSubViews, config)
         applicationInit.updateGroups(projectData.applicationsByGroup, config)
         layout.SetDocumentsMenu(projectData.staticDocumentations)
         visRenderer.RenderNetwork(document.getElementById('maincontent'),projectData, config)
     })
 }
 
-applicationInit.updateProjectDropdown = function(availableProjectNames) {
+applicationInit.updateProjectDropdown = function(availableSubViews) {
     let selected =  $("#select-project").val()
     $("#select-project").find('option').remove()
     $("#select-project").append(new Option("Select project",""));
-    for (var i in availableProjectNames) {
-        let name = availableProjectNames[i]
+    for (var i in availableSubViews) {
+        let name = availableSubViews[i]
         let selected = false
         if (selected == name) {
             selected = true

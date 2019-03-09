@@ -110,6 +110,15 @@ visRenderer.clickEventListener= function (nodeParams, projectData) {
         if (typeof app.description != "undefined") {
             commonTab = commonTab + `<p><small>${app.description}</small></p>`
         }
+        let propContent = ""
+        for (var pIndex in app.properties) {
+            let property = app.properties[pIndex]
+            propContent = `<tr><td>${pIndex}</td><td>${property}</td></tr>`
+        }
+        if (propContent != "") {
+            commonTab = commonTab + `<h6>Properties:</h6> <table class="mt-1 table table-sm small"><tbody>${propContent}</tbody></table> `
+        }
+
 
         // RENDER SERVICETAB
         let serviceContent = ""

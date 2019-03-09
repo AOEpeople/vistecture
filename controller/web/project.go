@@ -81,6 +81,7 @@ func (p *ProjectController) DataAction(w http.ResponseWriter, r *http.Request, d
 	if errors != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		fmt.Fprintf(w, `{"Error":"%v"}`, errors)
+		return
 	}
 	result := Result{
 		Name:                project.Name,

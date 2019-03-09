@@ -32,6 +32,9 @@ func (e *ErrorCollection) Error() string {
 }
 
 func (e *ErrorCollection) Add(err error) {
+	if err == nil {
+		return
+	}
 	if errMany, ok := err.(*ErrorCollection); ok {
 		e.Errors = append(e.Errors,errMany.Errors...)
 	} else {

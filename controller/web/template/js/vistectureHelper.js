@@ -1,7 +1,7 @@
 visTectureHelper = {}
 
 //loadVistectureData - loads the vistecture project data
-visTectureHelper.LoadVistectureData = function(project, callback) {
+visTectureHelper.LoadVistectureData = function(selectedSubView, callback) {
 
 
     if (typeof DATAURL == 'undefined') {
@@ -12,8 +12,12 @@ visTectureHelper.LoadVistectureData = function(project, callback) {
         alert('dataurl missing')
         return
     }
+    let ajaxUrl = DATAURL
+    if (selectedSubView != null) {
+        ajaxUrl = ajaxUrl +'?subview='+selectedSubView
+    }
 
-    $.getJSON( DATAURL+'?project='+project).done(function(data,statustext,jqXHR) {
+    $.getJSON( ajaxUrl).done(function(data,statustext,jqXHR) {
         //check if the status is 200(means everything is okay)
         if (jqXHR.status == 200)
         {
