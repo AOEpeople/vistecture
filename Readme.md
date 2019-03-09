@@ -18,7 +18,6 @@ For an example see the "demoproject" in the example folder.
 
 You can put your definition in one (big) file or split it up in  multiple files in structured directories (which is preferred for structuring bigger definitions).
 
-It is also possible to use json instead of yml if you like.
 
 
 
@@ -35,15 +34,15 @@ It has graphviz and vistecture installed and can be used directly:
 docker pull aoepeople/vistecture
 ```
 
-Example usage with a definition from current folder:
+Example usages:
 ```
 cd /your/path/with_vistecture_defintions
 
-docker run -v $(pwd):/workspace -p 8080:8080 aoepeople/vistecture vistecture --config=/workspace serve
+docker run -v $(pwd):/workspace -p 8080:8080 aoepeople/vistecture vistecture --config=/workspace/projectconfig.yml serve
 
-docker run -v $(pwd):/workspace aoepeople/vistecture  vistecture --config /workspace analyze
+docker run -v $(pwd):/workspace aoepeople/vistecture  vistecture --config=/workspace/projectconfig.yml analyze
 
-docker run -v $(pwd):/workspace aoepeople/vistecture  sh -c "vistecture --config /workspace/definition graph --iconPath /usr/src/go/src/github.com/AOEpeople/vistecture/templates/icons | dot -Tpng -o /workspace/graph.png"
+docker run -v $(pwd):/workspace aoepeople/vistecture  sh -c "vistecture --config=/workspace/projectconfig.yml graph --iconPath=templates/icons | dot -Tpng -o /workspace/graph.png"
 ```
 
 
@@ -70,7 +69,6 @@ And then discover the command:
 vistecture help
 ```
 
-You can also clone the repository and use golang tools.
 
 
 ## Vistecture Configuration Format:
@@ -172,9 +170,15 @@ Please also see chapter 'Domain Language / Concepts' for more information
 ```
 > vistecture --config=pathtodefinitions serve
 ```
-or
+
+To add a list to other assets you can use the `staticDocumentsFolder` parameter
+```
+> vistecture --config=pathtodefinitions serve --staticDocumentsFolder=/folderwithother_docs
+```
 
 ### Generate Graphs:
+
+
 
 A main feature is generating graphviz compatible graph descriptions that can be used by any of the graphviz layouters like this:
 
@@ -182,6 +186,7 @@ Complete Graph:
 ```
 > vistecture --config=pathtodefinitions graph | dot -Tpng -o graph.png
 ```
+(Not all graphviz versions will work!)
 
 Graph for a dedicated project configuration:
 ```
