@@ -1,5 +1,5 @@
 SOURCES=vistecture.go
-VERSION=2.0.3
+VERSION=2.0.4
 
 .PHONY: all templates darwin linux windows default
 
