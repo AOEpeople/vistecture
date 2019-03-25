@@ -181,7 +181,9 @@ func loadProject(configFile string, subViewName string, skipValidation bool) *co
 
 	if err != nil {
 		log.Println(err)
-		log.Fatal("project loading aborted.")
+		if !skipValidation {
+			log.Fatal("project loading aborted.")
+		}
 	}
 	return project
 }
@@ -210,7 +212,7 @@ func startServer(c *cli.Context) error {
 		log.Fatal(err)
 		return nil
 	}
-	webProjectController.Inject(definitions, &loader, path.Dir(projectConfigFile))
+	webProjectController.Inject(definitions, &loader, path.Dir(projectConfigFile), skipValidation)
 
 	// This will serve files under http://localhost:8000/documents/<filename>
 	r.PathPrefix("/documents/").Handler(http.StripPrefix("/documents/", http.FileServer(http.Dir(staticDocumentsFolder))))

@@ -9,6 +9,8 @@ import (
 	"path/filepath"
 	"strings"
 
+	"log"
+
 	"github.com/AOEpeople/vistecture/v2/model/core"
 	"github.com/AOEpeople/vistecture/v2/model/graphviz"
 )
@@ -32,7 +34,12 @@ func (d *DocumentationController) GraphvizAction(componentName string, iconPath 
 	if componentName != "" {
 		Component, e := d.project.FindApplication(componentName)
 		if e != nil {
-			fmt.Println(e)
+			log.Println(e)
+			if !skipValidation {
+				os.Exit(-1)
+			}
+		}
+		if Component == nil {
 			os.Exit(-1)
 		}
 		fmt.Print(projectDrawer.DrawComponent(Component))

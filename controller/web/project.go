@@ -2,6 +2,7 @@ package web
 
 import (
 	"encoding/json"
+	"errors"
 	"net/http"
 	"os"
 
@@ -23,6 +24,7 @@ type (
 		projectDefinitions    *application.ProjectConfig
 		projectLoader         *application.ProjectLoader
 		definitionsBaseFolder string
+		skipValidation        bool
 	}
 
 	Result struct {
@@ -31,6 +33,7 @@ type (
 		ApplicationsByGroup  *core.ApplicationsByGroup `json:"applicationsByGroup"`
 		ApplicationsDto      []*ApplicationDto         `json:"applications"`
 		StaticDocumentations []string                  `json:"staticDocumentations"`
+		Errors               []string                  `json:"errors"`
 	}
 
 	ApplicationDto struct {
@@ -43,10 +46,11 @@ var (
 	fileServerInstance http.Handler
 )
 
-func (p *ProjectController) Inject(definitions *application.ProjectConfig, projectLoader *application.ProjectLoader, definitionsBaseFolder string) {
+func (p *ProjectController) Inject(definitions *application.ProjectConfig, projectLoader *application.ProjectLoader, definitionsBaseFolder string, skipValidation bool) {
 	p.projectDefinitions = definitions
 	p.projectLoader = projectLoader
 	p.definitionsBaseFolder = definitionsBaseFolder
+	p.skipValidation = skipValidation
 }
 
 func (p *ProjectController) IndexAction(w http.ResponseWriter, r *http.Request, localTemplateFolder string) {
@@ -76,17 +80,22 @@ func initFileServerInstance(localFolder string) http.Handler {
 
 func (p *ProjectController) DataAction(w http.ResponseWriter, r *http.Request, documentsFolder string) {
 	subViewName, _ := r.URL.Query()["subview"]
-	project, errors := p.projectLoader.LoadProject(p.projectDefinitions, p.definitionsBaseFolder, strings.Join(subViewName, ""))
-
-	if errors != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		fmt.Fprintf(w, `{"Error":"%v"}`, errors)
-		return
-	}
+	project, err := p.projectLoader.LoadProject(p.projectDefinitions, p.definitionsBaseFolder, strings.Join(subViewName, ""))
 	result := Result{
 		Name:                project.Name,
 		ApplicationsByGroup: project.GetApplicationsRootGroup(),
 	}
+
+	if err != nil {
+		result.AddError(err)
+	}
+
+	if project == nil {
+		result.AddError(errors.New("No project loaded"))
+		p.writeJson(w, result, true)
+		return
+	}
+
 	for _, subViewConfig := range p.projectDefinitions.SubViewConfig {
 		result.AvailableSubViews = append(result.AvailableSubViews, subViewConfig.Name)
 	}
@@ -99,25 +108,29 @@ func (p *ProjectController) DataAction(w http.ResponseWriter, r *http.Request, d
 	}
 	files, err := getStaticDocuments(documentsFolder)
 	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		fmt.Fprint(w, `{"Error":"`+err.Error()+`"}`)
-		return
+		result.AddError(err)
 	}
 	result.StaticDocumentations = files
 
-	b, err := json.Marshal(result)
-	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:63343")
-	w.Header().Set("Access-Control-Allow-Origin", "null")
+	p.writeJson(w, result, false)
 
+}
+
+func (p *ProjectController) writeJson(w http.ResponseWriter, result Result, isHardError bool) {
+	b, err := json.Marshal(result)
 	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		fmt.Fprint(w, `{"Error":"`+err.Error()+`"}`)
+		fmt.Fprint(w, "unexpected error: "+err.Error())
 		return
 	}
+	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:63343")
+	w.Header().Set("Access-Control-Allow-Origin", "null")
+	if isHardError {
+		w.WriteHeader(http.StatusInternalServerError)
+	} else {
+		w.WriteHeader(http.StatusOK)
+	}
 
-	w.WriteHeader(http.StatusOK)
 	fmt.Fprint(w, string(b))
-
 }
 
 func getStaticDocuments(folder string) ([]string, error) {
@@ -146,4 +159,15 @@ func getStaticDocuments(folder string) ([]string, error) {
 	}
 
 	return result, err
+}
+
+func (r *Result) AddError(err error) {
+	if errorCollection, ok := err.(*application.ErrorCollection); ok {
+		for _, singleErr := range errorCollection.Errors {
+			r.Errors = append(r.Errors, singleErr.Error())
+		}
+	} else {
+		r.Errors = append(r.Errors, err.Error())
+	}
+
 }

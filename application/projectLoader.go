@@ -28,7 +28,7 @@ type (
 )
 
 func (e *ErrorCollection) Error() string {
-	return fmt.Sprintf("%v",e.Errors)
+	return fmt.Sprintf("%v", e.Errors)
 }
 
 func (e *ErrorCollection) Add(err error) {
@@ -36,14 +36,14 @@ func (e *ErrorCollection) Add(err error) {
 		return
 	}
 	if errMany, ok := err.(*ErrorCollection); ok {
-		e.Errors = append(e.Errors,errMany.Errors...)
+		e.Errors = append(e.Errors, errMany.Errors...)
 	} else {
-		e.Errors = append(e.Errors,err)
+		e.Errors = append(e.Errors, err)
 	}
 }
 
 func (e *ErrorCollection) ErrorsOrNil() error {
-	if len(e.Errors) >0 {
+	if len(e.Errors) > 0 {
 		return e
 	}
 	return nil
@@ -90,6 +90,8 @@ func (p *ProjectLoader) LoadProject(projectConfig *ProjectConfig, baseFolder str
 		loadedApps, err := p.LoadApplications(path.Join(baseFolder, pathsWithAppDefinitions))
 		if err != nil {
 			collectedErrors.Add(err)
+		}
+		if loadedApps == nil {
 			continue
 		}
 		applications = append(applications, loadedApps...)
@@ -135,7 +137,7 @@ func (p *ProjectLoader) LoadApplications(filePath string) ([]*core.Application, 
 	var applications []*core.Application
 	fileStat, err := os.Stat(filePath)
 	if err != nil {
-		collectedErrors.Add(errors.New(fmt.Sprintf("No valid filepath (%v) to load application - error: %v\n",filePath, err)))
+		collectedErrors.Add(errors.New(fmt.Sprintf("No valid filepath (%v) to load application - error: %v\n", filePath, err)))
 		return nil, collectedErrors
 	}
 
@@ -144,6 +146,8 @@ func (p *ProjectLoader) LoadApplications(filePath string) ([]*core.Application, 
 		loadedApplications, err := p.createFromFolder(filePath)
 		if err != nil {
 			collectedErrors.Add(err)
+		}
+		if loadedApplications == nil {
 			return nil, collectedErrors
 		}
 		applications = append(applications, loadedApplications...)
@@ -151,11 +155,13 @@ func (p *ProjectLoader) LoadApplications(filePath string) ([]*core.Application, 
 		loadedApplications, err := p.createFromFile(filePath)
 		if err != nil {
 			collectedErrors.Add(err)
+		}
+		if loadedApplications == nil {
 			return nil, collectedErrors
 		}
 		applications = append(applications, loadedApplications...)
 	}
-	return applications, nil
+	return applications, collectedErrors
 }
 
 func (p *ProjectLoader) createFromFolder(folderPath string) ([]*core.Application, error) {
@@ -181,6 +187,8 @@ func (p *ProjectLoader) createFromFolder(folderPath string) ([]*core.Application
 				loadedApps, err := p.createFromFolder(file)
 				if err != nil {
 					collectedErrors.Add(err)
+				}
+				if loadedApps == nil {
 					continue
 				}
 				applications = append(applications, loadedApps...)
@@ -189,6 +197,8 @@ func (p *ProjectLoader) createFromFolder(folderPath string) ([]*core.Application
 			loadedApps, err := p.createFromFile(file)
 			if err != nil {
 				collectedErrors.Add(err)
+			}
+			if loadedApps == nil {
 				continue
 			}
 			applications = append(applications, loadedApps...)
@@ -220,11 +230,9 @@ func (p *ProjectLoader) createFromFile(fileName string) ([]*core.Application, er
 		if loadedApplication.Name != "" {
 			applications = append(applications, &loadedApplication)
 		} else {
-			log.Println("You use DEPRICATED Old format for file " + fileName)
 			applications = append(applications, oldFormat.Applications...)
 		}
 	} else if errNewFormat != nil && errOldFormat == nil {
-		log.Println("You use DEPRICATED Old format for file " + fileName)
 		applications = append(applications, oldFormat.Applications...)
 	} else if errNewFormat == nil {
 		applications = append(applications, &loadedApplication)
