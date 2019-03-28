@@ -200,3 +200,16 @@ func (a *Application) GetDependenciesGrouped(project *Project) []*DependenciesGr
 	}
 	return result
 }
+
+//GetMissingDependencies - returns a list of references application names that are not in the project
+func (a *Application) GetMissingDependencies(project *Project) []string {
+	var missing []string
+
+	for _, dep := range a.Dependencies {
+		_, err := dep.GetApplication(project)
+		if err != nil {
+			missing = append(missing, dep.GetApplicationName())
+		}
+	}
+	return missing
+}

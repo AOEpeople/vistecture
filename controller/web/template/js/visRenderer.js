@@ -32,6 +32,21 @@ visRenderer.RenderNetwork = function(container, projectData,configurationData) {
         nodes.push(node);
     }
 
+    //Check if we are missing nodes (this means an application reference an application that is not specified)
+    for (var missingAppId in projectData.missingApplications) {
+        let missingApp = projectData.missingApplications[missingAppId]
+        var node = { id: missingApp.id, font: {color: "#ffffff"}, title: "MISSING!" + missingApp.title, label: missingApp.name, color: {border: "#ff0000", background: "#ee0000", highlight: {background:"#ff0000", border: "#ffaaaa"}}}
+        nodes.push(node);
+    }
+    for (var app in projectData.applications) {
+        let application = projectData.applications[app]
+        for (var missingAppIndex in application.dependenciesToMissingApplications) {
+            let missingApp = application.dependenciesToMissingApplications[missingAppIndex]
+            var edge = {color: {color: "#ee0000", highlight: "#ff0000"}, smooth:{enabled: false},arrows:{to: {enabled:true}}, from: application.id, to: missingApp.id}
+            edges.push(edge);
+        }
+    }
+
 
     // provide the data in the vis format
     var data = {
@@ -213,9 +228,15 @@ visRenderer.getStandardNodeBgColor = function(application) {
 
 visRenderer.getColorForGroup = function(groupName) {
     let colorScaleSize = 6
+    let colorScaleSizeTotal = 18
     //othrwise choose from a standard set of 6 different colors
-    let colors = chroma.scale(['#a6f4b4','#525f8c'])
+    let colorsScale1 = chroma.scale(['#a6f196','#322b84'])
         .mode('lch').colors(colorScaleSize)
+    let colorsScale2 = chroma.scale(['#ffd07d','#923069'])
+        .mode('lch').colors(colorScaleSize)
+    let colorsScale3 = chroma.scale(['#e795ad','#857dad'])
+        .mode('lch').colors(colorScaleSize)
+    let colors = colorsScale1.concat(colorsScale2.concat(colorsScale3))
 
     //choose same color for same group - looks nicer:
     if (typeof groupName != "undefined") {
@@ -223,15 +244,16 @@ visRenderer.getColorForGroup = function(groupName) {
         for (let i = 0; i < groupName.length; i++) {
             chr   = chr + groupName.charCodeAt(i);
         }
-        index = chr % colorScaleSize
+        index = chr % colorScaleSizeTotal
     } else {
-        index = Math.floor(Math.random() * colorScaleSize)
+        index = Math.floor(Math.random() * colorScaleSizeTotal)
     }
     return colors[index]
 }
 
 
-
+//getGroupedEdges - returns the vis network edges between nodes - based on the dependencies between applications
+// (we are using the grouped dependencies - to only draw one edge between two nodes - even if multiple dependencies to that node exist)
 visRenderer.getGroupedEdges = function(projectData, lenght) {
     edges = [];
     for (var app in projectData.applications) {

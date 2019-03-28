@@ -34,11 +34,21 @@ type (
 		ApplicationsDto      []*ApplicationDto         `json:"applications"`
 		StaticDocumentations []string                  `json:"staticDocumentations"`
 		Errors               []string                  `json:"errors"`
+		MissingApplications  MissingApplications       `json:"missingApplications"`
 	}
 
 	ApplicationDto struct {
 		*core.Application
-		DependenciesGrouped []*core.DependenciesGrouped `json:"dependenciesGrouped"`
+		DependenciesGrouped               []*core.DependenciesGrouped `json:"dependenciesGrouped"`
+		DependenciesToMissingApplications []*MissingApplicationDto    `json:"dependenciesToMissingApplications"`
+	}
+
+	MissingApplications []*MissingApplicationDto
+
+	MissingApplicationDto struct {
+		//PseudoId used as id for frontend
+		PseudoId int    `json:"id"`
+		Title    string `json:"name"`
 	}
 )
 
@@ -100,16 +110,36 @@ func (p *ProjectController) DataAction(w http.ResponseWriter, r *http.Request, d
 		result.AvailableSubViews = append(result.AvailableSubViews, subViewConfig.Name)
 	}
 
+	allMissingApps := new(MissingApplications)
 	for _, app := range project.Applications {
+
+		var dependenciesToMissingApplications []*MissingApplicationDto
+		dependenciesToMissingApplications = nil
+		for _, missing := range app.GetMissingDependencies(project) {
+			var id int
+			id = 0
+			for _, i := range []byte(missing) {
+				id = id + int(i)
+			}
+			missingApp := &MissingApplicationDto{
+				Title:    missing,
+				PseudoId: id,
+			}
+			dependenciesToMissingApplications = append(dependenciesToMissingApplications, missingApp)
+			allMissingApps = allMissingApps.Add(missingApp)
+		}
+
 		result.ApplicationsDto = append(result.ApplicationsDto, &ApplicationDto{
-			Application:         app,
-			DependenciesGrouped: app.GetDependenciesGrouped(project),
+			Application:                       app,
+			DependenciesGrouped:               app.GetDependenciesGrouped(project),
+			DependenciesToMissingApplications: dependenciesToMissingApplications,
 		})
 	}
 	files, err := getStaticDocuments(documentsFolder)
 	if err != nil {
 		result.AddError(err)
 	}
+	result.MissingApplications = *allMissingApps
 	result.StaticDocumentations = files
 
 	p.writeJson(w, result, false)
@@ -170,4 +200,14 @@ func (r *Result) AddError(err error) {
 		r.Errors = append(r.Errors, err.Error())
 	}
 
+}
+
+func (m MissingApplications) Add(dto *MissingApplicationDto) *MissingApplications {
+	for _, ma := range m {
+		if ma.PseudoId == dto.PseudoId {
+			return &m
+		}
+	}
+	m = append(m, dto)
+	return &m
 }
