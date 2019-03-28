@@ -35,7 +35,7 @@ visRenderer.RenderNetwork = function(container, projectData,configurationData) {
     //Check if we are missing nodes (this means an application reference an application that is not specified)
     for (var missingAppId in projectData.missingApplications) {
         let missingApp = projectData.missingApplications[missingAppId]
-        var node = { id: missingApp.id, font: {color: "#ffffff"}, title: "MISSING!" + missingApp.title, label: missingApp.name, color: {border: "#ff0000", background: "#ee0000", highlight: {background:"#ff0000", border: "#ffaaaa"}}}
+        var node = { id: missingApp.id, font: {color: "#ffffff"}, title: "MISSING!" + missingApp.title, label: "MISSING!" + missingApp.name, color: {border: "#ff0000", background: "#ee0000", highlight: {background:"#ff0000", border: "#ffaaaa"}}}
         nodes.push(node);
     }
     for (var app in projectData.applications) {
