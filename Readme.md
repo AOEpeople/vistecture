@@ -96,6 +96,8 @@ appOverrides:
     type: gui
     dependencies:
     - reference: order-workflow
+  remove-dependencies:
+  - test
 subViews:
 - name: "Demoproject minimal"
   included-applications:
@@ -300,7 +302,7 @@ go get github.com/AOEpeople/vistecture
 cd github.com/AOEpeople/vistecture
 
 //run tests
-go test ./tests/...
+go test ./...
 
 //build binaries:
 make all

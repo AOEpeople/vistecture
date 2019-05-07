@@ -22,15 +22,17 @@ type (
 		//Name - is used to reference
 		Name string `json:"name" yaml:"name"`
 		//Title and all other attributes are supposed to override or extend the properties of the referenced application
-		Title               string            `json:"title,omitempty" yaml:"title,omitempty"`
-		Summary             string            `json:"summary,omitempty" yaml:"summary,omitempty"`
-		Description         string            `json:"description,omitempty" yaml:"description,omitempty"`
-		Group               string            `json:"group,omitempty" yaml:"group,omitempty"`
-		Technology          string            `json:"technology,omitempty" yaml:"technology,omitempty"`
-		Category            string            `json:"category,omitempty" yaml:"category,omitempty"`
-		AddProvidedServices []core.Service    `json:"add-provided-services" yaml:"add-provided-services"`
-		AddDependencies     []core.Dependency `json:"add-dependencies" yaml:"add-dependencies"`
-		Properties          map[string]string `json:"properties" yaml:"properties"`
+		Title                  string            `json:"title,omitempty" yaml:"title,omitempty"`
+		Summary                string            `json:"summary,omitempty" yaml:"summary,omitempty"`
+		Description            string            `json:"description,omitempty" yaml:"description,omitempty"`
+		Group                  string            `json:"group,omitempty" yaml:"group,omitempty"`
+		Technology             string            `json:"technology,omitempty" yaml:"technology,omitempty"`
+		Category               string            `json:"category,omitempty" yaml:"category,omitempty"`
+		AddProvidedServices    []core.Service    `json:"add-provided-services" yaml:"add-provided-services"`
+		RemoveProvidedServices []string    `json:"remove-provided-services" yaml:"remove-provided-services"`
+		AddDependencies        []core.Dependency `json:"add-dependencies" yaml:"add-dependencies"`
+		RemoveDependencies     []string `json:"remove-dependencies" yaml:"remove-dependencies"`
+		Properties             map[string]string `json:"properties" yaml:"properties"`
 	}
 )
 
@@ -58,7 +60,7 @@ func (p *ProjectConfig) Validate() []error {
 	return foundErrors
 }
 
-//Find project info by Name
+//FindSubViewConfigByName - Find project info by Name
 func (p *ProjectConfig) FindSubViewConfigByName(nameToMatch string) (*SubViewConfig, error) {
 	for _, subView := range p.SubViewConfig {
 		if subView.Name == nameToMatch {
@@ -68,7 +70,7 @@ func (p *ProjectConfig) FindSubViewConfigByName(nameToMatch string) (*SubViewCon
 	return nil, errors.New("project info with name '" + nameToMatch + "' not found")
 }
 
-//Merges the given application with another. The current application is the one who will be modified.
+//GetAdjustedApplication - Merges the given application with another. The current application is the one who will be modified.
 func (a *ApplicationOverrides) GetAdjustedApplication(application *core.Application) (*core.Application, error) {
 	//clone the passed application
 	newApplication := *application
@@ -86,8 +88,26 @@ func (a *ApplicationOverrides) GetAdjustedApplication(application *core.Applicat
 	if a.AddDependencies != nil {
 		newApplication.Dependencies = append(application.Dependencies, a.AddDependencies...)
 	}
+	if a.RemoveDependencies != nil {
+		for currentKey,currentDep:=range newApplication.Dependencies {
+			for _,remove:=range a.RemoveDependencies {
+				if remove == currentDep.GetApplicationName() {
+					newApplication.Dependencies = append(newApplication.Dependencies[:currentKey],newApplication.Dependencies[currentKey+1:]...)
+				}
+			}
+		}
+	}
 	if a.AddProvidedServices != nil {
 		newApplication.ProvidedServices = append(application.ProvidedServices, a.AddProvidedServices...)
+	}
+	if a.RemoveProvidedServices != nil {
+		for currentKey,currentService:=range newApplication.ProvidedServices {
+			for _,remove:=range a.RemoveProvidedServices {
+				if remove == currentService.Name {
+					newApplication.ProvidedServices = append(newApplication.ProvidedServices[:currentKey],newApplication.ProvidedServices[currentKey+1:]...)
+				}
+			}
+		}
 	}
 	if a.Category != "" {
 		newApplication.Category = a.Category
