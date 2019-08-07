@@ -378,7 +378,7 @@ visRenderer.clusterNodeRenderer = function(groupName, projectData,configurationD
     if (bgHcl[0] < 63) {
         fontColor = "#efefef"
     }
-    var node = {title:groupName, label:groupName, id:groupName+'Cluster', borderWidth:3, shape:'box', color: {background:groupColor},margin: 12, font: {size: 19,color: fontColor}, mass: 0}
+    var node = {title:groupName, label:groupName, id:groupName+'Cluster', borderWidth:3, shape:'box', color: {background:groupColor},margin: 12, font: {size: 19,color: fontColor}}
     if (configurationData['nodeStyle'] == "detailed") {
         Object.assign(node, { size: 300, image: visRenderer.clusterNodeSvgUrl(groupName,projectData), shape: 'image', shapeProperties: {useImageSize: true, useBorderWithImage: true  }})
     }
