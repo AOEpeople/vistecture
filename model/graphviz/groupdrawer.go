@@ -1,6 +1,7 @@
 package graphviz
 
 import (
+	"fmt"
 	"strings"
 
 	model "github.com/AOEpeople/vistecture/v2/model/core"
@@ -141,8 +142,12 @@ func (d *GroupDrawer) DrawGroup(group string, applications []*model.Application,
 	for _, app := range applications {
 		color := "#CFCFCF"
 
+		teamName := ""
+		if app.Team != "" {
+			teamName = fmt.Sprintf(" (%v)",escape(app.Team))
+		}
 		result += "<TR><TD COLSPAN=\"2\"  align=\"CENTER\" PORT=\"" + escape(app.Name) + "\" BGCOLOR=\"" + color + "\">"
-		result += "<FONT POINT-SIZE=\"10\">" + escape(app.Name) + "</FONT>"
+		result += "<FONT POINT-SIZE=\"10\">" + escape(app.Name) + teamName + "</FONT>"
 
 		result += "</TD></TR>"
 	}
