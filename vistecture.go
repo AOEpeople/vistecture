@@ -133,6 +133,19 @@ func main() {
 			},
 		},
 		{
+			Name:   "groupGraph",
+			Usage:  "Build graphviz format that shows only the group of services and its dependencies.",
+			Action: actionFunc(documentationController, func() { documentationController.GroupGraphvizAction(summaryRelation) }),
+			Flags: []cli.Flag{
+				cli.StringFlag{
+					Name:        "summaryRelation",
+					Value:       "",
+					Usage:       "if set then only one arrow is drawn between the teams",
+					Destination: &summaryRelation,
+				},
+			},
+		},
+		{
 			Name:   "teamGraph",
 			Usage:  "Build a overview of involved teams and the relations based from the architecture (Conways law)",
 			Action: actionFunc(documentationController, func() { documentationController.TeamGraphvizAction(summaryRelation) }),
