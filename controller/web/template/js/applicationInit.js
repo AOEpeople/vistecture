@@ -22,10 +22,11 @@ applicationInit.DrawConfiguredGraph = function() {
     let value = $("#select-graph").val()
     let config = layout.GetGraphConfiguration()
     let selectedSubView = $("#select-project").val()
+    let networkFilterGroups = $("#networkFilterGroups").val()
 
-    visTectureHelper.LoadVistectureData(selectedSubView,function(projectData) {
+    visTectureHelper.LoadVistectureData(selectedSubView,networkFilterGroups,function(projectData) {
         applicationInit.updateProjectDropdown(projectData.availableSubViews, config)
-        applicationInit.updateGroups(projectData.applicationsByGroup, config)
+        applicationInit.updateGroups(projectData.applicationsByGroup, projectData.availableGroups, config)
         layout.SetDocumentsMenu(projectData.staticDocumentations)
         visRenderer.RenderNetwork(document.getElementById('maincontent'),projectData, config)
     })
@@ -46,25 +47,33 @@ applicationInit.updateProjectDropdown = function(availableSubViews) {
 }
 
 
-applicationInit.updateGroups = function(applicationsByGroup) {
-    let selectedOptions =  $("#networkClusterGroups").val()
+applicationInit.updateGroups = function(applicationsByGroup,availableGroups) {
+    let selectedClusterOptions =  $("#networkClusterGroups").val()
     $("#networkClusterGroups").find('option').remove()
-    applicationInit._addSubGroups(applicationsByGroup.subGroups,selectedOptions,0)
+    applicationInit._addSubGroups("#networkClusterGroups",applicationsByGroup.subGroups,selectedClusterOptions, 0)
+
+    let selectedFilterOptions =  $("#networkFilterGroups").val()
+    $("#networkFilterGroups").find('option').remove()
+    applicationInit._addSubGroups("#networkFilterGroups",availableGroups.subGroups,selectedFilterOptions, 0)
 }
 
 
-applicationInit._addSubGroups = function(subGroups, selectedOptions,level) {
+
+applicationInit._addSubGroups = function(selector, subGroups, selectedOptions, level) {
     if (level > 9) {
         return
     }
     for (var i in subGroups) {
         let subGroup = subGroups[i]
+        if (subGroup.groupName == "") {
+            continue
+        }
         let selected = false
-        if ($.inArray( subGroup.groupName, selectedOptions ) != -1) {
+        if ($.inArray( subGroup.qualifiedGroupName, selectedOptions ) != -1) {
             selected = true
         }
 
-        $("#networkClusterGroups").append(new Option("   ".repeat(level)+subGroup.groupName,subGroup.groupName,selected,selected));
-        applicationInit._addSubGroups(subGroups.subGroups,level+1)
+        $(selector).append(new Option("  > ".repeat(level)+subGroup.groupName,subGroup.qualifiedGroupName,selected,selected));
+        applicationInit._addSubGroups(selector,subGroup.subGroups,selectedOptions,level+1)
     }
 }

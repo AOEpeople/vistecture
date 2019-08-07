@@ -3,7 +3,7 @@
  */
 
 visRenderer = {}
-
+visRenderer.networkInstance = null
 visRenderer.RenderNetwork = function(container, projectData,configurationData) {
     const defaultProperties = {
         'hierarchicalSortMethod': "",
@@ -12,6 +12,7 @@ visRenderer.RenderNetwork = function(container, projectData,configurationData) {
         'physics': false,
         'physicsStabilization': false,
         'clusterGroups': [],
+        'filterGroups': [],
     }
     const config = Object.assign(defaultProperties, configurationData)
 
@@ -26,8 +27,10 @@ visRenderer.RenderNetwork = function(container, projectData,configurationData) {
 
 
     nodes = [];
+
     for (var app in projectData.applications) {
         let application = projectData.applications[app]
+
         var node = visRenderer.getBasicNode(application,config['nodeStyle'])
         nodes.push(node);
     }
@@ -35,14 +38,26 @@ visRenderer.RenderNetwork = function(container, projectData,configurationData) {
     //Check if we are missing nodes (this means an application reference an application that is not specified)
     for (var missingAppId in projectData.missingApplications) {
         let missingApp = projectData.missingApplications[missingAppId]
-        var node = { id: missingApp.id, font: {color: "#ffffff"}, title: "MISSING!" + missingApp.title, label: "MISSING!" + missingApp.name, color: {border: "#ff0000", background: "#ee0000", highlight: {background:"#ff0000", border: "#ffaaaa"}}}
+        var node = { id: missingApp.id, font: {color: "#ffffff"}, title: "MISSING! " + missingApp.title, label: "MISSING!" + missingApp.name, color: {border: "#ff0000", background: "#ee0000", highlight: {background:"#ff0000", border: "#ffaaaa"}}}
         nodes.push(node);
     }
+    //Check if we are missing nodes (this means an application reference an application that is not specified)
+    for (var unincludedAppId in projectData.unincludedApplications) {
+        let missingApp = projectData.unincludedApplications[unincludedAppId]
+        var node = { id: missingApp.id, font: {color: "#999999"}, title: "OUTSIDE: " + missingApp.title, label: "OUTSIDE: " + missingApp.name, color: {border: "#ee0000", background: "#666666", highlight: {background:"#aaaaaa", border: "#bbaaaa"}}}
+        nodes.push(node);
+    }
+
     for (var app in projectData.applications) {
         let application = projectData.applications[app]
         for (var missingAppIndex in application.dependenciesToMissingApplications) {
             let missingApp = application.dependenciesToMissingApplications[missingAppIndex]
             var edge = {color: {color: "#ee0000", highlight: "#ff0000"}, smooth:{enabled: false},arrows:{to: {enabled:true}}, from: application.id, to: missingApp.id}
+            edges.push(edge);
+        }
+        for (var unincludedAppIndex in application.dependenciesToUnincludedApplications) {
+            let unincludedApp = application.dependenciesToUnincludedApplications[unincludedAppIndex]
+            var edge = {color: {color: "#aaaaaa", highlight: "#eeeeee"}, smooth:{enabled: false},arrows:{to: {enabled:true}}, from: application.id, to: unincludedApp.id}
             edges.push(edge);
         }
     }
@@ -97,22 +112,24 @@ visRenderer.RenderNetwork = function(container, projectData,configurationData) {
     //console.log("renderNetworkOptions",options)
 
     // initialize your network!
-    var network = new vis.Network(container, data, options);
-    visNetworkHelper.InitNetwork(network,function(nodeParams) {
+    visRenderer.networkInstance = new vis.Network(container, data, options);
+    visNetworkHelper.InitNetwork(visRenderer.networkInstance,function(nodeParams) {
         visRenderer.clickEventListener(nodeParams,projectData)
     })
-    visNetworkHelper.ClusterByApplicationGroups(network,config['clusterGroups'],function(groupName) {
+    visNetworkHelper.ClusterByApplicationGroups(visRenderer.networkInstance,config['clusterGroups'],function(groupName) {
         return visRenderer.clusterNodeRenderer(groupName,projectData,configurationData)
     })
 
 }
 
+
+
 visRenderer.clickEventListener= function (nodeParams, projectData) {
     if (nodeParams.nodes.length<1) {
         return
     }
-    //console.log("clicked.. ",nodeParams.nodes[0])
     let app = visTectureHelper.FindApp(nodeParams.nodes[0],projectData)
+    //console.log("clicked.. ",nodeParams,app)
     if (app !== false) {
         // RENDER COMMONTAB
         let commonTab = ""
@@ -206,7 +223,11 @@ visRenderer.clickEventListener= function (nodeParams, projectData) {
 
 visRenderer.getBasicNode = function(application, nodeStyle) {
     let colors = visRenderer.getColorsForApplication(application)
-    var node = { id: application.id, appGroup: application.group, font: {color: colors.fontColor}, title: application.title, label: application.name, color: {border: colors.borderColor, background: colors.backgroundColor, highlight: {background:colors.highlightColor, border: colors.highLightBorderColor}}}
+    var groupName = "UNDEFINED"
+    if (application.group) {
+        groupName = application.group
+    }
+    var node = { id: application.id, appGroup: groupName, font: {color: colors.fontColor}, title: application.title, label: application.name, color: {border: colors.borderColor, background: colors.backgroundColor, highlight: {background:colors.highlightColor, border: colors.highLightBorderColor}}}
     if (nodeStyle == "detailed") {
         Object.assign(node, { size: 300, image: visRenderer.applicationSvgUrl(application,colors), shape: 'image', borderWidthSelected: 6,shapeProperties: {useImageSize: true, useBorderWithImage: true  }})
         if (application.status == 'planned') {
@@ -332,7 +353,7 @@ visRenderer.clusterNodeSvgUrl = function(groupName,projectData,borderColor) {
 
     let table = `<table border="1" style="width: 100%"><tr><td style="background-color: ${tableHeaderColor}; font-size:40px; color: #fff; padding: 2px">Group: ${groupName}</td></tr>`
 
-    table = table + `<tr><td>App Count:${projectData.applications.length}</td></tr>`
+    //table = table + `<tr><td>App Count:${projectData.applications.length}</td></tr>`
 
     table = table + `</table>`
 
@@ -352,8 +373,12 @@ visRenderer.clusterNodeSvgUrl = function(groupName,projectData,borderColor) {
 
 visRenderer.clusterNodeRenderer = function(groupName, projectData,configurationData) {
     groupColor = visRenderer.getColorForGroup(groupName)
-
-    var node = {title:groupName, label:groupName, id:groupName+'Cluster', borderWidth:3, shape:'box', color: {background:groupColor},margin: 10, font: {size: 19}}
+    let bgHcl = chroma(groupColor).lch()
+    let fontColor = "#333333"
+    if (bgHcl[0] < 63) {
+        fontColor = "#efefef"
+    }
+    var node = {title:groupName, label:groupName, id:groupName+'Cluster', borderWidth:3, shape:'box', color: {background:groupColor},margin: 12, font: {size: 19,color: fontColor}, mass: 0}
     if (configurationData['nodeStyle'] == "detailed") {
         Object.assign(node, { size: 300, image: visRenderer.clusterNodeSvgUrl(groupName,projectData), shape: 'image', shapeProperties: {useImageSize: true, useBorderWithImage: true  }})
     }

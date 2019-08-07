@@ -12,7 +12,7 @@ visNetworkHelper.InitNetwork = function(network, clickCallBack) {
 }
 
 visNetworkHelper.prepareNetworkForClustering = function (network) {
-    network.on("selectNode", function(params) {
+    network.on("doubleClick", function(params) {
         if (params.nodes.length == 1) {
             if (network.isCluster(params.nodes[0]) == true) {
                 network.openCluster(params.nodes[0]);
@@ -31,7 +31,6 @@ visNetworkHelper.ClusterByApplicationGroups = function(network, groups,clusterNo
         }
         groupNamesByLevel[groupPath.length][groupName] = true
     }
-    //console.log(groupNamesByLevel)
     // Cluster but start from deepes level for Clusters in Clusters
     for (let i = (groupNamesByLevel.length-1); i > 0; i--) {
         let groupNamesObject = groupNamesByLevel[i]
@@ -46,7 +45,7 @@ visNetworkHelper.ClusterByApplicationGroups = function(network, groups,clusterNo
 
 }
 
-//_clusterByApplicationGroup - does the clustering in vis network and clusters all nodes with groupName as
+//_clusterByApplicationGroup - does the clustering in vis network and clusters all nodes with groupName as node title
 visNetworkHelper.clusterByApplicationGroup = function(network, groupName, clusterNodeRenderer) {
     let groupPath = groupName.split("/");
     let parentGroupName = ""
@@ -64,7 +63,10 @@ visNetworkHelper.clusterByApplicationGroup = function(network, groupName, cluste
 
     network.cluster({
         joinCondition:function(childOptions) {
-            return childOptions.appGroup == groupName;
+            if (childOptions.appGroup) {
+                return childOptions.appGroup.toLowerCase().trim() == groupName.toLowerCase().trim();
+            }
+            return false
         },
         clusterNodeProperties: clusterNode
     });

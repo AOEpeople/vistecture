@@ -3,6 +3,7 @@ package core
 import (
 	"errors"
 	"fmt"
+	"strings"
 )
 
 type (
@@ -15,7 +16,9 @@ type (
 		SubGroups    []*ApplicationsByGroup `json:"subGroups"`
 		Applications []*Application         `json:"applications"`
 		GroupName    string                 `json:"groupName"`
-		IsRoot       bool                   `json:"isRoot"`
+		//QualifiedGroupName - includeing the path to root
+		QualifiedGroupName string `json:"qualifiedGroupName"`
+		IsRoot             bool   `json:"isRoot"`
 	}
 )
 
@@ -41,7 +44,7 @@ func (p *Project) Validate() []error {
 
 			error := p.doesServiceExists(dependendComponentName, serviceName)
 			if error != nil {
-				foundErrors = append(foundErrors, errors.New(fmt.Sprintf("Application '%v' Dependencies has Error: %v ( Add this application or mark the dependency as 'isOptional')",application.Name,error)))
+				foundErrors = append(foundErrors, errors.New(fmt.Sprintf("Application '%v' Dependencies has Error: %v ( Add this application or mark the dependency as 'isOptional')", application.Name, error)))
 			}
 		}
 	}
@@ -174,15 +177,17 @@ func (a *ApplicationsByGroup) add(app *Application) error {
 	}
 	groupPath := app.GetGroupPath()
 	groupToAddApp := a
-	for _, group := range groupPath {
-		groupToAddApp = groupToAddApp.getSubgroup(group)
+	for i, group := range groupPath {
+		qualifiedName := strings.Join(groupPath[0:i+1],"/")
+		groupToAddApp = groupToAddApp.getSubgroup(group, qualifiedName)
 	}
 	groupToAddApp.Applications = append(groupToAddApp.Applications, app)
 	return nil
 }
 
+
 // Add a Application to the Value object and takes care that it is added to the correct subgroup
-func (a *ApplicationsByGroup) getSubgroup(groupName string) *ApplicationsByGroup {
+func (a *ApplicationsByGroup) getSubgroup(groupName string, qualifiedGroupName string) *ApplicationsByGroup {
 	for _, subGroup := range a.SubGroups {
 		if subGroup.GroupName == groupName {
 			return subGroup
@@ -190,6 +195,7 @@ func (a *ApplicationsByGroup) getSubgroup(groupName string) *ApplicationsByGroup
 	}
 	newGroup := ApplicationsByGroup{
 		GroupName: groupName,
+		QualifiedGroupName: qualifiedGroupName,
 	}
 	a.SubGroups = append(a.SubGroups, &newGroup)
 	return &newGroup

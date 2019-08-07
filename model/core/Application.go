@@ -165,6 +165,13 @@ func (a *Application) GetGroupPath() []string {
 	return strings.Split(a.Group, "/")
 }
 
+
+//GetMainGroup - returns the main group
+func (a *Application) GetMainGroup() string {
+	groups := a.GetGroupPath()
+	return groups[0]
+}
+
 //GetDependenciesGrouped - returns a list of grouped dependencies for this application to others. Useful if you are not interested in the indivudual dependencies but only the general "links" from this app to others
 func (a *Application) GetDependenciesGrouped(project *Project) []*DependenciesGrouped {
 	var result []*DependenciesGrouped

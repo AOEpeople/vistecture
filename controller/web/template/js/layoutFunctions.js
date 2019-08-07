@@ -12,7 +12,8 @@ layout.GetGraphConfiguration = function() {
         'nodeStyle': $("#networkNodeStyle").val(),
         'layout': $("#networkLayout").val(),
         'physics': $("#networkPhysics").prop('checked'),
-        'clusterGroups': $('#networkClusterGroups').val()
+        'clusterGroups': $('#networkClusterGroups').val(),
+        'filterGroups': $('#networkFilterGroups').val()
     }
 }
 

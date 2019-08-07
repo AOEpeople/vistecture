@@ -1,7 +1,7 @@
 visTectureHelper = {}
 
 //loadVistectureData - loads the vistecture project data
-visTectureHelper.LoadVistectureData = function(selectedSubView, callback) {
+visTectureHelper.LoadVistectureData = function(selectedSubView, networkFilterGroups, callback) {
 
 
     if (typeof DATAURL == 'undefined') {
@@ -13,10 +13,15 @@ visTectureHelper.LoadVistectureData = function(selectedSubView, callback) {
         return
     }
     let ajaxUrl = DATAURL
+    let params = []
     if (selectedSubView != null) {
-        ajaxUrl = ajaxUrl +'?subview='+selectedSubView
+        params.push('subview='+selectedSubView)
+    }
+    if (networkFilterGroups != null) {
+        params.push('filterGroups='+networkFilterGroups)
     }
 
+    ajaxUrl = ajaxUrl + '?' + params.join('&')
     $.getJSON( ajaxUrl).done(function(data,statustext,jqXHR) {
         //check if the status is 200(means everything is okay)
         if (jqXHR.status == 200)
