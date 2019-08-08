@@ -18,6 +18,7 @@ type (
 		Relationship   string
 		ToGroup         string
 		ForApplication string
+		FromApplication string
 	}
 )
 
@@ -64,7 +65,7 @@ func (d *GroupDrawer) DrawComplete() string {
 			}
 			referenceToApplicationAlreadyPresent := false
 			for _, rel := range groupOutgoing[application.Team] {
-				if rel.ForApplication == dependencyApplication.Name {
+				if rel.ForApplication == dependencyApplication.Name && rel.FromApplication == application.Name {
 					referenceToApplicationAlreadyPresent = true
 				}
 			}
@@ -76,6 +77,7 @@ func (d *GroupDrawer) DrawComplete() string {
 					Relationship:   relationShip,
 					ToGroup:        depGroupName,
 					ForApplication: dependencyApplication.Name,
+					FromApplication: application.Name,
 				})
 
 		}
@@ -119,7 +121,7 @@ func (d *GroupDrawer) DrawComplete() string {
 			for _, relation := range groupOutgoing[group] {
 				edgeLayout := edgeLayout(relation.Relationship)
 
-				result = result + "\"" + group + "\"->\"" + relation.ToGroup + "\":\"" + relation.ForApplication + "\"[color=\"" + color + "\" " + edgeLayout + "]\n"
+				result = result + "\"" + group + "\":\"" + relation.FromApplication + "\"->\"" + relation.ToGroup + "\":\"" + relation.ForApplication + "\"[color=\"" + color + "\" " + edgeLayout + "]\n"
 			}
 		}
 
