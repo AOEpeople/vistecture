@@ -106,12 +106,16 @@ func (p *ProjectController) DataAction(w http.ResponseWriter, r *http.Request, d
 	completeProject, err := p.projectLoader.LoadProject(p.projectDefinitions, p.definitionsBaseFolder, "")
 	if err != nil {
 		result.AddError(err)
+	}
+	if completeProject == nil {
 		p.writeJson(w, result, false)
 		return
 	}
 	project, err := p.projectLoader.LoadProject(p.projectDefinitions, p.definitionsBaseFolder, strings.Join(subViewName, ""))
 	if err != nil {
 		result.AddError(err)
+	}
+	if project == nil {
 		p.writeJson(w, result, false)
 		return
 	}

@@ -161,6 +161,18 @@ func (p *ProjectLoader) LoadApplications(filePath string) ([]*core.Application, 
 		}
 		applications = append(applications, loadedApplications...)
 	}
+	//Check duplicates
+	for sk, sapp := range applications {
+		i := 0
+		for ck, capp := range applications {
+			if sk > ck && sapp.Name == capp.Name {
+				i ++
+				collectedErrors.Add(fmt.Errorf("Application with name %v is duplicated - exists in %d and %d",sapp.Name,sk,ck))
+				applications[ck].Name = fmt.Sprintf("%v-Duplicate-%v",applications[ck].Name,i)
+			}
+		}
+	}
+
 	return applications, collectedErrors
 }
 
@@ -259,10 +271,11 @@ func findApplicationByName(name string, apps []*core.Application) (*core.Applica
 	return nil, false
 }
 
-func replaceApplication(app *core.Application, apps []*core.Application) []*core.Application {
+func replaceApplication(appToReplace *core.Application, apps []*core.Application) []*core.Application {
 	for k, app := range apps {
-		if app.Name == app.Name {
-			apps[k] = app
+		if app.Name == appToReplace.Name {
+			apps[k] = appToReplace
+			break
 		}
 	}
 	return apps
