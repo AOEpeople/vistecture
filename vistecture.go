@@ -76,7 +76,7 @@ func main() {
 		{
 			Name:   "validate",
 			Usage:  "Validates project JSON",
-			Action: actionFunc(analyzeController, func() { log.Println("valid") }),
+			Action: validate,
 		},
 		{
 			Name:   "list",
@@ -201,13 +201,37 @@ func loadProject(configFile string, subViewName string, skipValidation bool) *co
 	return project
 }
 
+func validate(c *cli.Context) error {
+	loader := application.ProjectLoader{StrictMode: !skipValidation}
+	project, err := loader.LoadProjectFromConfigFile(projectConfigFile, projectSubViewName)
+
+	if err != nil {
+		log.Println(err)
+	}
+	var validationErrors []error
+	if project != nil {
+		validationErrors = project.Validate()
+		for _,valErr := range validationErrors {
+			log.Println(valErr)
+		}
+	}
+	if err != nil || len(validationErrors) > 0 {
+		log.Fatal("Not valid")
+	} else {
+		log.Println("valid")
+	}
+	return nil
+}
+
+
 func listApps(c *cli.Context) error {
-	project := loadProject(projectConfigFile, projectSubViewName, skipValidation)
+	project := loadProject(projectConfigFile, projectSubViewName, true)
 	for _, app := range project.Applications {
 		log.Printf("Name: %v Id: %v", app.Name, app.Id)
 	}
 	return nil
 }
+
 func startServer(c *cli.Context) error {
 	r := mux.NewRouter()
 

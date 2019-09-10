@@ -25,7 +25,7 @@ func (ComponentDrawer ApplicationDrawer) Draw(hidePlanned bool) string {
 		icon = "<IMG SRC=\"" + iconPath + "\" scale=\"true\"/>"
 	}
 
-	tableHeaderColor := ""
+	tableHeaderColor := "#333333"
 	switch Component.Category {
 	case model.CATEGORY_EXTERNAL:
 		tableHeaderColor = "#8e0909"
@@ -65,8 +65,7 @@ func (ComponentDrawer ApplicationDrawer) Draw(hidePlanned bool) string {
 			color = "#A3C7D4"
 		case "gui":
 			color = "#D4C1E0"
-		case "exchange":
-		case "topic":
+		case "exchange", "topic":
 			color = "#BEE8D2"
 		default:
 			color = "#CFCFCF"
@@ -74,6 +73,7 @@ func (ComponentDrawer ApplicationDrawer) Draw(hidePlanned bool) string {
 		if service.Status == model.STATUS_PLANNED {
 			color = "#BBBBB"
 		}
+
 		result += "<TR><TD COLSPAN=\"2\"  align=\"CENTER\" PORT=\"" + escape(service.Name) + "\" BGCOLOR=\"" + color + "\">"
 		result += "<FONT POINT-SIZE=\"10\">" + service.Type + ":" + escape(service.Name) + "</FONT>"
 		if service.IsOpenHost {

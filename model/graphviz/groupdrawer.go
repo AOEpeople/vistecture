@@ -134,6 +134,11 @@ func (d *GroupDrawer) DrawComplete() string {
 func (d *GroupDrawer) DrawGroup(group string, applications []*model.Application, tableHeaderColor string) string {
 	var result string
 
+
+	if tableHeaderColor == "" {
+		tableHeaderColor = "#333333"
+	}
+
 	// see http://www.graphviz.org/doc/info/shapes.html
 	// see http://4webmaster.de/wiki/Graphviz-Tutorial#Die_Darstellung_von_Edges_ver.C3.A4ndern
 	result += "\"" + group + "\" [shape=plaintext "
