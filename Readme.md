@@ -115,7 +115,7 @@ group: group1
 technology: scala
 team: team1
 display:
-  bordercolor: "#c922b3"
+  borderColor: "#c922b3"
 summary: Short description
 properties:
   foo: bar
@@ -127,41 +127,18 @@ description: |
 provided-services:
   - name: someApi
     type: api
+    dependencies:
+    - reference: service1.someApi
+      relationship: partnership
+      description: Some description here
   - name: otherApi
     type: api
   - name: eventpublish
     type: exchange
 infrastructure-dependencies:
   - type: mysql
-- name: application
-  group: group1
-  description: Application Description
-  provided-services:
-    - name: userinterface
-      type: gui
-      description: Main Application UI
-      dependencies:
-        - reference: service1.someApi
-          relationship: partnership
-          description: Some description here
-    - name: api
-      type: api
-    - name: domainEventAdapter
-- name: service2
-  title: Service 2
-  category: core
-  description: Framework, Technical Details, Database Access
-  dependencies:
-    - reference: service1
-- name: service3
-  title: Service 3
-  category: group1
-  description: Interface for administration
-- name: service4
-  title: Service 4
-  category: group1
-  description: Individual System
-  status: planned
+dependencies:
+  - reference: service2
 ```
 
 Please also see chapter 'Domain Language / Concepts' for more information

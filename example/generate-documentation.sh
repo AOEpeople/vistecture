@@ -13,7 +13,7 @@ vistecture --config=demoproject/project.yml documentation --templatePath=templat
 
 
 echo "generate minmal graphs..."
-vistecture --config=demoproject/project.yml --project="Demoproject minimal" --skipValidation=1 graph --iconPath=../templates/icons   --hidePlanned=1 | dot -Tpng -Gbgcolor=white -o result/graphmin.png
+vistecture --config=demoproject/project.yml --subview="Demoproject minimal" --skipValidation=1 graph --iconPath=../templates/icons   --hidePlanned=1 | dot -Tpng -Gbgcolor=white -o result/graphmin.png
 
 echo "generate graphs with planned..."
 vistecture --config=demoproject/project.yml graph --iconPath=templates/icons | dot -Tpng -Gbgcolor=white -o result/graphfull.png

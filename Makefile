@@ -27,3 +27,10 @@ dockerpublish:
 	docker tag aoepeople/vistecture:latest aoepeople/vistecture:$(VERSION)
 	docker push aoepeople/vistecture:latest
 	docker push aoepeople/vistecture:$(VERSION)
+
+
+
+dockerpublishexampleproject:
+	cd example && ./generate-docs-with-docker.sh
+	cd example && docker build --no-cache -t aoepeople/vistecture-example .
+    docker push aoepeople/vistecture-example:latest
