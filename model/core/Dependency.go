@@ -1,6 +1,11 @@
 package core
 
-import "strings"
+import (
+	"html/template"
+	"strings"
+
+	"github.com/russross/blackfriday"
+)
 
 type Dependency struct {
 	Reference      string            `json:"reference" yaml:"reference"`
@@ -39,4 +44,9 @@ func (Dependency *Dependency) GetServiceName() string {
 func (Dependency *Dependency) GetApplication(Project *Project) (*Application, error) {
 	componentName, _ := Dependency.GetApplicationAndServiceNames()
 	return Project.FindApplication(componentName)
+}
+
+//GetDescriptionHtml - helper that renders the description text as markdown - to be used in HTML documentations
+func (Dependency *Dependency) GetDescriptionHtml() template.HTML {
+	return template.HTML(blackfriday.MarkdownCommon([]byte(Dependency.Description)))
 }
