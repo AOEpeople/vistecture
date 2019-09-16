@@ -165,7 +165,6 @@ func (a *Application) GetGroupPath() []string {
 	return strings.Split(a.Group, "/")
 }
 
-
 //GetMainGroup - returns the main group
 func (a *Application) GetMainGroup() string {
 	groups := a.GetGroupPath()

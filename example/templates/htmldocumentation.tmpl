@@ -260,6 +260,12 @@
            {{$dependencies := $component.GetAllDependencies }}
            {{ range $dependency := $dependencies }}
                 <li>{{$dependency.Reference}}</li>
+                <ul>
+                {{ range $event := $dependency.Events }}
+                    <li>{{ $event.Name }}</li>
+                {{ end }}
+                </ul>
+
            {{ end }}
        </ul>
         <p>The application requires the following infrastructure services:</p>
