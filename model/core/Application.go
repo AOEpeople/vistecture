@@ -187,7 +187,7 @@ func (a *Application) GetDependenciesGrouped(project *Project) []*DependenciesGr
 		return nil
 	}
 
-	for _, dep := range a.Dependencies {
+	for _, dep := range a.GetAllDependencies() {
 		depApp, err := dep.GetApplication(project)
 		if err != nil {
 			continue

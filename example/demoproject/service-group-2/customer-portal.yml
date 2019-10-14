@@ -11,6 +11,8 @@ provided-services:
   type: api
 - name: ui
   type: gui
+  dependencies:
+    - reference: single-sign-on
 infrastructure-dependencies:
   - type: redis
 dependencies:
@@ -19,6 +21,5 @@ dependencies:
     relationship: customer-supplier
     properties:
       message-exchange-pattern: request/response
-  - reference: single-sign-on
   - reference: external-website
     isBrowserBased: true
