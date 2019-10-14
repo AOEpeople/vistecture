@@ -178,8 +178,7 @@ visRenderer.clickEventListener= function (nodeParams, projectData) {
 
         // RENDER DEP TAB
         let depContent = ""
-        for (var sIndex in app['dependencies']) {
-            let dep = app['dependencies'][sIndex]
+        renderDepItem = function(dep, extraInfo) {
             let propContent = ""
             for (var pIndex in dep.properties) {
                 let property = dep.properties[pIndex]
@@ -188,26 +187,37 @@ visRenderer.clickEventListener= function (nodeParams, projectData) {
 
             let relationShip = ""
             if (typeof dep.relationship != "undefined") {
-              relationShip = dep.relationship
+                relationShip = dep.relationship
             }
             if (dep.isBrowserBased) {
-              relationShip = relationShip + "(browser based)"
+                relationShip = relationShip + "(browser based)"
             }
             if (relationShip != "") {
-              relationShip = `<div class="badge badge-primary text-wrap" style="width: 6rem;">${relationShip}</div>`
+                relationShip = `<div class="badge badge-primary text-wrap" style="width: 6rem;">${relationShip}</div>`
             }
             let description = ""
             if (typeof depContent.description != "undefined") {
-              description = depContent.description
+                description = depContent.description
             }
-            depContent = depContent +` <li class="list-group-item">
+            return ` <li class="list-group-item">
                             <div class="d-flex w-100 justify-content-between">
                                 <h7 class="mb-1">${dep.reference}</h7>
                                 ${relationShip}
                             </div>
-                            <small class="">${description}</small>  
+                            <small class="">${extraInfo} ${description}</small>  
                             <table class="mt-1 table table-sm small"><tbody>${propContent}</tbody></table>                       
                         </li>`
+        }
+        for (var sIndex in app['dependencies']) {
+            let dep = app['dependencies'][sIndex]
+            depContent = depContent + renderDepItem(dep,"")
+        }
+        for (var sIndex in app['provided-services']) {
+            let service = app['provided-services'][sIndex]
+            for (var dIndex in service['dependencies']) {
+                let dep = service['dependencies'][dIndex]
+                depContent = depContent + renderDepItem(dep,"From " + service.name)
+            }
         }
         depContent = `<ul class="list-group">${depContent}</ul>`
 
