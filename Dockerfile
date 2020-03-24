@@ -1,11 +1,12 @@
-FROM golang:1.11 as build
-RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go get -u github.com/gobuffalo/packr/v2/packr2
-RUN mkdir -p /go/src/github.com/AOEpeople/
-COPY . /go/src/github.com/AOEpeople/vistecture
-RUN cd /go/src/github.com/AOEpeople/vistecture && CGO_ENABLED=0 GOOS=linux GOARCH=amd64 GO111MODULE=on go mod vendor
-RUN cd /go/src/github.com/AOEpeople/vistecture && CGO_ENABLED=0 GOOS=linux GOARCH=amd64 packr2 -v
-RUN cd /go/src/github.com/AOEpeople/vistecture && CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build .
-RUN ls -al /go/src/github.com/AOEpeople/vistecture
+FROM golang:1.14 as build
+ENV GOOS=linux
+ENV CGO_ENABLED=0
+ENV GOARCH=amd64
+COPY . /app
+RUN cd /app && go run github.com/gobuffalo/packr/v2/packr2 -v
+RUN echo "package web \nimport _ \"github.com/AOEpeople/vistecture/v2/packrd\"" > /app/controller/web/web-packr.go
+RUN cd /app && go build -o vistecture .
+RUN ls -l /app
 
 FROM alpine:3.9.5
 RUN apk add --no-cache \
@@ -13,4 +14,4 @@ RUN apk add --no-cache \
   font-bitstream-type1 \
   inotify-tools \
   tini
-COPY --from=build /go/src/github.com/AOEpeople/vistecture/vistecture /usr/local/bin
+COPY --from=build /app/vistecture /usr/local/bin

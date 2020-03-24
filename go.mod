@@ -1,6 +1,6 @@
 module github.com/AOEpeople/vistecture/v2
 
-go 1.12
+go 1.13
 
 require (
 	github.com/gobuffalo/events v1.2.0 // indirect
