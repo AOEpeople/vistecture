@@ -8,7 +8,7 @@ default: darwin
 all: darwin linux windows
 
 templates:
-	packr2
+	go run github.com/gobuffalo/packr/v2/packr2
 	echo "package web \n import _ \"github.com/AOEpeople/vistecture/v2/packrd\"" > controller/web/web-packr.go
 	mkdir -p build-artifacts
 	zip -qr build-artifacts/templates.zip templates
@@ -28,9 +28,7 @@ dockerpublish:
 	docker push aoepeople/vistecture:latest
 	docker push aoepeople/vistecture:$(VERSION)
 
-
-
 dockerpublishexampleproject:
 	cd example && ./generate-docs-with-docker.sh
 	cd example && docker build --no-cache -t aoepeople/vistecture-example .
-    docker push aoepeople/vistecture-example:latest
+	docker push aoepeople/vistecture-example:latest
