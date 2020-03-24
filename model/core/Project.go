@@ -178,13 +178,12 @@ func (a *ApplicationsByGroup) add(app *Application) error {
 	groupPath := app.GetGroupPath()
 	groupToAddApp := a
 	for i, group := range groupPath {
-		qualifiedName := strings.Join(groupPath[0:i+1],"/")
+		qualifiedName := strings.Join(groupPath[0:i+1], "/")
 		groupToAddApp = groupToAddApp.getSubgroup(group, qualifiedName)
 	}
 	groupToAddApp.Applications = append(groupToAddApp.Applications, app)
 	return nil
 }
-
 
 // Add a Application to the Value object and takes care that it is added to the correct subgroup
 func (a *ApplicationsByGroup) getSubgroup(groupName string, qualifiedGroupName string) *ApplicationsByGroup {
@@ -194,7 +193,7 @@ func (a *ApplicationsByGroup) getSubgroup(groupName string, qualifiedGroupName s
 		}
 	}
 	newGroup := ApplicationsByGroup{
-		GroupName: groupName,
+		GroupName:          groupName,
 		QualifiedGroupName: qualifiedGroupName,
 	}
 	a.SubGroups = append(a.SubGroups, &newGroup)

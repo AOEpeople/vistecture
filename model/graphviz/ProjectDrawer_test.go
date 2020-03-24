@@ -11,8 +11,8 @@ import (
 func TestApplicationDrawer_Draw(t *testing.T) {
 
 	project := core.Project{
-		"Project1",
-		[]*core.Application{
+		Name: "Project1",
+		Applications: []*core.Application{
 			{
 				Name: "app1",
 

@@ -29,9 +29,9 @@ type (
 		Technology             string            `json:"technology,omitempty" yaml:"technology,omitempty"`
 		Category               string            `json:"category,omitempty" yaml:"category,omitempty"`
 		AddProvidedServices    []core.Service    `json:"add-provided-services" yaml:"add-provided-services"`
-		RemoveProvidedServices []string    `json:"remove-provided-services" yaml:"remove-provided-services"`
+		RemoveProvidedServices []string          `json:"remove-provided-services" yaml:"remove-provided-services"`
 		AddDependencies        []core.Dependency `json:"add-dependencies" yaml:"add-dependencies"`
-		RemoveDependencies     []string `json:"remove-dependencies" yaml:"remove-dependencies"`
+		RemoveDependencies     []string          `json:"remove-dependencies" yaml:"remove-dependencies"`
 		Properties             map[string]string `json:"properties" yaml:"properties"`
 	}
 )
@@ -89,10 +89,10 @@ func (a *ApplicationOverrides) GetAdjustedApplication(application *core.Applicat
 		newApplication.Dependencies = append(application.Dependencies, a.AddDependencies...)
 	}
 	if a.RemoveDependencies != nil {
-		for currentKey,currentDep:=range newApplication.Dependencies {
-			for _,remove:=range a.RemoveDependencies {
+		for currentKey, currentDep := range newApplication.Dependencies {
+			for _, remove := range a.RemoveDependencies {
 				if remove == currentDep.GetApplicationName() {
-					newApplication.Dependencies = append(newApplication.Dependencies[:currentKey],newApplication.Dependencies[currentKey+1:]...)
+					newApplication.Dependencies = append(newApplication.Dependencies[:currentKey], newApplication.Dependencies[currentKey+1:]...)
 				}
 			}
 		}
@@ -101,10 +101,10 @@ func (a *ApplicationOverrides) GetAdjustedApplication(application *core.Applicat
 		newApplication.ProvidedServices = append(application.ProvidedServices, a.AddProvidedServices...)
 	}
 	if a.RemoveProvidedServices != nil {
-		for currentKey,currentService:=range newApplication.ProvidedServices {
-			for _,remove:=range a.RemoveProvidedServices {
+		for currentKey, currentService := range newApplication.ProvidedServices {
+			for _, remove := range a.RemoveProvidedServices {
 				if remove == currentService.Name {
-					newApplication.ProvidedServices = append(newApplication.ProvidedServices[:currentKey],newApplication.ProvidedServices[currentKey+1:]...)
+					newApplication.ProvidedServices = append(newApplication.ProvidedServices[:currentKey], newApplication.ProvidedServices[currentKey+1:]...)
 				}
 			}
 		}

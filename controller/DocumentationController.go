@@ -49,14 +49,10 @@ func (d *DocumentationController) GraphvizAction(componentName string, iconPath 
 
 }
 
-
-
 func (d *DocumentationController) GroupGraphvizAction(summaryRelation string) {
 	drawer := graphviz.CreateGroupDrawer(d.project, summaryRelation != "")
 	fmt.Print(drawer.DrawComplete())
 }
-
-
 
 func (d *DocumentationController) TeamGraphvizAction(summaryRelation string) {
 	drawer := graphviz.CreateTeamDependencyDrawer(d.project, summaryRelation != "")

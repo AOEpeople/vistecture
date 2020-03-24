@@ -211,7 +211,7 @@ func validate(c *cli.Context) error {
 	var validationErrors []error
 	if project != nil {
 		validationErrors = project.Validate()
-		for _,valErr := range validationErrors {
+		for _, valErr := range validationErrors {
 			log.Println(valErr)
 		}
 	}
@@ -222,7 +222,6 @@ func validate(c *cli.Context) error {
 	}
 	return nil
 }
-
 
 func listApps(c *cli.Context) error {
 	project := loadProject(projectConfigFile, projectSubViewName, true)

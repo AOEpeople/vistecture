@@ -15,9 +15,9 @@ type (
 		summaryRelationOnly bool
 	}
 	groupRelation struct {
-		Relationship   string
+		Relationship    string
 		ToGroup         string
-		ForApplication string
+		ForApplication  string
 		FromApplication string
 	}
 )
@@ -74,9 +74,9 @@ func (d *GroupDrawer) DrawComplete() string {
 			}
 			groupOutgoing[groupName] = append(groupOutgoing[groupName],
 				groupRelation{
-					Relationship:   relationShip,
-					ToGroup:        depGroupName,
-					ForApplication: dependencyApplication.Name,
+					Relationship:    relationShip,
+					ToGroup:         depGroupName,
+					ForApplication:  dependencyApplication.Name,
 					FromApplication: application.Name,
 				})
 
@@ -134,7 +134,6 @@ func (d *GroupDrawer) DrawComplete() string {
 func (d *GroupDrawer) DrawGroup(group string, applications []*model.Application, tableHeaderColor string) string {
 	var result string
 
-
 	if tableHeaderColor == "" {
 		tableHeaderColor = "#333333"
 	}
@@ -151,7 +150,7 @@ func (d *GroupDrawer) DrawGroup(group string, applications []*model.Application,
 
 		teamName := ""
 		if app.Team != "" {
-			teamName = fmt.Sprintf(" (%v)",escape(app.Team))
+			teamName = fmt.Sprintf(" (%v)", escape(app.Team))
 		}
 		result += "<TR><TD COLSPAN=\"2\"  align=\"CENTER\" PORT=\"" + escape(app.Name) + "\" BGCOLOR=\"" + color + "\">"
 		result += "<FONT POINT-SIZE=\"10\">" + escape(app.Name) + teamName + "</FONT>"

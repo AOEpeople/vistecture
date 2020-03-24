@@ -166,9 +166,9 @@ func (p *ProjectLoader) LoadApplications(filePath string) ([]*core.Application, 
 		i := 0
 		for ck, capp := range applications {
 			if sk > ck && sapp.Name == capp.Name {
-				i ++
-				collectedErrors.Add(fmt.Errorf("Application with name %v is duplicated - exists in %d and %d",sapp.Name,sk,ck))
-				applications[ck].Name = fmt.Sprintf("%v-Duplicate-%v",applications[ck].Name,i)
+				i++
+				collectedErrors.Add(fmt.Errorf("Application with name %v is duplicated - exists in %d and %d", sapp.Name, sk, ck))
+				applications[ck].Name = fmt.Sprintf("%v-Duplicate-%v", applications[ck].Name, i)
 			}
 		}
 	}

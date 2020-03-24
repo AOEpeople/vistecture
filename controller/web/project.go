@@ -28,17 +28,17 @@ type (
 	}
 
 	Result struct {
-		Name                   string                    `json:"name"`
-		AvailableSubViews      []string                  `json:"availableSubViews"`
-		ApplicationsByGroup    *core.ApplicationsByGroup `json:"applicationsByGroup"`
-		AvailableGroups        *AvailableGroups          `json:"availableGroups"`
-		ApplicationsDto        []*ApplicationDto         `json:"applications"`
-		StaticDocumentations   []string                  `json:"staticDocumentations"`
-		Errors                 []string                  `json:"errors"`
+		Name                 string                    `json:"name"`
+		AvailableSubViews    []string                  `json:"availableSubViews"`
+		ApplicationsByGroup  *core.ApplicationsByGroup `json:"applicationsByGroup"`
+		AvailableGroups      *AvailableGroups          `json:"availableGroups"`
+		ApplicationsDto      []*ApplicationDto         `json:"applications"`
+		StaticDocumentations []string                  `json:"staticDocumentations"`
+		Errors               []string                  `json:"errors"`
 		//MissingApplications - list of applications that are referenced but not definied at all in the projecr
-		MissingApplications    MissingApplications       `json:"missingApplications"`
+		MissingApplications MissingApplications `json:"missingApplications"`
 		//UnincludedApplications - list of applications that are referenced but not included in current selection (e.g. because of selected subview or due to a filter)
-		UnincludedApplications MissingApplications       `json:"unincludedApplications"`
+		UnincludedApplications MissingApplications `json:"unincludedApplications"`
 	}
 
 	AvailableGroups struct {
