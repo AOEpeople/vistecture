@@ -7,9 +7,11 @@ default: darwin
 
 all: darwin linux windows
 
-templates:
+packr:
 	go run github.com/gobuffalo/packr/v2/packr2
 	echo "package web \nimport _ \"github.com/AOEpeople/vistecture/v2/packrd\"" > controller/web/web-packr.go
+
+templates:
 	mkdir -p build-artifacts
 	zip -qr build-artifacts/templates.zip templates
 
