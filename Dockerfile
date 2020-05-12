@@ -8,7 +8,7 @@ RUN echo "package web \nimport _ \"github.com/AOEpeople/vistecture/v2/packrd\"" 
 RUN cd /app && go build -o vistecture .
 RUN ls -l /app
 
-FROM alpine:3.9.5
+FROM alpine:latest
 RUN apk add --no-cache \
   graphviz \
   font-bitstream-type1 \
