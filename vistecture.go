@@ -46,7 +46,7 @@ func main() {
 
 	app := cli.NewApp()
 	app.Name = "vistecture tool "
-	app.Version = "1.0.0"
+	app.Version = "2.0.11"
 	app.Usage = "describing and analysing distributed or microservice-style architectures with its depenendcies."
 
 	app.Flags = []cli.Flag{
