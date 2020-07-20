@@ -2,6 +2,7 @@ package analyze
 
 import (
 	"errors"
+	"log"
 	"strconv"
 
 	"github.com/AOEpeople/vistecture/v2/model/core"
@@ -52,10 +53,13 @@ func (projectAnalyzer *ProjectAnalyzer) walkDependencies(project *core.Project, 
 	}
 
 	callStack = append(callStack, component.Name)
-	//Walk Dependcies that are global for the given component
+	//Walk Dependencies that are global for the given component
 	dependencies := component.Dependencies
 	for _, dependency := range dependencies {
 		nextComponent, _ := dependency.GetApplication(project)
+		if nextComponent == nil {
+			log.Fatalf("Could not find dependency \"%s\" for application \"%s\"", dependency.Reference, component.Name)
+		}
 		err := projectAnalyzer.walkDependencies(project, nextComponent, callStack)
 		if err != nil {
 			return err
