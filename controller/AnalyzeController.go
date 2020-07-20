@@ -21,7 +21,7 @@ func (a *AnalyzeController) AnalyzeAction() {
 	errors := ProjectAnalyzer.AnalyzeCyclicDependencies(a.project)
 	if errors != nil {
 		for _, error := range errors {
-			fmt.Println(error)
+			log.Println(error)
 		}
 		log.Fatal("Solve Errors please!")
 	}
