@@ -2,7 +2,8 @@
  File contains helper to work with vis network
  */
 
-visNetworkHelper = {}
+
+export default class visNetworkHelper {}
 
 visNetworkHelper.InitNetwork = function(network, clickCallBack) {
     network.on("click", function (params) {

@@ -1,32 +1,45 @@
 SOURCES=vistecture.go
-VERSION=2.1.0
+VERSION=2.5.0
 
-.PHONY: all templates darwin linux windows default
+.PHONY: all templates darwin linux frontend windows default
 
 default: darwin
 
-all: darwin linux windows
+demo: frontend run-example
 
-packr:
-	go run github.com/gobuffalo/packr/v2/packr2
-	echo "package web \nimport _ \"github.com/AOEpeople/vistecture/v2/packrd\"" > controller/web/web-packr.go
+run-example:
+	go run vistecture.go --config example/demoproject/project.yml serve
+
+all: frontend darwin_binary linux_binary windows_binary
+
+windows: frontend windows_binary
+
+linux: frontend linux_binary
+
+darwin: frontend darwin_binary
+
+frontend:
+	cd ./controller/web/template && npm install &&	npm run build
+	packr2 clean &&	packr2
 
 templates:
 	mkdir -p build-artifacts
 	zip -qr build-artifacts/templates.zip templates
 
-darwin: $(SOURCES) templates
+darwin_binary: $(SOURCES) templates
 	GOOS=darwin go build -o build-artifacts/vistecture $(SOURCES)
 
-linux: $(SOURCES) templates
+linux_binary: $(SOURCES) templates
 	GOOS=linux go build -o build-artifacts/vistecture-linux $(SOURCES)
 
-windows: $(SOURCES) templates
+windows_binary: $(SOURCES) templates
 	GOOS=windows go build -o build-artifacts/vistecture.exe $(SOURCES)
 
-dockerpublish:
+docker:
 	docker build --no-cache -t aoepeople/vistecture .
 	docker tag aoepeople/vistecture:latest aoepeople/vistecture:$(VERSION)
+
+docker-publish:
 	docker push aoepeople/vistecture:latest
 	docker push aoepeople/vistecture:$(VERSION)
 

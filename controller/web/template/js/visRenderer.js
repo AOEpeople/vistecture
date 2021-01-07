@@ -1,11 +1,17 @@
-/*
+import visNetworkHelper from "./visNetworkHelper"
+import layout from "./layoutFunctions"
+
+import chroma from 'chroma-js'
+import vis from "../node_modules/vis-network/dist/vis-network"
+/**
  File contains render method to render the graph in given container
  */
 
-visRenderer = {}
+export default class visRenderer {}
 visRenderer.networkInstance = null
 visRenderer.RenderNetwork = function(container, projectData,configurationData) {
-    const defaultProperties = {
+    let node;
+	const defaultProperties = {
         'hierarchicalSortMethod': "",
         'nodeStyle': "",
         'layout': "",
@@ -18,7 +24,7 @@ visRenderer.RenderNetwork = function(container, projectData,configurationData) {
 
     //console.log("renderNetwork",config)
 
-    let edges = []
+    let edges
     if (config['nodeStyle'] == "detailed") {
         edges = visRenderer.getGroupedEdges(projectData, 300)
     } else {
@@ -26,36 +32,42 @@ visRenderer.RenderNetwork = function(container, projectData,configurationData) {
     }
 
 
-    nodes = [];
+    let nodes = [];
 
     for (var app in projectData.applications) {
         let application = projectData.applications[app]
 
-        var node = visRenderer.getBasicNode(application,config['nodeStyle'])
+        let node = visRenderer.getBasicNode(application,config['nodeStyle'])
         nodes.push(node);
     }
 
     //Check if we are missing nodes (this means an application reference an application that is not specified)
-    for (var missingAppId in projectData.missingApplications) {
+    for (let missingAppId in projectData.missingApplications) {
         let missingApp = projectData.missingApplications[missingAppId]
-        var node = { id: missingApp.id, font: {color: "#ffffff"}, title: "MISSING! " + missingApp.title, label: "MISSING!" + missingApp.name, color: {border: "#ff0000", background: "#ee0000", highlight: {background:"#ff0000", border: "#ffaaaa"}}}
+        node = { id: missingApp.id, font: {color: "#ffffff"}, title: "MISSING! " + missingApp.title, label: "MISSING!" + missingApp.name, color: {border: "#ff0000", background: "#ee0000", highlight: {background:"#ff0000", border: "#ffaaaa"}}};
         nodes.push(node);
     }
     //Check if we are missing nodes (this means an application reference an application that is not specified)
-    for (var unincludedAppId in projectData.unincludedApplications) {
+    for (let unincludedAppId in projectData.unincludedApplications) {
         let missingApp = projectData.unincludedApplications[unincludedAppId]
-        var node = { id: missingApp.id, font: {color: "#999999"}, title: "OUTSIDE: " + missingApp.title, label: "OUTSIDE: " + missingApp.name, color: {border: "#ee0000", background: "#666666", highlight: {background:"#aaaaaa", border: "#bbaaaa"}}}
-        nodes.push(node);
+		node = {
+			id: missingApp.id,
+			font: {color: "#999999"},
+			title: "OUTSIDE: " + missingApp.title,
+			label: "OUTSIDE: " + missingApp.name,
+			color: {border: "#ee0000", background: "#666666", highlight: {background: "#aaaaaa", border: "#bbaaaa"}}
+		};
+		nodes.push(node);
     }
 
     for (var app in projectData.applications) {
         let application = projectData.applications[app]
-        for (var missingAppIndex in application.dependenciesToMissingApplications) {
+        for (let missingAppIndex in application.dependenciesToMissingApplications) {
             let missingApp = application.dependenciesToMissingApplications[missingAppIndex]
             var edge = {color: {color: "#ee0000", highlight: "#ff0000"}, smooth:{enabled: false},arrows:{to: {enabled:true}}, from: application.id, to: missingApp.id}
             edges.push(edge);
         }
-        for (var unincludedAppIndex in application.dependenciesToUnincludedApplications) {
+        for (let unincludedAppIndex in application.dependenciesToUnincludedApplications) {
             let unincludedApp = application.dependenciesToUnincludedApplications[unincludedAppIndex]
             var edge = {color: {color: "#aaaaaa", highlight: "#eeeeee"}, smooth:{enabled: false},arrows:{to: {enabled:true}}, from: application.id, to: unincludedApp.id}
             edges.push(edge);
@@ -64,12 +76,12 @@ visRenderer.RenderNetwork = function(container, projectData,configurationData) {
 
 
     // provide the data in the vis format
-    var data = {
-        nodes: nodes,
-        edges: edges
-    };
+	const data = {
+		nodes: nodes,
+		edges: edges
+	};
 
-    let layout = {}
+	let layout = {}
     if (config["layout"] == "hierarchical") {
         layout = {
             hierarchical: {
@@ -84,32 +96,31 @@ visRenderer.RenderNetwork = function(container, projectData,configurationData) {
     }
 
 
+	const options = {
+		physics: {
+			enabled: config['physics'],
+			stabilization: config['physicsStabilization'],
+		},
+		//physics: false,
+		edges: {
+			smooth: {
+				type: 'continuous'
+			},
+			arrows: {
+				to: {enabled: true, scaleFactor: .5, type: 'arrow'}
+			},
+			scaling: {
+				max: 4,
+			}
+		},
+		nodes: {
+			shape: 'box',
+			shadow: true
+		},
+		layout: layout
+	};
 
-    var options = {
-        physics: {
-            enabled: config['physics'],
-            stabilization: config['physicsStabilization'],
-        },
-        //physics: false,
-        edges: {
-            smooth: {
-                type: 'continuous'
-            },
-            arrows: {
-                to: {enabled: true, scaleFactor:.5, type:'arrow'}
-            },
-            scaling: {
-                max: 4,
-            }
-        },
-        nodes: {
-            shape: 'box',
-            shadow:true
-        },
-        layout:layout
-    };
-
-    //console.log("renderNetworkOptions",options)
+	//console.log("renderNetworkOptions",options)
 
     // initialize your network!
     visRenderer.networkInstance = new vis.Network(container, data, options);
@@ -170,17 +181,17 @@ visRenderer.clickEventListener= function (nodeParams, projectData) {
                                 </div>
                                 <small>-</small>
                             </div>
-                            <small class="">${service.description}</small>  
-                            <table class="mt-1 table table-sm small"><tbody>${propContent}</tbody></table>                       
+                            <small class="">${service.description}</small>
+                            <table class="mt-1 table table-sm small"><tbody>${propContent}</tbody></table>
                         </li>`
         }
         serviceContent = `<ul class="list-group">${serviceContent}</ul>`
 
         // RENDER DEP TAB
         let depContent = ""
-        renderDepItem = function(dep, extraInfo) {
+        let renderDepItem = function(dep, extraInfo) {
             let propContent = ""
-            for (var pIndex in dep.properties) {
+            for (let pIndex in dep.properties) {
                 let property = dep.properties[pIndex]
                 propContent = `<tr><td>${pIndex}</td><td>${property}</td></tr>`
             }
@@ -204,8 +215,8 @@ visRenderer.clickEventListener= function (nodeParams, projectData) {
                                 <h7 class="mb-1">${dep.reference}</h7>
                                 ${relationShip}
                             </div>
-                            <small class="">${extraInfo} ${description}</small>  
-                            <table class="mt-1 table table-sm small"><tbody>${propContent}</tbody></table>                       
+                            <small class="">${extraInfo} ${description}</small>
+                            <table class="mt-1 table table-sm small"><tbody>${propContent}</tbody></table>
                         </li>`
         }
         for (var sIndex in app['dependencies']) {
@@ -214,7 +225,7 @@ visRenderer.clickEventListener= function (nodeParams, projectData) {
         }
         for (var sIndex in app['provided-services']) {
             let service = app['provided-services'][sIndex]
-            for (var dIndex in service['dependencies']) {
+            for (let dIndex in service['dependencies']) {
                 let dep = service['dependencies'][dIndex]
                 depContent = depContent + renderDepItem(dep,"From " + service.name)
             }
@@ -233,12 +244,23 @@ visRenderer.clickEventListener= function (nodeParams, projectData) {
 
 visRenderer.getBasicNode = function(application, nodeStyle) {
     let colors = visRenderer.getColorsForApplication(application)
-    var groupName = "UNDEFINED"
-    if (application.group) {
+	let groupName = "UNDEFINED";
+	if (application.group) {
         groupName = application.group
     }
-    var node = { id: application.id, appGroup: groupName, font: {color: colors.fontColor}, title: application.title, label: application.name, color: {border: colors.borderColor, background: colors.backgroundColor, highlight: {background:colors.highlightColor, border: colors.highLightBorderColor}}}
-    if (nodeStyle == "detailed") {
+	const node = {
+		id: application.id,
+		appGroup: groupName,
+		font: {color: colors.fontColor},
+		title: application.title,
+		label: application.name,
+		color: {
+			border: colors.borderColor,
+			background: colors.backgroundColor,
+			highlight: {background: colors.highlightColor, border: colors.highLightBorderColor}
+		}
+	};
+	if (nodeStyle == "detailed") {
         Object.assign(node, { size: 300, image: visRenderer.applicationSvgUrl(application,colors), shape: 'image', borderWidthSelected: 6,shapeProperties: {useImageSize: true, useBorderWithImage: true  }})
         if (application.status == 'planned') {
             node.label = 'planned'
@@ -270,7 +292,8 @@ visRenderer.getColorForGroup = function(groupName) {
     let colors = colorsScale1.concat(colorsScale2.concat(colorsScale3))
 
     //choose same color for same group - looks nicer:
-    if (typeof groupName != "undefined") {
+	let index;
+	if (typeof groupName != "undefined") {
         let chr = 0
         for (let i = 0; i < groupName.length; i++) {
             chr   = chr + groupName.charCodeAt(i);
@@ -286,22 +309,22 @@ visRenderer.getColorForGroup = function(groupName) {
 //getGroupedEdges - returns the vis network edges between nodes - based on the dependencies between applications
 // (we are using the grouped dependencies - to only draw one edge between two nodes - even if multiple dependencies to that node exist)
 visRenderer.getGroupedEdges = function(projectData, lenght) {
-    edges = [];
-    for (var app in projectData.applications) {
+    let edges = [];
+    for (let app in projectData.applications) {
         let application = projectData.applications[app]
 
         let colors = visRenderer.getColorsForApplication(application)
 
-        for (var groupedDepIndex in application.dependenciesGrouped) {
+        for (let groupedDepIndex in application.dependenciesGrouped) {
             let groupedDep = application.dependenciesGrouped[groupedDepIndex]
             let isBrowserBased = true
-            for (var depIndex in groupedDep.dependencies) {
+            for (let depIndex in groupedDep.dependencies) {
                 let individualDep = groupedDep.dependencies[depIndex]
                 if (individualDep.isBrowserBased === false) {
                     isBrowserBased  = false
                 }
             }
-            node = {color: {color: colors.borderColor, highlight: colors.highLightBorderColor}, smooth:{enabled: false},arrows:{to: {enabled:true}}, from: groupedDep.sourceApplication.id, to: groupedDep.application.id, value: groupedDep.dependencies.length}
+            let node = {color: {color: colors.borderColor, highlight: colors.highLightBorderColor}, smooth:{enabled: false},arrows:{to: {enabled:true}}, from: groupedDep.sourceApplication.id, to: groupedDep.application.id, value: groupedDep.dependencies.length}
             if (isBrowserBased) {
                 node.dashes = true
             }
@@ -316,10 +339,10 @@ visRenderer.getGroupedEdges = function(projectData, lenght) {
 
 
 visRenderer.applicationSvgUrl = function(application,colors) {
-    var iconUrl = application.technology + '.png'
-    var icon = '<img src=" + iconUrl + " scale="true" >'
-    //console.log(colors)
-    var tableHeaderColor = colors.backgroundColor // "#1B4E5E"
+	const iconUrl = application.technology + '.png';
+	const icon = '<img src=" + iconUrl + " scale="true" >';
+	//console.log(colors)
+	let tableHeaderColor = colors.backgroundColor; // "#1B4E5E"
 
     if  (application.category == 'external') {
         tableHeaderColor = "#8e0909"
@@ -330,7 +353,7 @@ visRenderer.applicationSvgUrl = function(application,colors) {
     if (application.title) {
         table = table + `<tr><td>${application.title}</td></tr>`
     }
-    for (var sIndex in application['provided-services']) {
+    for (let sIndex in application['provided-services']) {
         let service = application['provided-services'][sIndex]
         if (service.status == 'planned') {
             table = table + `<tr><td>${service.type}:${service.name}</td></tr>`
@@ -345,51 +368,60 @@ visRenderer.applicationSvgUrl = function(application,colors) {
     if (application['provided-services']) {
         height = height+application['provided-services'].length*50
     }
-    var svg = '<svg xmlns="http://www.w3.org/2000/svg" width="350px" height="'+height+'px">' +
-        '<rect x="0" y="0" width="100%" height="100%" fill="#efefef" stroke-width="2" stroke="'+colors.borderColor+'" ></rect>' +
-        '<foreignObject x="0" y="0" width="100%" height="100%">' +
-        '<div xmlns="http://www.w3.org/1999/xhtml" style="font-size:18px; font-family: arial, sans-serif">' +
-        table +
-        '</div>' +
-        '</foreignObject>' +
-        '</svg>';
-    return "data:image/svg+xml;charset=utf-8,"+ encodeURIComponent(svg);
+	const svg = '<svg xmlns="http://www.w3.org/2000/svg" width="350px" height="' + height + 'px">' +
+		'<rect x="0" y="0" width="100%" height="100%" fill="#efefef" stroke-width="2" stroke="' + colors.borderColor + '" ></rect>' +
+		'<foreignObject x="0" y="0" width="100%" height="100%">' +
+		'<div xmlns="http://www.w3.org/1999/xhtml" style="font-size:18px; font-family: arial, sans-serif">' +
+		table +
+		'</div>' +
+		'</foreignObject>' +
+		'</svg>';
+	return "data:image/svg+xml;charset=utf-8,"+ encodeURIComponent(svg);
 }
 
 
 visRenderer.clusterNodeSvgUrl = function(groupName,projectData,borderColor) {
 
-    var tableHeaderColor = "#008482"
+	const tableHeaderColor = "#008482";
 
-    let table = `<table border="1" style="width: 100%"><tr><td style="background-color: ${tableHeaderColor}; font-size:40px; color: #fff; padding: 2px">Group: ${groupName}</td></tr>`
+	let table = `<table border="1" style="width: 100%"><tr><td style="background-color: ${tableHeaderColor}; font-size:40px; color: #fff; padding: 2px">Group: ${groupName}</td></tr>`
 
     //table = table + `<tr><td>App Count:${projectData.applications.length}</td></tr>`
 
     table = table + `</table>`
 
-    var svg = '<svg xmlns="http://www.w3.org/2000/svg" width="500px" height="200px">' +
-        '<rect x="0" y="0" width="100%" height="100%" fill="#efefef" stroke-width="2" stroke="'+borderColor+'" ></rect>' +
-        '<foreignObject x="0" y="0" width="100%" height="100%">' +
-        '<div xmlns="http://www.w3.org/1999/xhtml" style="font-size:25px; font-family: arial, sans-serif">' +
-        table +
-        '</div>' +
-        '</foreignObject>' +
-        '</svg>';
-    return "data:image/svg+xml;charset=utf-8,"+ encodeURIComponent(svg);
+	const svg = '<svg xmlns="http://www.w3.org/2000/svg" width="500px" height="200px">' +
+		'<rect x="0" y="0" width="100%" height="100%" fill="#efefef" stroke-width="2" stroke="' + borderColor + '" ></rect>' +
+		'<foreignObject x="0" y="0" width="100%" height="100%">' +
+		'<div xmlns="http://www.w3.org/1999/xhtml" style="font-size:25px; font-family: arial, sans-serif">' +
+		table +
+		'</div>' +
+		'</foreignObject>' +
+		'</svg>';
+	return "data:image/svg+xml;charset=utf-8,"+ encodeURIComponent(svg);
 }
 
 
 
 
 visRenderer.clusterNodeRenderer = function(groupName, projectData,configurationData) {
-    groupColor = visRenderer.getColorForGroup(groupName)
+    let groupColor = visRenderer.getColorForGroup(groupName)
     let bgHcl = chroma(groupColor).lch()
     let fontColor = "#333333"
     if (bgHcl[0] < 63) {
         fontColor = "#efefef"
     }
-    var node = {title:groupName, label:groupName, id:groupName+'Cluster', borderWidth:3, shape:'box', color: {background:groupColor},margin: 12, font: {size: 19,color: fontColor}}
-    if (configurationData['nodeStyle'] == "detailed") {
+	const node = {
+		title: groupName,
+		label: groupName,
+		id: groupName + 'Cluster',
+		borderWidth: 3,
+		shape: 'box',
+		color: {background: groupColor},
+		margin: 12,
+		font: {size: 19, color: fontColor}
+	};
+	if (configurationData['nodeStyle'] == "detailed") {
         Object.assign(node, { size: 300, image: visRenderer.clusterNodeSvgUrl(groupName,projectData), shape: 'image', shapeProperties: {useImageSize: true, useBorderWithImage: true  }})
     }
     return node
@@ -423,3 +455,5 @@ visRenderer.getColorsForApplication = function(application) {
     }
 
 }
+
+

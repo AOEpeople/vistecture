@@ -2,7 +2,8 @@
     File contains methods to manipulate or read the view
  */
 
-layout = {}
+import $ from 'jquery'
+export default class layout {}
 
 
 

@@ -1,7 +1,9 @@
-visTectureHelper = {}
+import $ from 'jquery'
+
+export default class vistectureHelper {}
 
 //loadVistectureData - loads the vistecture project data
-visTectureHelper.LoadVistectureData = function(selectedSubView, networkFilterGroups, callback) {
+vistectureHelper.LoadVistectureData = function(selectedSubView, networkFilterGroups, callback) {
 
 
     if (typeof DATAURL == 'undefined') {
@@ -39,7 +41,7 @@ visTectureHelper.LoadVistectureData = function(selectedSubView, networkFilterGro
 
 
 
-visTectureHelper.FindApp = function(appId,projectData) {
+vistectureHelper.FindApp = function(appId, projectData) {
     for (var i in projectData.applications) {
         let app = projectData.applications[i]
         if (app.id == appId) {
@@ -50,7 +52,7 @@ visTectureHelper.FindApp = function(appId,projectData) {
 }
 
 
-visTectureHelper.GetIncomingDependencies = function(projectData, appid) {
+vistectureHelper.GetIncomingDependencies = function(projectData, appid) {
     let incomingDep = []
     for (var i in projectData.applications) {
         let app = projectData.applications[i]

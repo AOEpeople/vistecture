@@ -93,7 +93,7 @@ func initFileServerInstance(localFolder string) http.Handler {
 		fileSystem = http.Dir(localFolder)
 	} else {
 		log.Printf("Using templateBox templates for serving")
-		fileSystem = packr.New("templateBox", "./template")
+		fileSystem = packr.New("templateBox", "./template/dist/")
 	}
 	fileServerInstance = http.FileServer(fileSystem)
 	return fileServerInstance

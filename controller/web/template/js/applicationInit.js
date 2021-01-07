@@ -1,5 +1,10 @@
-
-
+import $ from 'jquery';
+window.$ = $;
+import '../node_modules/popper.js/dist/popper.js'
+import '../node_modules/bootstrap/dist/js/bootstrap.bundle.js'
+import visRenderer from "./visRenderer"
+import layout from './layoutFunctions'
+import vistectureHelper from "./vistectureHelper";
 
 // Dom Ready: Shorthand for $( document ).ready()
 $(function() {
@@ -16,7 +21,7 @@ $(function() {
     $('#networkConfigureForm').change(applicationInit.DrawConfiguredGraph)
 });
 
-applicationInit = {}
+var applicationInit = {}
 
 applicationInit.DrawConfiguredGraph = function() {
     let value = $("#select-graph").val()
@@ -24,7 +29,7 @@ applicationInit.DrawConfiguredGraph = function() {
     let selectedSubView = $("#select-project").val()
     let networkFilterGroups = $("#networkFilterGroups").val()
 
-    visTectureHelper.LoadVistectureData(selectedSubView,networkFilterGroups,function(projectData) {
+    vistectureHelper.LoadVistectureData(selectedSubView,networkFilterGroups,function(projectData) {
         applicationInit.updateProjectDropdown(projectData.availableSubViews, config)
         applicationInit.updateGroups(projectData.applicationsByGroup, projectData.availableGroups, config)
         layout.SetDocumentsMenu(projectData.staticDocumentations)
