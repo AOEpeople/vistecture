@@ -17,10 +17,10 @@ type (
 		Status         string            `json:"status" yaml:"status"`
 		Properties     map[string]string `json:"properties" yaml:"properties"`
 		IsOptional     bool              `json:"isOptional" yaml:"isOptional"`
-		Events         []DomainEvent     `json:"events" yaml:"events"`
+		Events         []Event     `json:"events" yaml:"events"`
 	}
 
-	DomainEvent struct {
+	Event struct {
 		Name string `json:"name" yaml:"name"`
 	}
 )
