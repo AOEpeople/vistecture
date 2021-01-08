@@ -261,7 +261,7 @@
            {{ range $dependency := $dependencies }}
                 <li>{{$dependency.Reference}}</li>
                 <ul>
-                {{ range $event := $dependency.Events }}
+                {{ range $event := $dependency.ConsumedEvents }}
                     <li>{{ $event.Name }}</li>
                 {{ end }}
                 </ul>

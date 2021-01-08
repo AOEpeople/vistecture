@@ -17,7 +17,7 @@ type (
 		Status         string            `json:"status" yaml:"status"`
 		Properties     map[string]string `json:"properties" yaml:"properties"`
 		IsOptional     bool              `json:"isOptional" yaml:"isOptional"`
-		Events         []Event     `json:"events" yaml:"events"`
+		ConsumedEvents         []Event     `json:"events" yaml:"events"`
 	}
 
 	Event struct {
