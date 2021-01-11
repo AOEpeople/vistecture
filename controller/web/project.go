@@ -119,7 +119,7 @@ func (p *ProjectController) DataAction(w http.ResponseWriter, r *http.Request, d
 		p.writeJson(w, result, false)
 		return
 	}
-	result.AvailableGroups = getAvailableGroups(project.GetApplicationsRootGroup())
+	result.AvailableGroups = getFlattenedListOfAvailableGroups(project.GetApplicationsRootGroup())
 	//Filter by filterGroups if parameter is given:
 	filterGroupsParam, _ := r.URL.Query()["filterGroups"]
 	allGroupFilters := strings.Join(filterGroupsParam, ",")
@@ -284,13 +284,16 @@ func inSlice(search string, in []string) bool {
 	return false
 }
 
-func getAvailableGroups(group *core.ApplicationsByGroup) *AvailableGroups {
+/*
+ * Recursivly walks trough the Group Tree and collects a flatted list of all available grouos
+ */
+func getFlattenedListOfAvailableGroups(group *core.ApplicationsByGroup) *AvailableGroups {
 	ag := &AvailableGroups{
 		QualifiedGroupName: group.QualifiedGroupName,
 		GroupName:          group.GroupName,
 	}
 	for _, subG := range group.SubGroups {
-		ag.SubGroups = append(ag.SubGroups, getAvailableGroups(subG))
+		ag.SubGroups = append(ag.SubGroups, getFlattenedListOfAvailableGroups(subG))
 	}
 	return ag
 }
