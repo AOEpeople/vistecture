@@ -35,7 +35,7 @@ type (
 		ApplicationsDto      []*ApplicationDto         `json:"applications"`
 		StaticDocumentations []string                  `json:"staticDocumentations"`
 		Errors               []string                  `json:"errors"`
-		//MissingApplications - list of applications that are referenced but not definied at all in the projecr
+		//MissingApplications - list of applications that are referenced but not definied at all in the project
 		MissingApplications MissingApplications `json:"missingApplications"`
 		//UnincludedApplications - list of applications that are referenced but not included in current selection (e.g. because of selected subview or due to a filter)
 		UnincludedApplications MissingApplications `json:"unincludedApplications"`
