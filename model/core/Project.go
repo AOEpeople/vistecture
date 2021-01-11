@@ -78,7 +78,9 @@ func (p *Project) FindApplication(nameToMatch string) (*Application, error) {
 // GetApplicationsRootGroup - Returns the Root Group
 func (p *Project) GetApplicationsRootGroup() *ApplicationsByGroup {
 	appsByGroup := ApplicationsByGroup{
-		IsRoot: true,
+		IsRoot:             true,
+		GroupName:          "default",
+		QualifiedGroupName: "default",
 	}
 	for _, app := range p.Applications {
 		appsByGroup.add(app)
@@ -177,9 +179,11 @@ func (a *ApplicationsByGroup) add(app *Application) error {
 	}
 	groupPath := app.GetGroupPath()
 	groupToAddApp := a
-	for i, group := range groupPath {
-		qualifiedName := strings.Join(groupPath[0:i+1], "/")
-		groupToAddApp = groupToAddApp.getSubgroup(group, qualifiedName)
+	if groupPath[0] != "" {
+		for i, group := range groupPath {
+			qualifiedName := strings.Join(groupPath[0:i+1], "/")
+			groupToAddApp = groupToAddApp.getSubgroup(group, qualifiedName)
+		}
 	}
 	groupToAddApp.Applications = append(groupToAddApp.Applications, app)
 	return nil
