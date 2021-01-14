@@ -25,7 +25,7 @@ visRenderer.RenderNetwork = function(container, projectData,configurationData) {
     //console.log("renderNetwork",config)
 
     let edges
-    if (config['nodeStyle'] == "detailed") {
+    if (config['nodeStyle'] === "detailed") {
         edges = visRenderer.getGroupedEdges(projectData, 300)
     } else {
         edges = visRenderer.getGroupedEdges(projectData, 0)
@@ -37,7 +37,7 @@ visRenderer.RenderNetwork = function(container, projectData,configurationData) {
     for (var app in projectData.applications) {
         let application = projectData.applications[app]
 
-        let node = visRenderer.getBasicNode(application,config['nodeStyle'])
+        let node = visRenderer.getBasicNode(application, config['nodeStyle'])
         nodes.push(node);
     }
 
@@ -82,14 +82,14 @@ visRenderer.RenderNetwork = function(container, projectData,configurationData) {
 	};
 
 	let layout = {}
-    if (config["layout"] == "hierarchical") {
+    if (config["layout"] === "hierarchical") {
         layout = {
             hierarchical: {
                 enabled: true,
                 sortMethod: config['hierarchicalSortMethod']
             }
         }
-        if (config['nodeStyle'] == "detailed") {
+        if (config['nodeStyle'] === "detailed") {
             layout.hierarchical.levelSeparation= 550
             layout.hierarchical.nodeSpacing= 440
         }
@@ -260,9 +260,9 @@ visRenderer.getBasicNode = function(application, nodeStyle) {
 			highlight: {background: colors.highlightColor, border: colors.highLightBorderColor}
 		}
 	};
-	if (nodeStyle == "detailed") {
+	if (nodeStyle === "detailed") {
         Object.assign(node, { size: 300, image: visRenderer.applicationSvgUrl(application,colors), shape: 'image', borderWidthSelected: 6,shapeProperties: {useImageSize: true, useBorderWithImage: true  }})
-        if (application.status == 'planned') {
+        if (application.status === 'planned') {
             node.label = 'planned'
         }
     }
@@ -272,7 +272,7 @@ visRenderer.getBasicNode = function(application, nodeStyle) {
 
 visRenderer.getStandardNodeBgColor = function(application) {
     //if the app has a color defined - use this one:
-    if (application.hasOwnProperty('display') && application.display.hasOwnProperty('color') && application.display.color != "") {
+    if (application.hasOwnProperty('display') && application.display.hasOwnProperty('color') && application.display.color !== "") {
         return application.display.color
     }
     return visRenderer.getColorForGroup(application.group)
@@ -340,11 +340,11 @@ visRenderer.getGroupedEdges = function(projectData, lenght) {
 
 visRenderer.applicationSvgUrl = function(application,colors) {
 	const iconUrl = application.technology + '.png';
-	const icon = '<img src=" + iconUrl + " scale="true" >';
+	const icon = '<img src="'+ iconUrl + '" scale="true" >';
 	//console.log(colors)
 	let tableHeaderColor = colors.backgroundColor; // "#1B4E5E"
 
-    if  (application.category == 'external') {
+    if  (application.category === 'external') {
         tableHeaderColor = "#8e0909"
     }
 
@@ -355,7 +355,7 @@ visRenderer.applicationSvgUrl = function(application,colors) {
     }
     for (let sIndex in application['provided-services']) {
         let service = application['provided-services'][sIndex]
-        if (service.status == 'planned') {
+        if (service.status === 'planned') {
             table = table + `<tr><td>${service.type}:${service.name}</td></tr>`
         } else {
             table = table + `<tr><td>${service.type}:${service.name}</td></tr>`
