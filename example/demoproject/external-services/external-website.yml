@@ -3,6 +3,7 @@ description: Some External Website
 properties:
   deployment: saas
 category: external
+group: external
 provided-services:
 - name: gui
   type: gui

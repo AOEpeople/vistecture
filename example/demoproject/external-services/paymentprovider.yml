@@ -3,6 +3,7 @@ description: External Payment Provider
 properties:
   deployment: saas
 category: external
+group: externalapi
 provided-services:
 - name: auth
   type: api

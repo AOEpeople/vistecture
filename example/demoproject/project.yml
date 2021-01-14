@@ -17,3 +17,10 @@ subViews:
   - customer-portal
   - single-sign-on
   - order-workflow
+
+- name: "External Services"
+  included-applications:
+    - paymentprovider
+    - some-fancy-points-api
+    - some-other-fancy-service
+    - external-website
