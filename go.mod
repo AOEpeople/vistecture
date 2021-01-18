@@ -3,6 +3,7 @@ module github.com/AOEpeople/vistecture/v2
 go 1.15
 
 require (
+	github.com/coreos/etcd v3.3.25+incompatible // indirect
 	github.com/gobuffalo/buffalo v0.13.0 // indirect
 	github.com/gobuffalo/buffalo-plugins v1.15.0 // indirect
 	github.com/gobuffalo/events v1.4.1 // indirect
@@ -13,6 +14,7 @@ require (
 	github.com/gobuffalo/packr v1.21.0 // indirect
 	github.com/gobuffalo/packr/v2 v2.8.1
 	github.com/gobuffalo/syncx v0.1.0 // indirect
+	github.com/google/uuid v1.1.5 // indirect
 	github.com/gorilla/mux v1.8.0
 	github.com/karrick/godirwalk v1.16.1 // indirect
 	github.com/konsorten/go-windows-terminal-sequences v1.0.3 // indirect
@@ -32,4 +34,5 @@ require (
 	golang.org/x/tools v0.0.0-20210106214847-113979e3529a // indirect
 	gopkg.in/urfave/cli.v1 v1.20.0
 	gopkg.in/yaml.v2 v2.4.0
+	sigs.k8s.io/yaml v1.2.0 // indirect
 )
