@@ -1,5 +1,7 @@
 # vistecture: Service Architecture Tool
 
+![dependency security scanning](https://github.com/AOEpeople/vistecture/workflows/dependency%20security%20scanning/badge.svg)
+
 A tool for visualizing and analyzing distributed (micro) service oriented architectures.
 Just define your applications (microservices) with its dependencies in a simpel yaml file.
 
