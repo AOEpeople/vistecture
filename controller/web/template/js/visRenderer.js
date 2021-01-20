@@ -148,14 +148,17 @@ visRenderer.clickEventListener= function (nodeParams, projectData) {
         if (typeof app.summary != "undefined") {
             commonTab = app.summary
         }
+		if (typeof app.description != "undefined") {
+			commonTab = commonTab + `<p>${app.description}</p>`
+		}
+
 		let incomingDep = vistectureHelper.GetIncomingDependencies(projectData,app.id)
 
         commonTab = commonTab + `<p class="pt-1"><strong>Consumers:</strong>There are <strong>#${incomingDep.length}</strong> consumers</p>`
-        commonTab = commonTab + `<p class="pt-1"><strong>Group:</strong> ${app.group}</p>`
-        if (typeof app.description != "undefined") {
-            commonTab = commonTab + `<p><small>${app.description}</small></p>`
-        }
-        let propContent = ""
+		commonTab = commonTab + `<p class="pt-1"><strong>Group:</strong> ${app.group}</p>`
+		commonTab = commonTab + `<p class="pt-1"><strong>Team:</strong> ${app.team}</p>`
+
+		let propContent = ""
         for (var pIndex in app.properties) {
             let property = app.properties[pIndex]
             propContent += `<tr><td>${pIndex}</td><td>${property}</td></tr>`
