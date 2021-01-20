@@ -260,6 +260,18 @@ visRenderer.getBasicNode = function(application, nodeStyle) {
 			highlight: {background: colors.highlightColor, border: colors.highLightBorderColor}
 		}
 	};
+	node.title += ' ('
+	if (application.group) {
+		node.title += 'Group: ' + application.group
+	}
+	if (application.group && application.team) {
+		node.title += ', ';
+	}
+	if (application.team) {
+		node.title += 'Team: ' + application.team
+	}
+	node.title += ')'
+
 	if (nodeStyle === "detailed") {
         Object.assign(node, { size: 300, image: visRenderer.applicationSvgUrl(application,colors), shape: 'image', borderWidthSelected: 6,shapeProperties: {useImageSize: true, useBorderWithImage: true  }})
         if (application.status === 'planned') {
