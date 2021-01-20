@@ -1,5 +1,11 @@
 package core
 
+import (
+	"html/template"
+
+	"github.com/russross/blackfriday"
+)
+
 type Service struct {
 	Name          string            `json:"name" yaml:"name"`
 	Title         string            `json:"title" yaml:"title"`
@@ -21,4 +27,9 @@ func (s *Service) HasPropertyWithValue(property string, compareValue string) boo
 		}
 	}
 	return false
+}
+
+//GetDescriptionHtml - helper that renders the description text as markdown - to be used in HTML documentations
+func (s *Service) GetDescriptionHtml() template.HTML {
+	return template.HTML(blackfriday.MarkdownCommon([]byte(s.Description)))
 }
