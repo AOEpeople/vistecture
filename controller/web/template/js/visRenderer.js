@@ -1,4 +1,5 @@
 import visNetworkHelper from "./visNetworkHelper"
+import vistectureHelper from "./vistectureHelper";
 import layout from "./layoutFunctions"
 
 import chroma from 'chroma-js'
@@ -139,15 +140,16 @@ visRenderer.clickEventListener= function (nodeParams, projectData) {
     if (nodeParams.nodes.length<1) {
         return
     }
-    let app = visTectureHelper.FindApp(nodeParams.nodes[0],projectData)
-    //console.log("clicked.. ",nodeParams,app)
-    if (app !== false) {
+    let app = vistectureHelper.FindApp(nodeParams.nodes[0],projectData)
+
+	if (app !== false) {
         // RENDER COMMONTAB
         let commonTab = ""
         if (typeof app.summary != "undefined") {
             commonTab = app.summary
         }
-        let incomingDep = visTectureHelper.GetIncomingDependencies(projectData,app.id)
+		let incomingDep = vistectureHelper.GetIncomingDependencies(projectData,app.id)
+
         commonTab = commonTab + `<p class="pt-1"><strong>Consumers:</strong>There are <strong>#${incomingDep.length}</strong> consumers</p>`
         commonTab = commonTab + `<p class="pt-1"><strong>Group:</strong> ${app.group}</p>`
         if (typeof app.description != "undefined") {
