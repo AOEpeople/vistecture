@@ -264,7 +264,7 @@ A dependency creates a reference to either an application, or more exactly, to a
 |                     |  (please note that on a per service level it is possible to define the service as `isOpenHost` - this normally means that the applications consuming this services fall in the relationship "open-host") | 
 | acl                 |  Anti corruption layer: If the provided interface is complex or very different from the applications bounded context internal model. The acl emphasizes that the downstream component takes care to isolate his domain with a acl pattern) | 
 
-(See https://www.aoe.com/tech-radar/strategic-domain-driven-design.html)
+(See https://www.aoe.com/techradar/methods-and-patterns/strategic-domain-driven-design.html)
 
 ### Groups (Business Services)
 Applications can be grouped. For example, this can be used to visualize Business Services:
