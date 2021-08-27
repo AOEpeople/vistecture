@@ -7,13 +7,16 @@
     "bootstrap": "^4.5.3",
     "chroma-js": "^2.1.0",
     "jquery": "^3.5.1",
+    "popper.js": "^1.16.1",
     "vis-network": "^8.5.6"
   },
   "devDependencies": {
-    "parcel-bundler": "^1.4.1"
+    "parcel-bundler": "^1.4.1",
+    "prettier": "^2.3.2"
   },
   "scripts": {
     "dev": "parcel index.html",
-    "build": "parcel build index.html favicon.ico"
+    "build": "parcel build index.html favicon.ico",
+    "format:write": "prettier --write ."
   }
 }
