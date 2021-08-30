@@ -16,7 +16,7 @@ RUN ls -l /app
 FROM alpine:latest
 RUN apk add --no-cache \
   graphviz \
-  font-bitstream-type1 \
+  ttf-freefont \
   inotify-tools \
   tini
 COPY --from=build /app/vistecture /usr/local/bin
