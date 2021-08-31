@@ -19,8 +19,7 @@ linux: frontend linux_binary
 darwin: frontend darwin_binary
 
 frontend:
-	cd ./controller/web/template && npm install &&	npm run build
-	packr2 clean &&	packr2
+	cd ./controller/web/template && npm install && npm run build
 
 templates:
 	mkdir -p build-artifacts

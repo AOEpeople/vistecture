@@ -1,22 +1,19 @@
 package web
 
 import (
+	"embed"
 	"encoding/json"
 	"errors"
+	"fmt"
+	"io/fs"
+	"log"
 	"net/http"
 	"os"
-
-	"fmt"
-
-	"strings"
-
-	"log"
-
 	"path/filepath"
+	"strings"
 
 	"github.com/AOEpeople/vistecture/v2/application"
 	"github.com/AOEpeople/vistecture/v2/model/core"
-	"github.com/gobuffalo/packr/v2"
 )
 
 type (
@@ -65,6 +62,8 @@ type (
 
 var (
 	fileServerInstance http.Handler
+	//go:embed template/dist
+	builtInTemplates embed.FS
 )
 
 func (p *ProjectController) Inject(definitions *application.ProjectConfig, projectLoader *application.ProjectLoader, definitionsBaseFolder string, skipValidation bool) {
@@ -92,8 +91,12 @@ func initFileServerInstance(localFolder string) http.Handler {
 		}
 		fileSystem = http.Dir(localFolder)
 	} else {
-		log.Printf("Using templateBox templates for serving")
-		fileSystem = packr.New("templateBox", "./template/dist/")
+		log.Printf("Using builtin templates for serving")
+		builtIn, err := fs.Sub(builtInTemplates, "template/dist")
+		if err != nil {
+			panic(err)
+		}
+		fileSystem = http.FS(builtIn)
 	}
 	fileServerInstance = http.FileServer(fileSystem)
 	return fileServerInstance
@@ -212,7 +215,7 @@ func (p *ProjectController) DataAction(w http.ResponseWriter, r *http.Request, d
 func (p *ProjectController) writeJson(w http.ResponseWriter, result Result, isHardError bool) {
 	b, err := json.Marshal(result)
 	if err != nil {
-		fmt.Fprint(w, "unexpected error: "+err.Error())
+		_, _ = fmt.Fprint(w, "unexpected error: "+err.Error())
 		return
 	}
 	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:63343")
@@ -223,7 +226,7 @@ func (p *ProjectController) writeJson(w http.ResponseWriter, result Result, isHa
 		w.WriteHeader(http.StatusOK)
 	}
 
-	fmt.Fprint(w, string(b))
+	_, _ = fmt.Fprint(w, string(b))
 }
 
 func getStaticDocuments(folder string) ([]string, error) {

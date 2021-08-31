@@ -8,4 +8,5 @@ vistecture
 /controller/web/template/node_modules/
 /controller/web/template/.cache/
 /controller/web/template/dist/
+!/controller/web/template/dist/.gitkeep
 /controller/web/web-packr.go

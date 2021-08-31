@@ -13,7 +13,7 @@ import (
 	"github.com/AOEpeople/vistecture/v2/controller/web"
 	"github.com/AOEpeople/vistecture/v2/model/core"
 	"github.com/gorilla/mux"
-	cli "gopkg.in/urfave/cli.v1"
+	"github.com/urfave/cli"
 )
 
 type (
@@ -185,7 +185,7 @@ func main() {
 		},
 	}
 
-	app.Run(os.Args)
+	_ = app.Run(os.Args)
 }
 
 func loadProject(configFile string, subViewName string, skipValidation bool) *core.Project {
@@ -201,7 +201,7 @@ func loadProject(configFile string, subViewName string, skipValidation bool) *co
 	return project
 }
 
-func validate(c *cli.Context) error {
+func validate(_ *cli.Context) error {
 	loader := application.ProjectLoader{StrictMode: !skipValidation}
 	project, err := loader.LoadProjectFromConfigFile(projectConfigFile, projectSubViewName)
 
@@ -223,7 +223,7 @@ func validate(c *cli.Context) error {
 	return nil
 }
 
-func listApps(c *cli.Context) error {
+func listApps(_ *cli.Context) error {
 	project := loadProject(projectConfigFile, projectSubViewName, true)
 	for _, app := range project.Applications {
 		log.Printf("Name: %v Id: %v", app.Name, app.Id)
@@ -231,7 +231,7 @@ func listApps(c *cli.Context) error {
 	return nil
 }
 
-func startServer(c *cli.Context) error {
+func startServer(_ *cli.Context) error {
 	r := mux.NewRouter()
 
 	srv := &http.Server{
