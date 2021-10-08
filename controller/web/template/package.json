@@ -7,6 +7,7 @@
     "bootstrap": "^4.5.3",
     "chroma-js": "^2.1.0",
     "jquery": "^3.5.1",
+    "popper.js": "^1.16.1",
     "vis-network": "^8.5.6"
   },
   "devDependencies": {
