@@ -211,7 +211,7 @@ func (a *Application) GetDependenciesGrouped(project *Project) []*DependenciesGr
 func (a *Application) GetMissingDependencies(project *Project) []string {
 	var missing []string
 
-	for _, dep := range a.Dependencies {
+	for _, dep := range a.GetAllDependencies() {
 		_, err := dep.GetApplication(project)
 		if err != nil {
 			missing = append(missing, dep.GetApplicationName())
