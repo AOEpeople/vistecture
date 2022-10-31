@@ -11,10 +11,10 @@
     "vis-network": "^8.5.6"
   },
   "devDependencies": {
-    "parcel-bundler": "^1.4.1"
+    "parcel": "^2.7.0"
   },
   "scripts": {
-    "dev": "parcel index.html",
-    "build": "parcel build index.html favicon.ico"
+    "dev": "npx parcel index.html",
+    "build": "npx parcel build index.html"
   }
 }
