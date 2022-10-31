@@ -11,7 +11,7 @@
     "vis-network": "^8.5.6"
   },
   "devDependencies": {
-    "parcel-bundler": "^1.4.1"
+    "parcel-bundler": "^1.12.5"
   },
   "scripts": {
     "dev": "parcel index.html",
