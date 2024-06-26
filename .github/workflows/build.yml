@@ -59,8 +59,8 @@ jobs:
       - uses: actions/setup-go@v2
         with:
           go-version: '^1.17.x'
-      - run: GOOS=linux GOARCH=amd64 go build -o build-artifacts/vistecture-linux vistecture.go
-      - run: GOOS=linux GOARCH=arm64 go build -o build-artifacts/vistecture-linux vistecture.go
+      - run: GOOS=linux GOARCH=amd64 go build -o build-artifacts/vistecture-linux-amd64 vistecture.go
+      - run: GOOS=linux GOARCH=arm64 go build -o build-artifacts/vistecture-linux-arm64 vistecture.go
       - run: GOOS=windows go build -o build-artifacts/vistecture.exe vistecture.go
       - uses: actions/upload-artifact@master
         with:
@@ -97,7 +97,7 @@ jobs:
           asset_name: vistecture.exe
           asset_content_type: application/octet-stream
       - name: Upload vistecture linux asset
-        id: upload-linux-asset
+        id: upload-linux-asset-amd64
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -107,7 +107,7 @@ jobs:
           asset_name: vistecture-amd64
           asset_content_type: application/octet-stream
       - name: Upload vistecture linux asset
-        id: upload-linux-asset
+        id: upload-linux-asset-arm64
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
