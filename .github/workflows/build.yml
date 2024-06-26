@@ -103,7 +103,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps
-          asset_path: ./vistecture-linux
+          asset_path: ./vistecture-linux-amd64
           asset_name: vistecture-amd64
           asset_content_type: application/octet-stream
       - name: Upload vistecture linux asset
@@ -113,7 +113,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps
-          asset_path: ./vistecture-linux
+          asset_path: ./vistecture-linux-arm64
           asset_name: vistecture-arm64
           asset_content_type: application/octet-stream
   docker:
@@ -128,8 +128,6 @@ jobs:
         with:
           name: binaries
           path: build-artifacts
-      - name: Display structure of downloaded files
-        run: ls -R
       - name: Cache Docker layers
         uses: actions/cache@v2
         with:
