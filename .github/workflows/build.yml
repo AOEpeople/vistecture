@@ -62,7 +62,7 @@ jobs:
       - run: GOOS=linux GOARCH=amd64 go build -o build-artifacts/vistecture-linux-amd64 vistecture.go
       - run: GOOS=linux GOARCH=arm64 go build -o build-artifacts/vistecture-linux-arm64 vistecture.go
       - run: GOOS=windows go build -o build-artifacts/vistecture.exe vistecture.go
-      - uses: actions/upload-artifact@master
+      - uses: actions/upload-artifact@v4
         with:
           name: binaries
           path: build-artifacts/vistecture*
@@ -82,7 +82,7 @@ jobs:
           draft: false
           prerelease: false
       - name: Download go-binary artifact
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v4
         with:
           name: binaries
           path: ./
@@ -124,10 +124,12 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v1
       - name: Download go-binary artifact
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v4
         with:
           name: binaries
           path: build-artifacts
+      - name: Display structure of downloaded files
+        run: ls -R
       - name: Cache Docker layers
         uses: actions/cache@v2
         with:
