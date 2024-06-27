@@ -138,6 +138,7 @@ jobs:
       - name: Build
         uses: docker/build-push-action@v6
         with:
+          file: .github/Dockerfile
           push: true
           tags: aoepeople/vistecture:${{ github.ref_name }}
           platforms: linux/amd64,linux/arm64
