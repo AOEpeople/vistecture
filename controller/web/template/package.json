@@ -15,6 +15,6 @@
   },
   "scripts": {
     "dev": "npx parcel index.html",
-    "build": "npx parcel build index.html"
+    "build": "npx parcel build --no-optimize index.html"
   }
 }

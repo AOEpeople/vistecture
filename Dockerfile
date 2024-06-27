@@ -1,4 +1,4 @@
-FROM node:16.20.2-alpine3.18 AS frontend
+FROM node:15.5.1-alpine3.12 AS frontend
 COPY . /app
 RUN apk add --update python3 make gcc g++
 RUN cd /app/controller/web/template && npm install && npm run build
