@@ -131,6 +131,10 @@ jobs:
           name: binaries
           path: build-artifacts
       - name: Display structure of downloaded files
+        run: pwd
+      - name: Display structure of downloaded files
+        run: ls -la
+      - name: Display structure of downloaded files
         run: ls -R build-artifacts
 #      - name: Login to DockerHub
 #        uses: docker/login-action@v1
@@ -141,7 +145,6 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           file: .github/Dockerfile
-          context: .
           push: true
           tags: aoepeople/vistecture:${{ github.ref_name }}
           platforms: linux/amd64,linux/arm64
