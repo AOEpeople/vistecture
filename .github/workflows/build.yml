@@ -130,6 +130,8 @@ jobs:
         with:
           name: binaries
           path: build-artifacts
+      - name: Display structure of downloaded files
+        run: ls -R build-artifacts
 #      - name: Login to DockerHub
 #        uses: docker/login-action@v1
 #        with:
