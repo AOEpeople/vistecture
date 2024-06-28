@@ -137,11 +137,13 @@ jobs:
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - name: Set up ref without leading 'v'
+        run: echo "STRIPPED_REF_NAME=${GITHUB_REF_NAME#v}" >> $GITHUB_ENV
       - name: Build
         uses: docker/build-push-action@v6
         with:
           context: .
           file: .github/Dockerfile
           push: true
-          tags: aoepeople/vistecture:${{ github.ref_name }}
+          tags: aoepeople/vistecture:${{ env.STRIPPED_REF_NAME }}
           platforms: linux/amd64,linux/arm64
