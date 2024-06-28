@@ -56,12 +56,12 @@ jobs:
         with:
           path: build-artifacts/templates.zip
           key: templates-${{ hashFiles('templates/**') }}
-      - uses: actions/setup-go@v2
+      - uses: actions/setup-go@v5
         with:
           go-version: '^1.17.x'
-      - run: GOOS=linux GOARCH=amd64 go build -o build-artifacts/vistecture-linux-amd64 vistecture.go
-      - run: GOOS=linux GOARCH=arm64 go build -o build-artifacts/vistecture-linux-arm64 vistecture.go
-      - run: GOOS=windows go build -o build-artifacts/vistecture.exe vistecture.go
+      - run: GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -o build-artifacts/vistecture-linux-amd64 vistecture.go
+      - run: GOOS=linux GOARCH=arm64 CGO_ENABLED=0 go build -o build-artifacts/vistecture-linux-arm64 vistecture.go
+      - run: GOOS=windows CGO_ENABLED=0 go build -o build-artifacts/vistecture.exe vistecture.go
       - uses: actions/upload-artifact@v4
         with:
           name: binaries
