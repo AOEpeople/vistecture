@@ -1,9 +1,9 @@
-FROM node:15.5.1-alpine3.12 as frontend
+FROM node:15.5.1-alpine3.12 AS frontend
 COPY . /app
 RUN apk add --update python3 make gcc g++
 RUN cd /app/controller/web/template && npm install && npm run build
 
-FROM golang:1.17 as build
+FROM golang:1.17 AS build
 ENV GOOS=linux
 ENV CGO_ENABLED=0
 COPY . /app
