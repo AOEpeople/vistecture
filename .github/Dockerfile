@@ -5,4 +5,4 @@ RUN apk add --no-cache \
   ttf-freefont \
   inotify-tools \
   tini
-COPY build-artifacts/vistecture-linux-$TARGETARCH /usr/local/bin/vistecture
+COPY --chmod=0755 build-artifacts/vistecture-linux-$TARGETARCH /usr/local/bin/vistecture
